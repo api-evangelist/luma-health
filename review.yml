@@ -1,0 +1,129 @@
+aid: luma-health
+name: Luma Health
+review:
+  question: Does Luma Health expose a documented public developer API, and is it an HL7 FHIR server or a REST API?
+  answer: true
+  date: '2026-07-24'
+  reviewer: API Evangelist
+  homeMarket: United States
+findings:
+  summary: |
+    Luma Health publishes a documented public developer portal at
+    https://apidocs.lumahealth.io (HTTP 200), rendered with Redoc from a single
+    OpenAPI 3.0.0 specification served at https://apidocs.lumahealth.io/public.yaml
+    (HTTP 200, application/yaml, ~1.04 MB). The spec is titled "Rest-Service"
+    version 2.0.0 and describes Luma's patient-engagement REST API - 143 paths,
+    276 operations, 54 tags - served at https://api.lumahealth.io/api/v2. This is
+    a conventional JSON REST API, NOT an HL7 FHIR server: there is no public FHIR
+    CapabilityStatement and no SMART-on-FHIR configuration. Probes of
+    https://api.lumahealth.io/metadata,
+    https://api.lumahealth.io/.well-known/smart-configuration, and
+    https://api.lumahealth.io/.well-known/openid-configuration each returned HTTP
+    200 but with content-type text/html (the marketing SPA), confirming no real
+    FHIR/SMART discovery document is served. FHIR/HL7 interoperability with EHRs
+    (Epic, Oracle Health/Cerner, MEDITECH, eClinicalWorks, athenahealth, NextGen,
+    Greenway, Nextech) occurs inside Luma's bidirectional integration layer, not
+    as a public FHIR endpoint. The developer surface spans scheduling and
+    appointments, patients and forms, providers and facilities, messaging and
+    engagement, broadcast and campaigns, intake/checklists, billing and payments,
+    insurance eligibility verification, referrals, a conversational AI assistant
+    (lumabot / assistant instances), and reporting/audits.
+  developerPortal:
+    url: https://apidocs.lumahealth.io
+    status: 200
+    confirmed: true
+    renderer: Redoc
+  fhirCapabilityStatement:
+    present: false
+    fhirVersion: null
+    note: No public FHIR server or CapabilityStatement (/metadata) is served; the developer API is REST, not FHIR.
+  smartOnFhir:
+    present: false
+    note: /.well-known/smart-configuration returns the HTML marketing page (text/html), not a SMART configuration JSON.
+  downloadableSpecs:
+    count: 1
+    specs:
+      - path: openapi/luma-health-openapi.yaml
+        provenance: https://apidocs.lumahealth.io/public.yaml
+        format: OpenAPI 3.0.0
+        title: Rest-Service
+        version: 2.0.0
+        httpStatus: 200
+        contentType: application/yaml
+        bytes: 1040143
+        paths: 143
+        operations: 276
+        tags: 54
+        harvestedVerbatim: true
+        harvestDate: '2026-07-24'
+  authModel:
+    scheme: OAuth2 client-credentials
+    tokenType: JWT bearer
+    securityScheme: Bearer (http, bearerFormat JWT)
+    flow: |
+      POST /auth/clients generates a client id and secret (PATCH rotates the
+      secret, GET lists client ids); POST /auth/token exchanges credentials for a
+      JWT access token; PUT /auth/token/{userId} issues a subaccount access token.
+      All other operations require the global Bearer JWT security requirement.
+    smartScopes: []
+    note: OAuth2 client-credentials issuing JWT bearer tokens. Not SMART-on-FHIR; no patient/*.read or system/*.rw scopes are documented.
+  standardsConformance:
+    usCore: false
+    ukCore: false
+    auCore: false
+    daVinci: false
+    carinBlueButton: false
+    note: |
+      No FHIR implementation-guide conformance (US Core / Da Vinci / CARIN Blue
+      Button) applies - the public API is a proprietary REST API, not FHIR.
+      Luma's own OAuth2 client-credentials + JWT model governs access.
+  access:
+    model: gated
+    selfServe: false
+    note: |
+      The OpenAPI reference is openly published and self-serve to read, but
+      obtaining API credentials requires a Luma Health customer/partner
+      relationship (client id/secret are provisioned via /auth/clients within an
+      authenticated account). No open self-signup sandbox is documented; pricing
+      is not published (HTTP 404 on /pricing).
+  transports:
+    - protocol: REST
+      scheme: https
+      baseURL: https://api.lumahealth.io/api/v2
+      documented: true
+    - protocol: WebSocket
+      scheme: wss
+      documented: false
+      note: No WebSocket endpoint is documented in the Luma Health OpenAPI or developer portal as of the review date.
+sources:
+  - url: https://apidocs.lumahealth.io
+    type: DeveloperPortal
+    status: 200
+    note: Redoc-rendered API documentation portal; loads spec-url public.yaml.
+  - url: https://apidocs.lumahealth.io/public.yaml
+    type: OpenAPI
+    status: 200
+    note: OpenAPI 3.0.0 "Rest-Service" v2.0.0; harvested verbatim to openapi/luma-health-openapi.yaml.
+  - url: https://api.lumahealth.io/api/v2
+    type: BaseURL
+    status: 401
+    note: API base URL; returns 401 Unauthorized without a Bearer JWT, confirming the live authenticated REST surface.
+  - url: https://www.lumahealth.io
+    type: Website
+    status: 200
+    note: Corporate site; describes the patient-engagement platform and EHR integrations.
+  - url: https://www.lumahealth.io/integrations
+    type: Documentation
+    status: 200
+    note: Lists bidirectional EHR integrations (Epic, Oracle Health/Cerner, MEDITECH, eClinicalWorks, athenahealth, NextGen, Greenway, Nextech).
+  - url: https://api.lumahealth.io/.well-known/smart-configuration
+    type: Probe
+    status: 200
+    note: Returns text/html marketing page, not a SMART-on-FHIR configuration; confirms no SMART surface.
+  - url: https://api.lumahealth.io/metadata
+    type: Probe
+    status: 200
+    note: Returns text/html marketing page, not a FHIR CapabilityStatement; confirms no public FHIR server.
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

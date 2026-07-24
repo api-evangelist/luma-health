@@ -1,0 +1,299 @@
+aid: luma-health
+url: https://raw.githubusercontent.com/api-evangelist/luma-health/refs/heads/main/apis.yml
+name: Luma Health
+kind: company
+description: >-
+  Luma Health is a United States patient-engagement (Patient Success) platform for
+  healthcare provider organizations, headquartered in San Francisco, California. Its
+  operational AI platform automates the patient journey - self-service scheduling and
+  appointment management, referral and waitlist management, intake and digital forms,
+  omnichannel two-way messaging and broadcast, appointment reminders and recalls,
+  insurance eligibility verification, payments and billing, and a conversational AI
+  assistant (Navigator / lumabot) - and integrates bidirectionally with the major EHRs
+  (Epic, Oracle Health/Cerner, MEDITECH, eClinicalWorks, athenahealth, NextGen, Greenway,
+  Nextech). Luma exposes a documented public REST API (Rest-Service v2.0.0, OpenAPI 3.0.0)
+  at https://api.lumahealth.io/api/v2, secured with OAuth2 client-credentials that issue
+  JWT bearer tokens. The developer-facing surface is a REST API rather than an HL7 FHIR
+  server; FHIR/HL7 interoperability with EHRs happens inside Luma's integration layer, not
+  as a public FHIR endpoint.
+image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+tags:
+- Healthcare
+- United States
+- Patient Engagement
+- Scheduling
+- Referrals
+- Intake
+- Messaging
+- Eligibility
+- EHR
+- Interoperability
+- Clinical AI
+created: '2026-07-24'
+modified: '2026-07-24'
+specificationVersion: '0.19'
+apis:
+- aid: luma-health:luma-health-scheduling-api
+  name: Luma Health Scheduling & Appointments API
+  description: >-
+    Self-service scheduling, appointment lifecycle, appointment types, provider
+    availabilities, schedulers, offers, recalls, and waitlist management.
+  humanURL: https://apidocs.lumahealth.io/#tag/appointments
+  baseURL: https://api.lumahealth.io/api/v2
+  tags:
+  - Scheduling
+  - Appointments
+  - Availabilities
+  - Waitlists
+  properties:
+  - type: OpenAPI
+    url: openapi/luma-health-openapi.yaml
+  - type: Documentation
+    url: https://apidocs.lumahealth.io
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/appointments
+  - type: Authentication
+    url: https://apidocs.lumahealth.io/#tag/auth
+- aid: luma-health:luma-health-patients-api
+  name: Luma Health Patients API
+  description: >-
+    Patient demographics and records, patient forms and form templates, and patient
+    stored credit cards.
+  humanURL: https://apidocs.lumahealth.io/#tag/patients
+  baseURL: https://api.lumahealth.io/api/v2
+  tags:
+  - Patients
+  - Forms
+  properties:
+  - type: OpenAPI
+    url: openapi/luma-health-openapi.yaml
+  - type: Documentation
+    url: https://apidocs.lumahealth.io
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/patients
+  - type: Authentication
+    url: https://apidocs.lumahealth.io/#tag/auth
+- aid: luma-health:luma-health-providers-facilities-api
+  name: Luma Health Providers & Facilities API
+  description: >-
+    Providers, provider scheduling groups, facilities, specialties, groups, and platform
+    users.
+  humanURL: https://apidocs.lumahealth.io/#tag/providers
+  baseURL: https://api.lumahealth.io/api/v2
+  tags:
+  - Providers
+  - Facilities
+  - Specialties
+  properties:
+  - type: OpenAPI
+    url: openapi/luma-health-openapi.yaml
+  - type: Documentation
+    url: https://apidocs.lumahealth.io
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/providers
+  - type: Authentication
+    url: https://apidocs.lumahealth.io/#tag/auth
+- aid: luma-health:luma-health-messaging-api
+  name: Luma Health Messaging & Engagement API
+  description: >-
+    Two-way patient messaging, engagements and engagement events/settings, appointment
+    reminders, and patient message templates.
+  humanURL: https://apidocs.lumahealth.io/#tag/messages
+  baseURL: https://api.lumahealth.io/api/v2
+  tags:
+  - Messaging
+  - Engagement
+  - Reminders
+  properties:
+  - type: OpenAPI
+    url: openapi/luma-health-openapi.yaml
+  - type: Documentation
+    url: https://apidocs.lumahealth.io
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/messages
+  - type: Authentication
+    url: https://apidocs.lumahealth.io/#tag/auth
+- aid: luma-health:luma-health-broadcast-api
+  name: Luma Health Broadcast & Campaigns API
+  description: >-
+    Broadcast events, broadcast flows and templates, and outreach campaigns for
+    population-level patient messaging.
+  humanURL: https://apidocs.lumahealth.io/#tag/broadcastFlows
+  baseURL: https://api.lumahealth.io/api/v2
+  tags:
+  - Broadcast
+  - Campaigns
+  properties:
+  - type: OpenAPI
+    url: openapi/luma-health-openapi.yaml
+  - type: Documentation
+    url: https://apidocs.lumahealth.io
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/broadcastFlows
+  - type: Authentication
+    url: https://apidocs.lumahealth.io/#tag/auth
+- aid: luma-health:luma-health-intake-forms-api
+  name: Luma Health Intake & Forms API
+  description: >-
+    Digital intake via checklists and checklist templates, patient forms and form
+    templates, and file uploads.
+  humanURL: https://apidocs.lumahealth.io/#tag/checklists
+  baseURL: https://api.lumahealth.io/api/v2
+  tags:
+  - Intake
+  - Forms
+  - Checklists
+  properties:
+  - type: OpenAPI
+    url: openapi/luma-health-openapi.yaml
+  - type: Documentation
+    url: https://apidocs.lumahealth.io
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/checklists
+  - type: Authentication
+    url: https://apidocs.lumahealth.io/#tag/auth
+- aid: luma-health:luma-health-billing-payments-api
+  name: Luma Health Billing & Payments API
+  description: >-
+    Billing charges and copays, cost estimates, and patient credit-card payment
+    instruments.
+  humanURL: https://apidocs.lumahealth.io/#tag/billingCharges
+  baseURL: https://api.lumahealth.io/api/v2
+  tags:
+  - Billing
+  - Payments
+  properties:
+  - type: OpenAPI
+    url: openapi/luma-health-openapi.yaml
+  - type: Documentation
+    url: https://apidocs.lumahealth.io
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/billingCharges
+  - type: Authentication
+    url: https://apidocs.lumahealth.io/#tag/auth
+- aid: luma-health:luma-health-eligibility-insurance-api
+  name: Luma Health Eligibility & Insurance API
+  description: >-
+    Insurance records with real-time eligibility verification and the insurance payors
+    directory.
+  humanURL: https://apidocs.lumahealth.io/#tag/insurances
+  baseURL: https://api.lumahealth.io/api/v2
+  tags:
+  - Eligibility
+  - Insurance
+  properties:
+  - type: OpenAPI
+    url: openapi/luma-health-openapi.yaml
+  - type: Documentation
+    url: https://apidocs.lumahealth.io
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/insurances
+  - type: Authentication
+    url: https://apidocs.lumahealth.io/#tag/auth
+- aid: luma-health:luma-health-referrals-api
+  name: Luma Health Referrals API
+  description: >-
+    Inbound and outbound referral management across the care network.
+  humanURL: https://apidocs.lumahealth.io/#tag/referrals
+  baseURL: https://api.lumahealth.io/api/v2
+  tags:
+  - Referrals
+  properties:
+  - type: OpenAPI
+    url: openapi/luma-health-openapi.yaml
+  - type: Documentation
+    url: https://apidocs.lumahealth.io
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/referrals
+  - type: Authentication
+    url: https://apidocs.lumahealth.io/#tag/auth
+- aid: luma-health:luma-health-assistant-api
+  name: Luma Health Conversational AI Assistant API
+  description: >-
+    Conversational AI assistant surfaces - assistant instances and actions, lumabot flows
+    and templates, knowledge-base question/answers, chat activities, and queue-manager
+    routing.
+  humanURL: https://apidocs.lumahealth.io/#tag/assistantInstances
+  baseURL: https://api.lumahealth.io/api/v2
+  tags:
+  - Clinical AI
+  - Assistant
+  - Chat
+  properties:
+  - type: OpenAPI
+    url: openapi/luma-health-openapi.yaml
+  - type: Documentation
+    url: https://apidocs.lumahealth.io
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/assistantInstances
+  - type: Authentication
+    url: https://apidocs.lumahealth.io/#tag/auth
+- aid: luma-health:luma-health-reporting-api
+  name: Luma Health Reporting & Audits API
+  description: >-
+    Operational reports plus system and chat audit trails.
+  humanURL: https://apidocs.lumahealth.io/#tag/reports
+  baseURL: https://api.lumahealth.io/api/v2
+  tags:
+  - Reporting
+  - Audits
+  properties:
+  - type: OpenAPI
+    url: openapi/luma-health-openapi.yaml
+  - type: Documentation
+    url: https://apidocs.lumahealth.io
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/reports
+  - type: Authentication
+    url: https://apidocs.lumahealth.io/#tag/auth
+- aid: luma-health:luma-health-authentication-api
+  name: Luma Health Authentication API
+  description: >-
+    OAuth2 client-credentials authentication - generate and rotate client id/secret and
+    exchange them for JWT access tokens (including subaccount tokens).
+  humanURL: https://apidocs.lumahealth.io/#tag/auth
+  baseURL: https://api.lumahealth.io/api/v2
+  tags:
+  - Authentication
+  - OAuth2
+  properties:
+  - type: OpenAPI
+    url: openapi/luma-health-openapi.yaml
+  - type: Documentation
+    url: https://apidocs.lumahealth.io
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/auth
+common:
+- type: Website
+  url: https://www.lumahealth.io
+- type: DeveloperPortal
+  url: https://apidocs.lumahealth.io
+- type: Documentation
+  url: https://apidocs.lumahealth.io
+- type: APIReference
+  url: https://apidocs.lumahealth.io
+- type: OpenAPI
+  url: openapi/luma-health-openapi.yaml
+- type: Integrations
+  url: https://www.lumahealth.io/integrations
+- type: Blog
+  url: https://www.lumahealth.io/blog
+- type: Learn
+  url: https://www.lumahealth.io/learn
+- type: StatusPage
+  url: https://status.lumahealth.io
+- type: Security
+  url: https://www.lumahealth.io/security
+- type: Login
+  url: https://next.lumahealth.io/login
+- type: TermsOfService
+  url: https://www.lumahealth.io/terms
+- type: PrivacyPolicy
+  url: https://www.lumahealth.io/privacy-policy
+- type: GitHubOrganization
+  url: https://github.com/lumahealthhq
+- type: LinkedIn
+  url: https://www.linkedin.com/company/luma-health
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com
