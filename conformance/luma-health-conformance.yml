@@ -1,0 +1,52 @@
+generated: '2026-07-24'
+method: derived
+source: openapi/luma-health-openapi.yaml
+note: >-
+  Cross-cutting standards conformance. Security/compliance certifications are
+  publisher-verified (see security/luma-health-trust-center.yml); protocol
+  conformance is derived from the OpenAPI 3.0.0 contract.
+standards:
+- id: openapi-3.0
+  conforms: true
+  evidence: openapi/luma-health-openapi.yaml declares openapi 3.0.0 with 270 operations
+- id: oauth2-client-credentials
+  conforms: true
+  evidence: >-
+    /auth/token issues JWT bearer tokens via grant_type=client_credentials; the
+    applied security scheme is http bearer (JWT). Not a full RFC 6749 OAuth2
+    server (no authorize endpoint, no scopes), but the client-credentials
+    machine-to-machine pattern is followed.
+- id: jwt-bearer
+  conforms: true
+  evidence: securitySchemes.Bearer is http/bearer with bearerFormat JWT
+- id: rfc9457-problem-details
+  conforms: false
+  evidence: >-
+    errors use a custom {message} envelope (components.schemas.ErrorSchema) with
+    application/json, not application/problem+json
+- id: fhir-r4
+  conforms: false
+  evidence: >-
+    the public developer surface is a proprietary REST API, not an HL7 FHIR
+    server; FHIR/HL7 interoperability happens inside Luma's EHR integration layer
+- id: hipaa
+  conforms: true
+  evidence: publisher states all software and processes are HIPAA-compliant; BAAs offered
+- id: hitrust-csf
+  conforms: true
+  evidence: HITRUST CSF r2 certified (security/luma-health-trust-center.yml)
+- id: soc2-type-ii
+  conforms: true
+  evidence: SOC 2 Type II attestation performed annually
+- id: iso-27001
+  conforms: true
+  evidence: ISO/IEC 27001:2022 certified
+- id: tx-ramp
+  conforms: true
+  evidence: TX-RAMP Level 2 certified
+- id: pagination-offset
+  conforms: true
+  evidence: list operations expose page + limit query parameters (offset/page style)
+- id: idempotency-key
+  conforms: false
+  evidence: no Idempotency-Key request header/parameter is documented in the OpenAPI

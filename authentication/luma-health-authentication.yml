@@ -1,0 +1,38 @@
+generated: '2026-07-24'
+method: searched
+source: openapi/luma-health-openapi.yaml
+docs: https://apidocs.lumahealth.io/#tag/auth
+summary:
+  types:
+  - http
+  api_key_in: []
+  oauth2_flows:
+  - clientCredentials
+  notes: >-
+    Luma Health uses an OAuth2 client-credentials style machine-to-machine flow.
+    A tenant first mints a clientId/clientSecret pair (POST /auth/clients, one
+    active pair per user, rotate with PATCH /auth/clients), then exchanges those
+    credentials for a short-lived JWT access token (POST /auth/token with
+    grant_type=client_credentials). Every other endpoint is then called with
+    Authorization: Bearer <JWT>. The OpenAPI models the applied scheme as an
+    http bearer (JWT) security scheme named "Bearer"; there is no scopes surface.
+    Subaccount tokens can also be issued for multi-account tenants.
+schemes:
+- name: Bearer
+  type: http
+  scheme: bearer
+  bearerFormat: JWT
+  sources:
+  - openapi/luma-health-openapi.yaml
+token_endpoints:
+- path: /auth/token
+  method: post
+  grant_type: client_credentials
+  request: {client_id, client_secret, grant_type}
+  returns: JWT bearer token
+- path: /auth/clients
+  method: post
+  purpose: Generate clientId/clientSecret (machine-to-machine credentials)
+- path: /auth/clients
+  method: patch
+  purpose: Rotate clientSecret for an existing clientId

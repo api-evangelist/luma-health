@@ -264,6 +264,34 @@ apis:
   - type: APIReference
     url: https://apidocs.lumahealth.io/#tag/auth
 common:
+- type: AgenticAccess
+  url: agentic-access/luma-health-agentic-access.yml
+- type: DomainSecurity
+  url: security/luma-health-domain-security.yml
+- type: Authentication
+  url: authentication/luma-health-authentication.yml
+- type: Conformance
+  url: conformance/luma-health-conformance.yml
+- type: Compliance
+  url: https://www.lumahealth.io/security-and-trust/
+- type: TrustCenter
+  url: security/luma-health-trust-center.yml
+- type: ErrorCatalog
+  url: errors/luma-health-problem-types.yml
+- type: Lifecycle
+  url: lifecycle/luma-health-lifecycle.yml
+- type: Conventions
+  url: conventions/luma-health-conventions.yml
+- type: DataModel
+  url: data-model/luma-health-data-model.yml
+- type: MCPServer
+  url: mcp/luma-health-mcp.yml
+- type: LLMsTxt
+  url: llms/luma-health-llms.txt
+- type: Overlay
+  url: overlays/luma-health-openapi-overlay.yaml
+- type: AgentSkill
+  url: skills/_index.yml
 - type: Website
   url: https://www.lumahealth.io
 - type: DeveloperPortal

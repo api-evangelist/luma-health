@@ -1,0 +1,54 @@
+generated: '2026-07-24'
+method: derived
+status: candidate
+source: openapi/luma-health-openapi.yaml
+note: >-
+  No official hosted/remote Luma Health MCP server was found (docs, npm
+  @modelcontextprotocol, MCP registries all miss). This is a CANDIDATE tool
+  surface derived from the OpenAPI operations - one tool per marquee operation,
+  each inheriting its backing operation's parameters + requestBody as its real
+  inputSchema. Not published by Luma.
+server:
+  name: luma-health
+  transport: http
+  url: null
+tools:
+- name: list_patients
+  description: List/search patients
+  source_operation: openapi/luma-health-openapi.yaml#listPatients
+- name: create_patient
+  description: Create a patient record
+  source_operation: openapi/luma-health-openapi.yaml#createPatients
+- name: get_patient
+  description: Get a patient by id
+  source_operation: openapi/luma-health-openapi.yaml#getPatientById
+- name: list_appointment_types
+  description: List EHR appointment types
+  source_operation: openapi/luma-health-openapi.yaml#appointmentTypesList
+- name: list_scheduler_availabilities
+  description: List open scheduler availability slots
+  source_operation: openapi/luma-health-openapi.yaml#listSchedulerAvailabilities
+- name: create_appointment
+  description: Book an appointment
+  source_operation: openapi/luma-health-openapi.yaml#appointmentCreate
+- name: get_appointment
+  description: Get an appointment by id
+  source_operation: openapi/luma-health-openapi.yaml#appointmentGet
+- name: send_message
+  description: Send a two-way patient message
+  source_operation: openapi/luma-health-openapi.yaml#messageCreate
+- name: list_messages
+  description: List patient messages
+  source_operation: openapi/luma-health-openapi.yaml#messagesList
+- name: send_checklist
+  description: Send a digital intake checklist to a patient
+  source_operation: openapi/luma-health-openapi.yaml#checklistSend
+- name: check_insurance_eligibility
+  description: Run real-time insurance eligibility verification
+  source_operation: openapi/luma-health-openapi.yaml#insuranceCheckEligibility
+- name: create_referral
+  description: Create a referral
+  source_operation: openapi/luma-health-openapi.yaml#referralCreate
+- name: list_referrals
+  description: List referrals
+  source_operation: openapi/luma-health-openapi.yaml#referralsList

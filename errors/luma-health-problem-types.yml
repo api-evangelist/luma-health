@@ -1,0 +1,46 @@
+generated: '2026-07-24'
+method: derived
+source: openapi/luma-health-openapi.yaml
+format: custom
+envelope:
+  media_type: application/json
+  schema: ErrorSchema
+  shape: '{ "message": string }'
+  note: >-
+    Luma Health returns a simple JSON error envelope with a human-readable
+    "message" field (components.schemas.ErrorSchema). Errors are NOT RFC 9457
+    application/problem+json. HTTP status code carries the machine-readable
+    error class.
+problems:
+- status: 400
+  title: Bad Request
+  meaning: Request parameters are malformed, invalid, or missing; the operation could not be completed.
+  remediation: Validate the request body/query against the OpenAPI schema and retry.
+- status: 401
+  title: Unauthorized
+  meaning: Missing, expired, or invalid JWT bearer token.
+  remediation: 'Mint a fresh token via POST /auth/token (grant_type=client_credentials) and resend with Authorization: Bearer.'
+- status: 403
+  title: Forbidden
+  meaning: The authenticated client is not permitted to access this resource or account.
+  remediation: Confirm the token's account/subaccount context and the client's permissions.
+- status: 404
+  title: Not Found
+  meaning: The referenced resource (e.g. patient, appointment, clientId) does not exist.
+  remediation: Verify the 24-char hex object id; list the collection to confirm existence.
+- status: 406
+  title: Not Acceptable
+  meaning: Conflicting precondition - e.g. a clientId/clientSecret pair already exists for the user.
+  remediation: Rotate the existing secret (PATCH /auth/clients) instead of generating a new pair.
+- status: 409
+  title: Conflict
+  meaning: The request conflicts with the current state of the resource.
+  remediation: Re-read the resource and reconcile before retrying.
+- status: 422
+  title: Unprocessable Entity
+  meaning: The request was well-formed but semantically invalid.
+  remediation: Correct the field values that violate business rules and retry.
+- status: 500
+  title: Internal Server Error
+  meaning: An unexpected server-side error occurred while processing the request.
+  remediation: Retry with backoff; if persistent, contact Luma support and check https://status.lumahealth.io.

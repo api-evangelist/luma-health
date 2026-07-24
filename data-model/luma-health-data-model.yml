@@ -1,0 +1,119 @@
+generated: '2026-07-24'
+method: derived
+source: openapi/luma-health-openapi.yaml
+note: >-
+  Entity-relationship graph derived from the OpenAPI: id-reference fields
+  (24-char hex MongoDB ObjectIds) that link resources, plus the path hierarchy.
+  Patient is the hub of the model; appointments, messages, forms, insurance,
+  billing, and referrals all belong to a patient and reference providers and
+  facilities.
+id_format: 24-char lowercase hex (MongoDB ObjectId)
+entities:
+- name: patient
+  path: /patients
+  hub: true
+- name: appointment
+  path: /appointments
+- name: appointmentType
+  path: /appointmentTypes
+- name: provider
+  path: /providers
+- name: facility
+  path: /facilities
+- name: specialty
+  path: /specialties
+- name: availability
+  path: /availabilities
+- name: message
+  path: /messages
+- name: engagement
+  path: /engagements
+- name: checklist
+  path: /checklists
+- name: patientForm
+  path: /patientForms
+- name: insurance
+  path: /insurances
+- name: insurancePayor
+  path: /insurancePayors
+- name: billingCharge
+  path: /billingCharges
+- name: referral
+  path: /referrals
+- name: assistantInstance
+  path: /assistantInstances
+- name: user
+  path: /users
+relationships:
+- from: appointment
+  to: patient
+  type: belongs_to
+  via: patient
+- from: appointment
+  to: provider
+  type: belongs_to
+  via: provider
+- from: appointment
+  to: facility
+  type: belongs_to
+  via: facility
+- from: appointment
+  to: appointmentType
+  type: belongs_to
+  via: appointmentType
+- from: availability
+  to: provider
+  type: belongs_to
+  via: provider
+- from: availability
+  to: facility
+  type: belongs_to
+  via: facility
+- from: message
+  to: patient
+  type: belongs_to
+  via: patient
+- from: engagement
+  to: patient
+  type: belongs_to
+  via: patient
+- from: checklist
+  to: patient
+  type: belongs_to
+  via: patient
+- from: patientForm
+  to: patient
+  type: belongs_to
+  via: patient
+- from: insurance
+  to: patient
+  type: belongs_to
+  via: patient
+- from: insurance
+  to: insurancePayor
+  type: belongs_to
+  via: payor
+- from: billingCharge
+  to: patient
+  type: belongs_to
+  via: patient
+- from: referral
+  to: patient
+  type: belongs_to
+  via: patient
+- from: provider
+  to: specialty
+  type: has_many
+  via: specialties
+- from: specialty
+  to: facility
+  type: has_many
+  via: facilities
+- from: patient
+  to: appointment
+  type: has_many
+  via: patient
+- from: patient
+  to: insurance
+  type: has_many
+  via: patient

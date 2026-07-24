@@ -1,0 +1,48 @@
+generated: '2026-07-24'
+method: derived
+source: openapi/luma-health-openapi.yaml
+authentication:
+  style: oauth2-client-credentials -> jwt bearer
+  header: 'Authorization: Bearer <JWT>'
+  detail: authentication/luma-health-authentication.yml
+base_url: https://api.lumahealth.io/api/v2
+object_ids:
+  format: 24-char lowercase hex (MongoDB ObjectId)
+  pattern: '[0-9a-f]{24}'
+  common_query_params:
+  - _id (Luma internal object id)
+  - user (root account user id)
+  - deleted (0|1 soft-delete filter)
+idempotency:
+  supported: false
+  note: >-
+    No Idempotency-Key header/parameter is documented. The word "idempotent"
+    appears once in the spec but only describes checklist-template seeding
+    behavior, not a client-supplied idempotency contract. Do NOT treat writes
+    as safely retryable without dedupe on the caller side.
+pagination:
+  style: page-number
+  params:
+  - page
+  - limit
+  note: >-
+    List endpoints expose page and limit query parameters (offset/page-number
+    paging). Not all collections advertise both; some also accept sort.
+sorting:
+  param: sort
+  note: available on some list operations (e.g. availabilities)
+metadata:
+  note: no standard cross-resource metadata envelope documented
+request_tracing:
+  request_id_header: null
+  note: no documented request-id/trace header
+versioning:
+  style: uri-path (/api/v2)
+  detail: lifecycle/luma-health-lifecycle.yml
+error_envelope:
+  media_type: application/json
+  shape: '{ "message": string }'
+  detail: errors/luma-health-problem-types.yml
+rate_limiting:
+  signal: null
+  note: no published rate-limit headers or documented quotas found

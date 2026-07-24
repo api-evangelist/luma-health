@@ -1,0 +1,20 @@
+generated: '2026-07-24'
+method: generated
+api: openapi/luma-health-openapi.yaml
+skills:
+- file: luma-health-schedule-appointment.md
+  name: Schedule a patient appointment
+  api: openapi/luma-health-openapi.yaml
+  operations: [listPatients, createPatients, appointmentTypesList, listSchedulerAvailabilities, appointmentCreate, appointmentGet]
+- file: luma-health-register-and-intake.md
+  name: Register a patient and send digital intake
+  api: openapi/luma-health-openapi.yaml
+  operations: [createPatients, checklistTemplatesList, checklistSend, listPatientForms]
+- file: luma-health-message-patient.md
+  name: Send a two-way patient message
+  api: openapi/luma-health-openapi.yaml
+  operations: [listPatients, getPatientById, messageCreate, messagesList]
+- file: luma-health-verify-eligibility.md
+  name: Verify patient insurance eligibility
+  api: openapi/luma-health-openapi.yaml
+  operations: [getPatientById, insuranceCheckEligibility]

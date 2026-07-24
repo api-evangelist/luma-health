@@ -1,0 +1,19 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for Luma Health Rest-Service
+  version: 1.0.0
+extends: openapi/luma-health-openapi.yaml
+actions:
+- target: $.info
+  update:
+    x-apievangelist-provider: luma-health
+    x-apievangelist-category: healthcare-patient-engagement
+    x-apievangelist-auth: oauth2-client-credentials -> jwt-bearer
+    x-apievangelist-compliance: [HITRUST CSF r2, SOC 2 Type II, ISO 27001:2022, HIPAA, TX-RAMP L2]
+    x-apievangelist-status-page: https://status.lumahealth.io
+    x-apievangelist-error-envelope: '{ message: string } (custom, not RFC 9457)'
+    x-apievangelist-pagination: page-number (page + limit)
+    x-apievangelist-idempotency: none-documented
+- target: $.info.contact
+  update:
+    x-apievangelist-docs: https://apidocs.lumahealth.io

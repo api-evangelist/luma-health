@@ -1,0 +1,24 @@
+generated: '2026-07-24'
+method: searched
+note: >-
+  Probed the /.well-known/ discovery surface on the API host and the marketing
+  host. The API host (api.lumahealth.io) 302-redirects all /.well-known/ paths
+  to the marketing homepage, so no machine-readable discovery documents are
+  published. Absence is valid, recorded data.
+hosts:
+- host: https://api.lumahealth.io
+  documents:
+  - path: /.well-known/security.txt
+    status: 302
+    redirect: https://www.lumahealth.io/
+  - path: /.well-known/openid-configuration
+    status: 302
+    redirect: https://www.lumahealth.io/
+  - path: /.well-known/oauth-authorization-server
+    status: 302
+    redirect: https://www.lumahealth.io/
+- host: https://www.lumahealth.io
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+documents: []

@@ -1,0 +1,39 @@
+# Luma Health
+
+> Luma Health is a United States patient-engagement (Patient Success) platform for healthcare provider organizations. Its operational AI platform automates the patient journey - self-service scheduling, referral and waitlist management, digital intake and forms, omnichannel two-way messaging and broadcast, appointment reminders and recalls, insurance eligibility verification, payments and billing, and a conversational AI assistant (Navigator/lumabot) - and integrates bidirectionally with the major EHRs (Epic, Oracle Health/Cerner, MEDITECH, eClinicalWorks, athenahealth, NextGen, Greenway, Nextech). The public developer surface is a REST API (Rest-Service v2.0.0, OpenAPI 3.0.0) at https://api.lumahealth.io/api/v2, secured with OAuth2 client-credentials that issue JWT bearer tokens.
+
+## APIs
+- [Scheduling & Appointments API](https://apidocs.lumahealth.io/#tag/appointments): Self-service scheduling, appointment lifecycle, appointment types, provider availabilities, offers, recalls, and waitlists.
+- [Patients API](https://apidocs.lumahealth.io/#tag/patients): Patient demographics and records, patient forms, and stored credit cards.
+- [Providers & Facilities API](https://apidocs.lumahealth.io/#tag/providers): Providers, scheduling groups, facilities, specialties, groups, and users.
+- [Messaging & Engagement API](https://apidocs.lumahealth.io/#tag/messages): Two-way patient messaging, engagements, reminders, and message templates.
+- [Broadcast & Campaigns API](https://apidocs.lumahealth.io/#tag/broadcastFlows): Broadcast events, flows, templates, and outreach campaigns.
+- [Intake & Forms API](https://apidocs.lumahealth.io/#tag/checklists): Digital intake via checklists and templates, patient forms, and file uploads.
+- [Billing & Payments API](https://apidocs.lumahealth.io/#tag/billingCharges): Billing charges, copays, cost estimates, and patient credit-card instruments.
+- [Eligibility & Insurance API](https://apidocs.lumahealth.io/#tag/insurances): Insurance records with real-time eligibility verification and the payors directory.
+- [Referrals API](https://apidocs.lumahealth.io/#tag/referrals): Inbound and outbound referral management.
+- [Conversational AI Assistant API](https://apidocs.lumahealth.io/#tag/assistantInstances): Navigator/lumabot assistant instances and actions, flows, knowledge base, chat activities, and queue routing.
+- [Reporting & Audits API](https://apidocs.lumahealth.io/#tag/reports): Operational reports plus system and chat audit trails.
+- [Authentication API](https://apidocs.lumahealth.io/#tag/auth): OAuth2 client-credentials - generate/rotate client id/secret and exchange for JWT access tokens.
+
+## Specs
+- [OpenAPI (Rest-Service 2.0.0)](https://raw.githubusercontent.com/api-evangelist/luma-health/refs/heads/main/openapi/luma-health-openapi.yaml)
+
+## Auth
+- [Authentication profile](https://raw.githubusercontent.com/api-evangelist/luma-health/refs/heads/main/authentication/luma-health-authentication.yml): OAuth2 client-credentials -> JWT bearer. POST /auth/token with grant_type=client_credentials.
+
+## Conventions & semantics
+- [API conventions](https://raw.githubusercontent.com/api-evangelist/luma-health/refs/heads/main/conventions/luma-health-conventions.yml): 24-char hex object ids, page/limit pagination, {message} error envelope, no idempotency key.
+- [Error catalog](https://raw.githubusercontent.com/api-evangelist/luma-health/refs/heads/main/errors/luma-health-problem-types.yml)
+- [Data model / ERD](https://raw.githubusercontent.com/api-evangelist/luma-health/refs/heads/main/data-model/luma-health-data-model.yml)
+- [Lifecycle & versioning](https://raw.githubusercontent.com/api-evangelist/luma-health/refs/heads/main/lifecycle/luma-health-lifecycle.yml)
+- [Conformance](https://raw.githubusercontent.com/api-evangelist/luma-health/refs/heads/main/conformance/luma-health-conformance.yml)
+
+## Docs
+- [Developer Portal / API Reference](https://apidocs.lumahealth.io)
+- [Integrations](https://www.lumahealth.io/integrations)
+- [Security & Trust](https://www.lumahealth.io/security-and-trust/): HITRUST CSF r2, SOC 2 Type II, ISO 27001:2022, HIPAA, TX-RAMP L2.
+- [Status page](https://status.lumahealth.io)
+- [Blog](https://www.lumahealth.io/blog)
+- [Terms of Service](https://www.lumahealth.io/terms)
+- [Privacy Policy](https://www.lumahealth.io/privacy-policy)

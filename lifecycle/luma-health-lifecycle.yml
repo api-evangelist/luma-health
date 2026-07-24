@@ -1,0 +1,29 @@
+generated: '2026-07-24'
+method: searched
+source: openapi/luma-health-openapi.yaml
+versioning:
+  scheme: uri-path
+  current: v2
+  base_path: /api/v2
+  spec_version: 2.0.0
+  docs: https://apidocs.lumahealth.io
+deprecation:
+  policy_url: null
+  sunset_header: false
+  note: >-
+    No public deprecation policy or RFC 8594 Sunset/Deprecation header support
+    was found. No operations are marked deprecated in the OpenAPI.
+sla:
+  url: null
+  uptime_target: null
+  note: SLAs are handled under enterprise contracts; no public SLA page found.
+status_page: https://status.lumahealth.io
+status_page_provider: Atlassian Statuspage
+status_components:
+- Luma Health Web
+- API
+- Communication Services
+- EHR/PM Integration
+- Patient Web
+- Reporting/Datawarehouse
+deprecated_operations: []
