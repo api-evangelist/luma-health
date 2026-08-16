@@ -29,8 +29,10 @@ tags:
 - EHR
 - Interoperability
 - Clinical AI
+- Reputation Management
+- Patient Feedback
 created: '2026-07-24'
-modified: '2026-07-24'
+modified: '2026-08-15'
 specificationVersion: '0.19'
 apis:
 - aid: luma-health:luma-health-scheduling-api
@@ -207,6 +209,31 @@ apis:
     url: https://apidocs.lumahealth.io/#tag/referrals
   - type: Authentication
     url: https://apidocs.lumahealth.io/#tag/auth
+- aid: luma-health:luma-health-feedback-reputation-api
+  name: Luma Health Feedback & Reputation API
+  description: >-
+    NPS survey responses and feedback-link clicks, external reviews scraped from Google
+    Business Profile and Yelp with AI-extracted sentiment and themes, AI-drafted public
+    review replies with an approve/reject workflow, and per-patient review-platform
+    rotation history.
+  humanURL: https://apidocs.lumahealth.io/#tag/feedbackResponses
+  baseURL: https://api.lumahealth.io/api/v2
+  tags:
+  - Feedback
+  - Reputation
+  - Reviews
+  - NPS
+  properties:
+  - type: OpenAPI
+    url: openapi/luma-health-openapi.yaml
+  - type: Documentation
+    url: https://apidocs.lumahealth.io
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/feedbackResponses
+  - type: Authentication
+    url: https://apidocs.lumahealth.io/#tag/auth
+  - type: AgentSkill
+    url: skills/luma-health-manage-patient-feedback.md
 - aid: luma-health:luma-health-assistant-api
   name: Luma Health Conversational AI Assistant API
   description: >-
@@ -276,6 +303,14 @@ common:
   url: https://www.lumahealth.io/security-and-trust/
 - type: TrustCenter
   url: security/luma-health-trust-center.yml
+- type: VulnerabilityDisclosure
+  url: security/luma-health-vulnerability-disclosure.yml
+- type: Packages
+  url: packages/luma-health-packages.yml
+- type: Plans
+  url: plans/luma-health-plans-pricing.yml
+- type: RateLimits
+  url: rate-limits/luma-health-rate-limits.yml
 - type: ErrorCatalog
   url: errors/luma-health-problem-types.yml
 - type: Lifecycle
@@ -303,19 +338,27 @@ common:
 - type: OpenAPI
   url: openapi/luma-health-openapi.yaml
 - type: Integrations
-  url: https://www.lumahealth.io/integrations
+  url: https://www.lumahealth.io/integrations-2
 - type: Blog
   url: https://www.lumahealth.io/blog
+- type: BlogRSS
+  url: https://www.lumahealth.io/blog/feed/
 - type: Learn
   url: https://www.lumahealth.io/learn
+- type: HelpCenter
+  url: https://support.lumahealth.io/hc/en-us
+- type: Newsroom
+  url: https://www.lumahealth.io/newsroom/in-the-news/
+- type: Careers
+  url: https://job-boards.greenhouse.io/lumahealth
 - type: StatusPage
   url: https://status.lumahealth.io
 - type: Security
-  url: https://www.lumahealth.io/security
+  url: security/luma-health-vulnerability-disclosure.yml
 - type: Login
   url: https://next.lumahealth.io/login
 - type: TermsOfService
-  url: https://www.lumahealth.io/terms
+  url: https://www.lumahealth.io/terms-of-use
 - type: PrivacyPolicy
   url: https://www.lumahealth.io/privacy-policy
 - type: GitHubOrganization
@@ -325,3 +368,8 @@ common:
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
+x-enrichment:
+  date: '2026-08-15'
+  status: enriched
+  artifacts_added: 5
+  pass: local-v1
