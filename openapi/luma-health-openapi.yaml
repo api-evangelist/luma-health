@@ -1684,6 +1684,20 @@ components:
           description: |
             Determines if the availability is being booked or not.
             If it is set to true, the system will book the availability.
+        notes:
+          type: string
+          description: >
+            Optional freeform text to append to the appointment reason when
+            booking (status: booked).
+
+            If a patientForm or lumabotFlow is also provided, this value is
+            appended after the
+
+            patient-form or Lumabot notes (separated by "; "). The combined
+            string is forwarded to the EHR
+
+            as part of the appointment reason (e.g. prepended to the
+            eClinicalWorks SQL reason field).
         filters:
           $ref: '#/components/schemas/Filters'
         provider:
@@ -18748,6 +18762,16 @@ tags:
     description: Staff users
   - name: waitlists
     description: Patients waiting for an appointment
+  - name: feedbackResponses
+    description: Patient responses to NPS feedback surveys and clicks on feedback links
+  - name: feedbackResponsesExternalReviews
+    description: Scraped external reviews from Google Business Profile and Yelp
+  - name: feedbackResponsesExternalReviewReplies
+    description: >-
+      AI-generated reply drafts for external reviews, with approve/reject
+      workflow
+  - name: feedbackResponsesPromoterHistories
+    description: Per-patient platform rotation history for NPS promoter review requests
 paths:
   /appointmentTypes/{appointmentTypeId}:
     get:
@@ -32316,3 +32340,701 @@ paths:
           description: Not authenticated
         '403':
           description: Access token does not have the required scope
+  /feedbackResponses:
+    get:
+      summary: List feedback responses
+      description: >
+        Returns patient responses to NPS feedback surveys, along with clicks on
+        the
+
+        positive/negative feedback links sent after an appointment.
+
+
+        Read-only: feedback responses are recorded by the NPS survey /
+        feedback-link flow,
+
+        not created or edited through the API.
+
+
+        `response.type` is one of:
+          - `npsscore`: the patient submitted a numeric NPS score (`response.value` is the score,
+            also copied to `npsscore` for convenience).
+          - `positive-click` / `negative-click`: the patient clicked the positive or negative link
+            sent in the feedback message, before any score was collected.
+      operationId: feedbackResponsesList
+      tags:
+        - feedbackResponses
+      parameters:
+        - name: patient
+          in: query
+          required: false
+          description: The ID of patient
+          schema:
+            type: string
+            pattern: '[0-9a-f]'
+            minLength: 24
+            maxLength: 24
+        - name: provider
+          in: query
+          required: false
+          description: The ID of provider
+          schema:
+            type: string
+            pattern: '[0-9a-f]'
+            minLength: 24
+            maxLength: 24
+        - name: facility
+          in: query
+          required: false
+          description: The ID of facility
+          schema:
+            type: string
+            pattern: '[0-9a-f]'
+            minLength: 24
+            maxLength: 24
+        - name: appointment
+          in: query
+          required: false
+          description: The ID of appointment
+          schema:
+            type: string
+            pattern: '[0-9a-f]'
+            minLength: 24
+            maxLength: 24
+        - name: response.type
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - npsscore
+              - positive-click
+              - negative-click
+        - $ref: '#/components/parameters/userParam'
+        - $ref: '#/components/parameters/deletedParam'
+        - $ref: '#/components/parameters/createdByParam'
+        - $ref: '#/components/parameters/updatedByParam'
+        - $ref: '#/components/parameters/createdAtParam'
+        - $ref: '#/components/parameters/updatedAtParam'
+        - $ref: '#/components/parameters/pageParam'
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/populateParam'
+        - $ref: '#/components/parameters/selectParam'
+      responses:
+        '200':
+          description: A list of feedback responses
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  response:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        _id:
+                          type: string
+                        patient:
+                          type: string
+                          description: Patient ID
+                        provider:
+                          type: string
+                          description: Provider ID
+                        facility:
+                          type: string
+                          description: Facility ID
+                        appointment:
+                          type: string
+                          description: Appointment ID
+                        npsscore:
+                          type: number
+                          description: >-
+                            Copy of response.value when response.type is
+                            npsscore
+                        response:
+                          type: object
+                          properties:
+                            type:
+                              type: string
+                              enum:
+                                - npsscore
+                                - positive-click
+                                - negative-click
+                            value:
+                              description: >-
+                                The NPS score (number) when type is npsscore,
+                                otherwise empty
+                        scoreSource:
+                          type: string
+                          enum:
+                            - patient
+                            - sentiment
+                          description: Only set when response.type is npsscore
+                  page:
+                    type: integer
+                  size:
+                    type: integer
+        '401':
+          description: Not authenticated
+        '403':
+          description: Not authorized
+        '500':
+          description: Internal server error
+  /feedbackResponses/{id}:
+    get:
+      summary: Get feedback response by id
+      description: >
+        Read-only: feedback responses are recorded by the NPS survey /
+        feedback-link flow,
+
+        not created or edited through the API.
+      operationId: feedbackResponseGet
+      tags:
+        - feedbackResponses
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '[0-9a-f]'
+            minLength: 24
+            maxLength: 24
+      responses:
+        '200':
+          description: A feedback response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  _id:
+                    type: string
+                  patient:
+                    type: string
+                  provider:
+                    type: string
+                  facility:
+                    type: string
+                  appointment:
+                    type: string
+                  npsscore:
+                    type: number
+                  response:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                        enum:
+                          - npsscore
+                          - positive-click
+                          - negative-click
+                      value: {}
+                  scoreSource:
+                    type: string
+                    enum:
+                      - patient
+                      - sentiment
+        '401':
+          description: Not authenticated
+        '403':
+          description: Not authorized
+        '404':
+          description: Not found
+        '500':
+          description: Internal server error
+  /feedbackResponsesExternalReviews:
+    get:
+      summary: List external reviews
+      description: >
+        Returns scraped external reviews (Google, Yelp) for the authenticated
+        account.
+
+        Reviews are upserted by the scraping pipeline and include AI-extracted
+        themes and sentiment.
+      operationId: feedbackResponsesExternalReviewsList
+      tags:
+        - feedbackResponsesExternalReviews
+      parameters:
+        - $ref: '#/components/parameters/userParam'
+        - $ref: '#/components/parameters/deletedParam'
+        - $ref: '#/components/parameters/pageParam'
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/selectParam'
+        - name: platform
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - google
+              - yelp
+          description: Filter by review platform
+        - name: replyEligible
+          in: query
+          required: false
+          schema:
+            type: boolean
+          description: Filter to only reviews eligible for replies (Google only)
+      responses:
+        '200':
+          description: A list of external reviews
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  response:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        _id:
+                          type: string
+                        platform:
+                          type: string
+                          enum:
+                            - google
+                            - yelp
+                        externalId:
+                          type: string
+                          description: Platform-native review ID
+                        externalAuthorName:
+                          type: string
+                        rating:
+                          type: number
+                          minimum: 1
+                          maximum: 5
+                        reviewText:
+                          type: string
+                        reviewedAt:
+                          type: string
+                          format: date-time
+                        sentiment:
+                          type: string
+                          enum:
+                            - positive
+                            - neutral
+                            - negative
+                        themes:
+                          type: array
+                          items:
+                            type: string
+                          description: AI-extracted themes from the review text
+                        replyEligible:
+                          type: boolean
+                        platformRepliedAt:
+                          type: string
+                          format: date-time
+                        facility:
+                          type: string
+                  page:
+                    type: integer
+                  size:
+                    type: integer
+        '401':
+          description: Not authenticated
+        '403':
+          description: Not authorized
+        '500':
+          description: Internal server error
+  /feedbackResponsesExternalReviews/{id}:
+    get:
+      summary: Get external review by id
+      description: >
+        Returns a single scraped external review (Google, Yelp) for the
+        authenticated account.
+      operationId: feedbackResponsesExternalReviewGet
+      tags:
+        - feedbackResponsesExternalReviews
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '[0-9a-f]'
+            minLength: 24
+            maxLength: 24
+      responses:
+        '200':
+          description: An external review
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  _id:
+                    type: string
+                  platform:
+                    type: string
+                    enum:
+                      - google
+                      - yelp
+                  externalId:
+                    type: string
+                    description: Platform-native review ID
+                  externalAuthorName:
+                    type: string
+                  rating:
+                    type: number
+                    minimum: 1
+                    maximum: 5
+                  reviewText:
+                    type: string
+                  reviewedAt:
+                    type: string
+                    format: date-time
+                  sentiment:
+                    type: string
+                    enum:
+                      - positive
+                      - neutral
+                      - negative
+                  themes:
+                    type: array
+                    items:
+                      type: string
+                    description: AI-extracted themes from the review text
+                  replyEligible:
+                    type: boolean
+                  platformRepliedAt:
+                    type: string
+                    format: date-time
+                  facility:
+                    type: string
+        '401':
+          description: Not authenticated
+        '403':
+          description: Not authorized
+        '404':
+          description: Not found
+        '500':
+          description: Internal server error
+  /feedbackResponsesExternalReviewReplies:
+    get:
+      summary: List external review replies
+      description: >
+        Returns AI-generated reply drafts for external reviews. Replies move
+        through a lifecycle:
+
+        `pending-approval` → `approved` → `published` (or `rejected` /
+        `failed`).
+
+
+        When `autoPublish.reviewTimeout = 0` is configured, replies skip the
+        approval queue and
+
+        go directly to `published` at generation time.
+      operationId: feedbackResponsesExternalReviewRepliesList
+      tags:
+        - feedbackResponsesExternalReviewReplies
+      parameters:
+        - $ref: '#/components/parameters/userParam'
+        - $ref: '#/components/parameters/deletedParam'
+        - $ref: '#/components/parameters/pageParam'
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/selectParam'
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - pending-approval
+              - approved
+              - published
+              - rejected
+              - failed
+          description: Filter by reply status
+      responses:
+        '200':
+          description: A list of external review replies
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  response:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        _id:
+                          type: string
+                        externalReview:
+                          type: string
+                          description: ID of the parent FeedbackResponsesExternalReview
+                        generatedText:
+                          type: string
+                          description: Original AI-generated draft
+                        finalText:
+                          type: string
+                          description: Text actually published (may differ if staff edited)
+                        modelId:
+                          type: string
+                          description: OpenAI model used to generate the reply
+                        status:
+                          type: string
+                          enum:
+                            - pending-approval
+                            - approved
+                            - published
+                            - rejected
+                            - failed
+                        approvedBy:
+                          type: string
+                          description: User ID of the approver (null if auto-published)
+                        approvedAt:
+                          type: string
+                          format: date-time
+                        rejectedBy:
+                          type: string
+                        rejectedAt:
+                          type: string
+                          format: date-time
+                        rejectionReason:
+                          type: string
+                        publishedAt:
+                          type: string
+                          format: date-time
+                        publishError:
+                          type: string
+                        pendingApprovalSince:
+                          type: string
+                          format: date-time
+                        facility:
+                          type: string
+                  page:
+                    type: integer
+                  size:
+                    type: integer
+        '401':
+          description: Not authenticated
+        '403':
+          description: Not authorized
+        '500':
+          description: Internal server error
+  /feedbackResponsesExternalReviewReplies/{id}/approval:
+    patch:
+      summary: Approve or reject a review reply
+      description: >
+        Updates the approval status of an AI-generated review reply. On
+        approval, the reply
+
+        is queued for publishing by the next `PublishApprovedReviewReplies` job
+        run (every 15 min).
+
+        On rejection, the reply is permanently dismissed.
+
+
+        Also updates the associated action queue item status (`accepted` or
+        `rejected`).
+      operationId: feedbackResponsesExternalReviewRepliesUpdateApproval
+      tags:
+        - feedbackResponsesExternalReviewReplies
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The ID of the review reply
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - status
+              properties:
+                status:
+                  type: string
+                  enum:
+                    - approved
+                    - rejected
+                rejectionReason:
+                  type: string
+                  description: Optional reason for rejection (used when status is rejected)
+                finalText:
+                  type: string
+                  description: >-
+                    Optional edited reply text to publish instead of the
+                    AI-generated text (used when status is approved)
+      responses:
+        '200':
+          description: Reply status updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum:
+                      - approved
+                      - rejected
+                  approvedBy:
+                    type: string
+                  approvedAt:
+                    type: string
+                    format: date-time
+                  rejectedBy:
+                    type: string
+                  rejectedAt:
+                    type: string
+                    format: date-time
+                  rejectionReason:
+                    type: string
+                  finalText:
+                    type: string
+        '400':
+          description: Invalid status value
+        '401':
+          description: Not authenticated
+        '403':
+          description: Not authorized
+        '404':
+          description: Reply not found
+        '500':
+          description: Internal server error
+  /feedbackResponsesPromoterHistories:
+    get:
+      summary: List promoter platform histories
+      description: >
+        Returns per-patient records tracking which review platforms a promoter
+        (NPS ≥ 9) has
+
+        been directed to. Used internally to rotate patients across configured
+        platforms so no
+
+        single platform receives all reviews.
+
+
+        One document per patient per account. `platformsAsked` grows with each
+        feedback send;
+
+        once all configured platforms are exhausted the history is cleared and
+        rotation restarts.
+      operationId: feedbackResponsesPromoterHistoriesList
+      tags:
+        - feedbackResponsesPromoterHistories
+      parameters:
+        - $ref: '#/components/parameters/userParam'
+        - $ref: '#/components/parameters/deletedParam'
+        - $ref: '#/components/parameters/pageParam'
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/selectParam'
+        - name: patient
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Filter by patient ID
+      responses:
+        '200':
+          description: A list of promoter history records
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  response:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        _id:
+                          type: string
+                        patient:
+                          type: string
+                          description: Patient ID
+                        platformsAsked:
+                          type: array
+                          items:
+                            type: string
+                            enum:
+                              - google
+                              - yelp
+                          description: >-
+                            Ordered list of platforms this patient has been
+                            directed to
+                        lastPlatformAsked:
+                          type: string
+                          enum:
+                            - google
+                            - yelp
+                        lastAskedAt:
+                          type: string
+                          format: date-time
+                  page:
+                    type: integer
+                  size:
+                    type: integer
+        '401':
+          description: Not authenticated
+        '403':
+          description: Not authorized
+        '500':
+          description: Internal server error
+  /feedbackResponsesPromoterHistories/{id}:
+    get:
+      summary: Get promoter platform history by id
+      description: >
+        Returns a single per-patient record tracking which review platforms a
+        promoter
+
+        (NPS >= 9) has been directed to.
+      operationId: feedbackResponsesPromoterHistoryGet
+      tags:
+        - feedbackResponsesPromoterHistories
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '[0-9a-f]'
+            minLength: 24
+            maxLength: 24
+      responses:
+        '200':
+          description: A promoter history record
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  _id:
+                    type: string
+                  patient:
+                    type: string
+                    description: Patient ID
+                  platformsAsked:
+                    type: array
+                    items:
+                      type: string
+                      enum:
+                        - google
+                        - yelp
+                    description: >-
+                      Ordered list of platforms this patient has been directed
+                      to
+                  lastPlatformAsked:
+                    type: string
+                    enum:
+                      - google
+                      - yelp
+                  lastAskedAt:
+                    type: string
+                    format: date-time
+        '401':
+          description: Not authenticated
+        '403':
+          description: Not authorized
+        '404':
+          description: Not found
+        '500':
+          description: Internal server error

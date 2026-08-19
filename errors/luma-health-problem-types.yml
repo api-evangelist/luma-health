@@ -1,6 +1,6 @@
-generated: '2026-07-24'
+generated: '2026-08-15'
 method: derived
-source: openapi/luma-health-openapi.yaml
+source: openapi/luma-health-openapi.yaml (re-fetched 2026-08-15)
 format: custom
 envelope:
   media_type: application/json
@@ -10,7 +10,26 @@ envelope:
     Luma Health returns a simple JSON error envelope with a human-readable
     "message" field (components.schemas.ErrorSchema). Errors are NOT RFC 9457
     application/problem+json. HTTP status code carries the machine-readable
-    error class.
+    error class. There is no error CODE vocabulary: nothing in the envelope is
+    stable enough to branch on, so a client can only switch on HTTP status.
+occurrence_census:
+  note: >-
+    Declared response codes across all 278 operations in the published spec
+    (2026-08-15). No 429 is declared anywhere - see
+    rate-limits/luma-health-rate-limits.yml.
+  counts:
+    '200': 244
+    '201': 39
+    '204': 1
+    '400': 19
+    '401': 270
+    '403': 269
+    '404': 34
+    '406': 1
+    '409': 1
+    '422': 1
+    '500': 28
+    default: 38
 problems:
 - status: 400
   title: Bad Request
@@ -44,3 +63,10 @@ problems:
   title: Internal Server Error
   meaning: An unexpected server-side error occurred while processing the request.
   remediation: Retry with backoff; if persistent, contact Luma support and check https://status.lumahealth.io.
+- status: 429
+  title: Too Many Requests
+  meaning: NOT DECLARED. Luma declares no 429 on any operation and documents no rate limit.
+  remediation: >-
+    Do not assume a 429 contract exists. Pace requests conservatively client-side;
+    there is no Retry-After to honour. See rate-limits/luma-health-rate-limits.yml.
+  declared: false

@@ -1,6 +1,6 @@
-generated: '2026-07-24'
+generated: '2026-08-15'
 method: derived
-source: openapi/luma-health-openapi.yaml
+source: openapi/luma-health-openapi.yaml (re-fetched 2026-08-15)
 authentication:
   style: oauth2-client-credentials -> jwt bearer
   header: 'Authorization: Bearer <JWT>'
@@ -25,9 +25,18 @@ pagination:
   params:
   - page
   - limit
+  response_envelopes:
+  - shape: '{ <resource>: [...], page, ... }'
+    note: the older/majority collection shape
+  - shape: '{ response: [...], page, size }'
+    note: >-
+      used by the feedbackResponses* collections added in 2026-08. The API does
+      NOT use one collection envelope throughout - clients must not assume a
+      single shape across resources.
   note: >-
     List endpoints expose page and limit query parameters (offset/page-number
-    paging). Not all collections advertise both; some also accept sort.
+    paging). Not all collections advertise both; some also accept sort. No
+    cursor paging, no Link headers, no total-count header.
 sorting:
   param: sort
   note: available on some list operations (e.g. availabilities)
@@ -45,4 +54,22 @@ error_envelope:
   detail: errors/luma-health-problem-types.yml
 rate_limiting:
   signal: null
-  note: no published rate-limit headers or documented quotas found
+  detail: rate-limits/luma-health-rate-limits.yml
+  note: >-
+    No published rate-limit headers and no documented quotas. Re-verified
+    2026-08-15 against the 278-operation spec: zero 429 responses declared,
+    and no RateLimit-*, X-RateLimit-* or Retry-After header anywhere.
+code_samples:
+  present: true
+  format: OpenAPI x-codeSamples
+  langs: [cURL]
+  note: >-
+    x-codeSamples blocks are attached only to the /auth/clients operations
+    (POST and PATCH). The other 276 operations carry no sample, so Redoc renders
+    generated requests for the rest of the API.
+sandbox:
+  published: false
+  note: >-
+    No sandbox or test-mode host, no test credentials and no fixture tooling are
+    published. https://api.lumahealth.io/api/v2 is the only environment named in
+    servers[]; sandbox.lumahealth.io does not resolve.

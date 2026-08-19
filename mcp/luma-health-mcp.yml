@@ -1,13 +1,18 @@
-generated: '2026-07-24'
+generated: '2026-08-15'
 method: derived
 status: candidate
 source: openapi/luma-health-openapi.yaml
 note: >-
-  No official hosted/remote Luma Health MCP server was found (docs, npm
-  @modelcontextprotocol, MCP registries all miss). This is a CANDIDATE tool
-  surface derived from the OpenAPI operations - one tool per marquee operation,
-  each inheriting its backing operation's parameters + requestBody as its real
-  inputSchema. Not published by Luma.
+  NO official hosted or local Luma Health MCP server exists. Re-searched
+  2026-08-15: the docs host (apidocs.lumahealth.io), the marketing site, the
+  lumahealthhq GitHub organization (31 public repos), npm and the public MCP
+  registries all miss. Search results for "Luma MCP server" return only
+  unaffiliated servers for Luma AI / Dream Machine (video generation) and
+  lu.ma (events) - different companies with a colliding name, and neither is
+  Luma Health. This file is therefore a CANDIDATE tool surface DERIVED from the
+  OpenAPI operations: one tool per marquee operation, each inheriting its
+  backing operation's parameters and requestBody as its real inputSchema.
+  Nothing here is published by Luma Health and no endpoint URL is asserted.
 server:
   name: luma-health
   transport: http
@@ -52,3 +57,26 @@ tools:
 - name: list_referrals
   description: List referrals
   source_operation: openapi/luma-health-openapi.yaml#referralsList
+- name: list_feedback_responses
+  description: List NPS survey responses and feedback-link clicks
+  source_operation: openapi/luma-health-openapi.yaml#feedbackResponsesList
+- name: list_external_reviews
+  description: List Google Business Profile and Yelp reviews scraped for the account
+  source_operation: openapi/luma-health-openapi.yaml#feedbackResponsesExternalReviewsList
+- name: approve_review_reply
+  description: Approve or reject an AI-generated reply draft for an external review
+  source_operation: openapi/luma-health-openapi.yaml#feedbackResponsesExternalReviewRepliesUpdateApproval
+deployment:
+  mode: none
+  endpoint: null
+  install: null
+  package: null
+  auth: unknown
+  verified: searched
+  tools: 16
+  checked: '2026-08-15'
+  source: >-
+    Re-searched 2026-08-15 across apidocs.lumahealth.io, www.lumahealth.io,
+    github.com/lumahealthhq, npm and the public MCP registries. No remote
+    endpoint and no stdio package is published. mode:none means WE derived a
+    candidate; Luma Health ships no MCP server of either kind.

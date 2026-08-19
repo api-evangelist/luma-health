@@ -1,0 +1,45 @@
+generated: '2026-08-15'
+method: searched
+source: >-
+  Registry searches (registry.npmjs.org, pypi.org, rubygems.org), the GitHub
+  organization https://github.com/lumahealthhq, and the developer reference at
+  https://apidocs.lumahealth.io
+note: >-
+  Luma Health publishes NO first-party client SDK for its Rest-Service v2 API.
+  The public reference at apidocs.lumahealth.io is a Redoc render of
+  public.yaml and ships only x-codeSamples cURL snippets on the /auth/clients
+  operations - there is no linked SDK, no generated client, and no download
+  page. The lumahealthhq GitHub org (31 public repos, probed 2026-08-15) holds
+  only forks of third-party Node libraries (bull, body-parser, hot-shots,
+  node-schedule, passport-local, sqlstring, nightmare, dd-trace-js), hiring
+  exercise repos (front-end-interview, devops-interview, sre-interview), an
+  archived Redoc fork used to build the docs site (rest-service-docs), and one
+  clinical-content repo (project-open-source-colonoscopy-prep). None of them is
+  an API client. Integrators call the REST API directly.
+official_package_count: 0
+packages:
+- name: lumahealth
+  registry: npm
+  url: https://www.npmjs.com/package/lumahealth
+  official: false
+  version: 1.0.2
+  published: '2019-03-05'
+  note: >-
+    NAME-SQUAT, NOT A LUMA HEALTH PACKAGE. Single version published 2019-03-05
+    by an unaffiliated maintainer (npm user aakash2707), with no description,
+    no README, no repository field and no homepage. Recorded here so the empty
+    npm namespace is not mistaken for a first-party SDK by a consumer searching
+    the registry.
+registries_checked:
+- registry: npm
+  query: lumahealth / "luma health"
+  result: no first-party package
+- registry: pypi
+  query: lumahealth
+  result: 404 - no package
+- registry: rubygems
+  query: lumahealth
+  result: no package
+- registry: github
+  query: https://github.com/lumahealthhq
+  result: 31 public repos, no API client library

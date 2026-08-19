@@ -1,6 +1,6 @@
-generated: '2026-07-24'
+generated: '2026-08-15'
 method: derived
-source: openapi/luma-health-openapi.yaml
+source: openapi/luma-health-openapi.yaml (re-fetched 2026-08-15)
 note: >-
   Entity-relationship graph derived from the OpenAPI: id-reference fields
   (24-char hex MongoDB ObjectIds) that link resources, plus the path hierarchy.
@@ -44,6 +44,18 @@ entities:
   path: /assistantInstances
 - name: user
   path: /users
+- name: feedbackResponse
+  path: /feedbackResponses
+  note: NPS survey response or feedback-link click; response.type is npsscore|positive-click|negative-click
+- name: externalReview
+  path: /feedbackResponsesExternalReviews
+  note: review scraped from Google Business Profile or Yelp; carries rating 1-5, sentiment, AI-extracted themes
+- name: externalReviewReply
+  path: /feedbackResponsesExternalReviewReplies
+  note: AI-generated reply draft for an external review, with an approve/reject workflow (PATCH /{id}/approval)
+- name: promoterHistory
+  path: /feedbackResponsesPromoterHistories
+  note: per-patient review-platform rotation history (platformsAsked, lastPlatformAsked, lastAskedAt)
 relationships:
 - from: appointment
   to: patient
@@ -116,4 +128,28 @@ relationships:
 - from: patient
   to: insurance
   type: has_many
+  via: patient
+- from: feedbackResponse
+  to: patient
+  type: belongs_to
+  via: patient
+- from: feedbackResponse
+  to: provider
+  type: belongs_to
+  via: provider
+- from: feedbackResponse
+  to: facility
+  type: belongs_to
+  via: facility
+- from: feedbackResponse
+  to: appointment
+  type: belongs_to
+  via: appointment
+- from: externalReview
+  to: facility
+  type: belongs_to
+  via: facility
+- from: promoterHistory
+  to: patient
+  type: belongs_to
   via: patient

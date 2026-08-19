@@ -1,4 +1,4 @@
-generated: '2026-07-24'
+generated: '2026-08-15'
 method: searched
 probe: false
 url: https://www.lumahealth.io/security-and-trust/
@@ -6,17 +6,34 @@ certifications:
 - HITRUST CSF r2
 - SOC 2 Type II
 - ISO/IEC 27001:2022
+- ISO/IEC 42001 (AI management system, for Luma AI products)
 - HIPAA
 - TX-RAMP Level 2
+- EU-US Data Privacy Framework (with UK and Swiss extensions)
 compliance_program: >-
   Luma Health operates a dedicated in-house information security and compliance
   function with a fully documented set of policies, procedures, and controls that
-  are independently audited by a third party no less than annually. All Luma
-  software and company processes are stated to be fully HIPAA-compliant, and Luma
-  signs Business Associate Agreements (BAAs) with covered-entity customers.
+  are independently audited by a third party no less than annually, plus annual
+  external penetration testing by a third party. All Luma software and company
+  processes are stated to be fully HIPAA-compliant, and Luma signs Business
+  Associate Agreements (BAAs) with covered-entity customers. As of the 2026-08-15
+  re-read the page also names ISO/IEC 42001 for Luma's AI products and
+  certification under the EU-US Data Privacy Framework (including the UK
+  extension and the Swiss-US framework) - neither of which was recorded in the
+  2026-07-24 pass.
+security_contact: security@lumahealth.io
+vulnerability_disclosure: security/luma-health-vulnerability-disclosure.yml
+trust_portal:
+  dedicated_portal: false
+  note: >-
+    No Vanta/Drata/SafeBase-style trust portal with downloadable evidence is
+    published; the marketing page is the trust surface and audit reports are
+    shared under NDA through sales. The public real-time surface is the
+    Atlassian Statuspage at https://status.lumahealth.io.
 evidence:
 - source: https://www.lumahealth.io/security-and-trust/
-  keywords: [hitrust, soc 2 type ii, iso 27001, hipaa, tx-ramp, trust]
+  status: 200
+  keywords: [hitrust csf r2, soc 2 type ii, iso 27001:2022, iso 42001, hipaa, tx-ramp level 2, data privacy framework, penetration testing]
 - source: https://www.lumahealth.io/newsroom/company-news/luma-health-elevates-its-security-practices-with-iso-iec-270012022-certification/
   keywords: [iso 27001:2022, hitrust r2, soc 2 type ii]
 - source: https://www.prnewswire.com/news-releases/hitrust-r2-certification-validates-luma-healths-security-posture-301632696.html

@@ -1,19 +1,62 @@
 overlay: 1.0.0
 info:
   title: API Evangelist enhancements for Luma Health Rest-Service
-  version: 1.0.0
+  version: 1.1.0
 extends: openapi/luma-health-openapi.yaml
+x-generated: '2026-08-15'
+x-method: generated
+x-source: >-
+  Derived from openapi/luma-health-openapi.yaml plus the repo artifacts
+  (authentication/, conventions/, errors/, lifecycle/, conformance/,
+  rate-limits/, security/). Never mutates the original OpenAPI.
 actions:
 - target: $.info
   update:
     x-apievangelist-provider: luma-health
     x-apievangelist-category: healthcare-patient-engagement
     x-apievangelist-auth: oauth2-client-credentials -> jwt-bearer
-    x-apievangelist-compliance: [HITRUST CSF r2, SOC 2 Type II, ISO 27001:2022, HIPAA, TX-RAMP L2]
+    x-apievangelist-compliance: [HITRUST CSF r2, SOC 2 Type II, ISO/IEC 27001:2022, ISO/IEC 42001, HIPAA, TX-RAMP L2, EU-US DPF]
     x-apievangelist-status-page: https://status.lumahealth.io
+    x-apievangelist-status-api: https://status.lumahealth.io/api/v2/summary.json
     x-apievangelist-error-envelope: '{ message: string } (custom, not RFC 9457)'
-    x-apievangelist-pagination: page-number (page + limit)
+    x-apievangelist-pagination: page-number (page + limit request, {response, page, size} envelope on newer collections)
     x-apievangelist-idempotency: none-documented
+    x-apievangelist-rate-limits: none-documented (no 429 declared, no RateLimit-* headers)
+    x-apievangelist-sdks: none (no first-party client library on any registry)
+    x-apievangelist-security-contact: security@lumahealth.io
+    x-apievangelist-pricing: enterprise-quote-only (no published plans)
+    x-apievangelist-spec-source: https://apidocs.lumahealth.io/public.yaml
+- target: $.info.description
+  update: >-
+    Luma Health Rest-Service v2 - the public REST surface of the Luma Patient
+    Success Platform, covering scheduling and appointments, patients, providers
+    and facilities, two-way messaging, broadcast and campaigns, digital intake
+    and forms, billing and payments, insurance eligibility, referrals, the
+    Navigator/lumabot conversational assistant, reporting and audits, and
+    patient feedback and external-review management. Base URL
+    https://api.lumahealth.io/api/v2. Mint machine credentials with POST
+    /auth/clients, exchange them at POST /auth/token
+    (grant_type=client_credentials) for a short-lived JWT, then call every other
+    operation with Authorization: Bearer <JWT>. Object ids are 24-character
+    lowercase hex (MongoDB ObjectId). Errors return { "message": string } with
+    application/json - not RFC 9457 problem+json. No Idempotency-Key contract is
+    published, so writes must be de-duplicated by the caller.
 - target: $.info.contact
   update:
     x-apievangelist-docs: https://apidocs.lumahealth.io
+    x-apievangelist-security: security@lumahealth.io
+- target: $.servers
+  update:
+  - url: https://api.lumahealth.io/api/v2
+    description: >-
+      Production. Only environment published - Luma documents no sandbox or
+      test-mode host and no test credentials.
+- target: $.tags[?(@.name=='feedbackResponses')]
+  update:
+    x-apievangelist-added: '2026-08-15'
+    x-apievangelist-note: >-
+      Feedback and external-review management (feedbackResponses,
+      feedbackResponsesExternalReviews, feedbackResponsesExternalReviewReplies,
+      feedbackResponsesPromoterHistories) appeared additively between the
+      2026-07-24 and 2026-08-15 captures with no version bump, no changelog and
+      no announcement - 270 to 278 operations.

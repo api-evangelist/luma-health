@@ -1,6 +1,8 @@
-generated: '2026-07-24'
+generated: '2026-08-15'
 method: derived
-source: openapi/luma-health-openapi.yaml
+source: >-
+  openapi/luma-health-openapi.yaml (re-fetched 2026-08-15) +
+  https://www.lumahealth.io/security-and-trust/
 note: >-
   Cross-cutting standards conformance. Security/compliance certifications are
   publisher-verified (see security/luma-health-trust-center.yml); protocol
@@ -8,22 +10,37 @@ note: >-
 standards:
 - id: openapi-3.0
   conforms: true
-  evidence: openapi/luma-health-openapi.yaml declares openapi 3.0.0 with 270 operations
+  evidence: >-
+    openapi/luma-health-openapi.yaml declares openapi 3.0.0 with 151 paths and
+    278 operations (2026-08-15 re-fetch of https://apidocs.lumahealth.io/public.yaml)
 - id: oauth2-client-credentials
   conforms: true
   evidence: >-
     /auth/token issues JWT bearer tokens via grant_type=client_credentials; the
     applied security scheme is http bearer (JWT). Not a full RFC 6749 OAuth2
-    server (no authorize endpoint, no scopes), but the client-credentials
-    machine-to-machine pattern is followed.
+    server (no authorize endpoint, no scopes, no discovery document), but the
+    client-credentials machine-to-machine pattern is followed.
 - id: jwt-bearer
   conforms: true
-  evidence: securitySchemes.Bearer is http/bearer with bearerFormat JWT
+  evidence: securitySchemes.Bearer is http/bearer with bearerFormat JWT; root security applies it globally
+- id: oauth2-discovery-rfc8414
+  conforms: false
+  evidence: >-
+    no /.well-known/oauth-authorization-server or /.well-known/openid-configuration
+    is served on any host (see well-known/luma-health-well-known.yml)
 - id: rfc9457-problem-details
   conforms: false
   evidence: >-
     errors use a custom {message} envelope (components.schemas.ErrorSchema) with
     application/json, not application/problem+json
+- id: rfc9116-security-txt
+  conforms: false
+  evidence: >-
+    no /.well-known/security.txt on any host, although a real disclosure mailbox
+    (security@lumahealth.io) is published in prose
+- id: rfc8594-sunset-header
+  conforms: false
+  evidence: no Sunset/Deprecation header support and no deprecation policy published
 - id: fhir-r4
   conforms: false
   evidence: >-
@@ -41,12 +58,32 @@ standards:
 - id: iso-27001
   conforms: true
   evidence: ISO/IEC 27001:2022 certified
+- id: iso-42001
+  conforms: true
+  evidence: >-
+    ISO/IEC 42001 AI management system certification named on
+    https://www.lumahealth.io/security-and-trust/ for Luma's AI products
+    (Navigator/lumabot, Spark, Document Flow Agent)
 - id: tx-ramp
   conforms: true
   evidence: TX-RAMP Level 2 certified
+- id: eu-us-data-privacy-framework
+  conforms: true
+  evidence: >-
+    certified under the EU-US Data Privacy Framework including the UK extension
+    and the Swiss-US framework (dataprivacyframework.gov), per the Safety and
+    Security page
 - id: pagination-offset
   conforms: true
-  evidence: list operations expose page + limit query parameters (offset/page style)
+  evidence: list operations return a page-number envelope and accept page + limit query parameters
 - id: idempotency-key
   conforms: false
-  evidence: no Idempotency-Key request header/parameter is documented in the OpenAPI
+  evidence: >-
+    no Idempotency-Key request header or parameter appears anywhere in the
+    278-operation spec; the single occurrence of "idempotent" describes
+    checklist-template seeding behaviour, not a client contract
+- id: rate-limit-headers
+  conforms: false
+  evidence: >-
+    no 429 response is declared on any operation and no RateLimit-*/X-RateLimit-*/
+    Retry-After header is documented (see rate-limits/luma-health-rate-limits.yml)

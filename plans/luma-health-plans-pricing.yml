@@ -1,0 +1,27 @@
+generated: '2026-08-15'
+method: searched
+source: https://www.lumahealth.io/
+docs: https://www.lumahealth.io/book-a-demo
+plan_count: 0
+model: enterprise-quote-only
+note: >-
+  Luma Health publishes NO pricing tiers, no rate card and no self-service
+  sign-up. https://www.lumahealth.io/pricing returns HTTP 404 and there is no
+  pricing entry anywhere in the site navigation or footer (probed 2026-08-15);
+  the only commercial call-to-action is "Get a demo" at
+  https://www.lumahealth.io/book-a-demo, which routes to sales. The API is a
+  contracted-customer surface, not a metered product: access requires an
+  existing Luma tenant, and API credentials are minted from inside the
+  authenticated console (POST /auth/clients) rather than purchased. There is no
+  published quota, no per-call price and no overage schedule, so nothing about
+  the cost of an integration is knowable from the public surface. This is an
+  honest zero, recorded as data - not a missing measurement.
+plans: []
+evidence:
+- url: https://www.lumahealth.io/pricing
+  status: 404
+- url: https://www.lumahealth.io/book-a-demo
+  status: 200
+- url: https://www.lumahealth.io/
+  status: 200
+  note: full nav + footer enumerated; no pricing link present

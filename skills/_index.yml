@@ -1,6 +1,10 @@
-generated: '2026-07-24'
+generated: '2026-08-15'
 method: generated
 api: openapi/luma-health-openapi.yaml
+source: >-
+  Grounded in real operationIds from openapi/luma-health-openapi.yaml
+  (re-fetched 2026-08-15 from https://apidocs.lumahealth.io/public.yaml). Luma
+  Health publishes no AGENTS.md and no first-party skill packs.
 skills:
 - file: luma-health-schedule-appointment.md
   name: Schedule a patient appointment
@@ -18,3 +22,7 @@ skills:
   name: Verify patient insurance eligibility
   api: openapi/luma-health-openapi.yaml
   operations: [getPatientById, insuranceCheckEligibility]
+- file: luma-health-manage-patient-feedback.md
+  name: Review patient feedback and approve review replies
+  api: openapi/luma-health-openapi.yaml
+  operations: [feedbackResponsesList, feedbackResponseGet, feedbackResponsesExternalReviewsList, feedbackResponsesExternalReviewGet, feedbackResponsesExternalReviewRepliesList, feedbackResponsesExternalReviewRepliesUpdateApproval, feedbackResponsesPromoterHistoriesList]

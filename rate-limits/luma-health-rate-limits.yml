@@ -1,0 +1,38 @@
+generated: '2026-08-15'
+method: searched
+source: >-
+  https://apidocs.lumahealth.io (Redoc) + the published spec
+  https://apidocs.lumahealth.io/public.yaml, re-fetched 2026-08-15
+limit_count: 0
+note: >-
+  Luma Health documents NO rate limits for the Rest-Service v2 API. The
+  published OpenAPI (278 operations) declares no 429 response on any operation
+  - the full response-code census is 200 (244), 401 (270), 403 (269), 201 (39),
+  404 (34), 500 (28), 400 (19), 406/409/422/204 (1 each) - and the strings
+  "rate limit", "ratelimit", "throttle" (as a client contract), "Retry-After"
+  and "X-RateLimit" do not occur anywhere in the document. The only "throttling"
+  in the spec is a BroadcastFlow send-pacing SETTING for mass patient
+  communications, not a client request budget. There is no developer portal
+  beyond the Redoc render and no public help-center article on API limits
+  (support.lumahealth.io serves HTTP 403 to non-browser clients), so no
+  runtime backoff signal is discoverable. An integrator cannot tell from the
+  public surface how many calls per second a Luma tenant may make, nor what the
+  API returns when they exceed it. Limits, if any, are enforced server-side and
+  communicated under contract.
+limits: []
+response_headers:
+  documented: []
+  note: no X-RateLimit-*, RateLimit-* or Retry-After header is documented or declared in the spec
+exhaustion_status: null
+retry_guidance: >-
+  Undocumented. Callers should implement conservative client-side pacing and
+  exponential backoff on 5xx, and must NOT assume writes are safely retryable -
+  the API documents no Idempotency-Key contract (see
+  conventions/luma-health-conventions.yml).
+evidence:
+- url: https://apidocs.lumahealth.io/public.yaml
+  status: 200
+  note: 1,064,424-byte OpenAPI 3.0.0; zero 429 responses, zero rate-limit headers
+- url: https://support.lumahealth.io/hc/en-us
+  status: 403
+  note: help center refuses non-browser clients; not machine-readable

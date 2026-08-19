@@ -1,29 +1,64 @@
-generated: '2026-07-24'
-method: searched
-source: openapi/luma-health-openapi.yaml
+generated: '2026-08-15'
+method: probed
+source: >-
+  https://status.lumahealth.io/api/v2/summary.json (Atlassian Statuspage API,
+  fetched 2026-08-15) + openapi/luma-health-openapi.yaml
 versioning:
   scheme: uri-path
   current: v2
   base_path: /api/v2
   spec_version: 2.0.0
   docs: https://apidocs.lumahealth.io
+  note: >-
+    The spec version string has not moved off 2.0.0, but the contract IS
+    changing underneath it: the 2026-08-15 re-fetch of
+    https://apidocs.lumahealth.io/public.yaml carries 151 paths / 278
+    operations against 143 / 270 in the 2026-07-24 capture. Eight operations
+    across four new tags (feedbackResponses, feedbackResponsesExternalReviews,
+    feedbackResponsesExternalReviewReplies, feedbackResponsesPromoterHistories)
+    were added additively with no version bump and no announcement. Additive
+    changes are safe, but a consumer has no signal that the surface moved.
 deprecation:
   policy_url: null
   sunset_header: false
   note: >-
-    No public deprecation policy or RFC 8594 Sunset/Deprecation header support
-    was found. No operations are marked deprecated in the OpenAPI.
+    No public deprecation policy and no RFC 8594 Sunset/Deprecation header
+    support was found. No operations are marked deprecated in the OpenAPI
+    (re-checked 2026-08-15). No dated changelog is published - the docs host is
+    a static Redoc render with no changelog page (403 on /changelog and
+    /CHANGELOG.md) and www.lumahealth.io/changelog returns 404.
+changelog:
+  published: false
+  probes:
+  - url: https://www.lumahealth.io/changelog
+    status: 404
+  - url: https://apidocs.lumahealth.io/changelog
+    status: 403
 sla:
   url: null
   uptime_target: null
   note: SLAs are handled under enterprise contracts; no public SLA page found.
 status_page: https://status.lumahealth.io
 status_page_provider: Atlassian Statuspage
+status_page_api: https://status.lumahealth.io/api/v2/summary.json
+status_page_id: jhd878wp972s
 status_components:
-- Luma Health Web
-- API
+- Luma Health Web (next.lumahealth.io)
+- Luma Health Patient Web (patient.lumahealth.io)
+- Luma Health API
 - Communication Services
-- EHR/PM Integration
-- Patient Web
-- Reporting/Datawarehouse
+- EHR/PM Integration System
+- Reporting and Datawarehouse
+status_dependency_components:
+- AWS (ec2/eks/lambda/s3/elasticache/cloudfront, us-west-2)
+- Twilio (SMS, Voice, REST API, Phone Numbers, Group Rooms)
+- SendGrid API v3
+- Bandwidth
+- Auth0 User Authentication (SSO)
+- Cloudflare CDN/Cache
+status_note: >-
+  The Statuspage exposes a machine-readable JSON API and, unusually, publishes
+  its upstream third-party dependencies as first-class components - AWS us-west-2,
+  Twilio, SendGrid, Bandwidth, Auth0 and Cloudflare - so an integrator can see
+  which vendor is degraded, not just that Luma is. 26 components total.
 deprecated_operations: []
