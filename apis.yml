@@ -282,6 +282,8 @@ apis:
   baseURL: https://api.lumahealth.io/api/v2
   tags:
   - Authentication
+  tags_raw:
+  - Authentication
   - OAuth2
   properties:
   - type: OpenAPI
