@@ -16,6 +16,18 @@ description: >-
   JWT bearer tokens. The developer-facing surface is a REST API rather than an HL7 FHIR
   server; FHIR/HL7 interoperability with EHRs happens inside Luma's integration layer, not
   as a public FHIR endpoint.
+deliveryModel:
+  model: saas
+  open_source: false
+  commercial: true
+  callable_host: true
+  label: Hosted service · you call their endpoint
+  confidence: high
+  source:
+  - openapi
+  - pricing
+  generated: '2026-08-28'
+  method: derived
 image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
 tags:
 - Healthcare
@@ -2363,6 +2375,9 @@ apis:
   - type: APIReference
     url: https://apidocs.lumahealth.io/#tag/auth
 common:
+- type: CapabilityMap
+  url: capabilities/luma-health-capability-edges.yml
+  name: Luma Health Business Capability Map
 - type: AgentSkill
   url: skills/luma-health-manage-patient-feedback.md
 - type: AgenticAccess
