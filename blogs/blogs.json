@@ -9,6 +9,20 @@
       "method": "feed"
     },
     {
+      "source": "https://www.lumahealth.io/integrations-2/feed/",
+      "feed_url": "https://www.lumahealth.io/integrations-2/feed/",
+      "title": "",
+      "saved": 0,
+      "method": "feed"
+    },
+    {
+      "source": "https://www.lumahealth.io/blog/feed/",
+      "feed_url": "https://www.lumahealth.io/blog/feed/",
+      "title": "",
+      "saved": 0,
+      "method": "feed"
+    },
+    {
       "source": "https://www.lumahealth.io/integrations-2",
       "feed_url": "https://www.lumahealth.io/integrations-2/feed/",
       "title": "",
@@ -24,5 +38,5 @@
     }
   ],
   "post_count": 0,
-  "fetched": "2026-08-22T20:20:02Z"
+  "fetched": "2026-08-30T22:33:40Z"
 }

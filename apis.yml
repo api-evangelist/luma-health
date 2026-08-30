@@ -53,6 +53,8 @@ apis:
   humanURL: https://apidocs.lumahealth.io/#tag/appointments
   baseURL: https://api.lumahealth.io/api/v2
   tags:
+  - Appointments
+  tags_raw:
   - appointments
   properties:
   - type: OpenAPI
@@ -93,6 +95,8 @@ apis:
   humanURL: https://apidocs.lumahealth.io/#tag/appointments
   baseURL: https://api.lumahealth.io/api/v2
   tags:
+  - Appointment Types
+  tags_raw:
   - appointmentTypes
   properties:
   - type: OpenAPI
@@ -133,7 +137,8 @@ apis:
     Audit log of individual tool calls made by the Navigator AI assistant during a conversation
   humanURL: https://apidocs.lumahealth.io/#tag/appointments
   baseURL: https://api.lumahealth.io/api/v2
-  tags:
+  tags: []
+  tags_raw:
   - assistantActions
   properties:
   - type: OpenAPI
@@ -173,7 +178,8 @@ apis:
   description: Conversations between the Navigator AI assistant and a patient or staff member
   humanURL: https://apidocs.lumahealth.io/#tag/appointments
   baseURL: https://api.lumahealth.io/api/v2
-  tags:
+  tags: []
+  tags_raw:
   - assistantInstances
   properties:
   - type: OpenAPI
@@ -213,7 +219,8 @@ apis:
   description: Transfer rules for AI assistants (Navigator) to handle call routing
   humanURL: https://apidocs.lumahealth.io/#tag/appointments
   baseURL: https://api.lumahealth.io/api/v2
-  tags:
+  tags: []
+  tags_raw:
   - assistantTransferRules
   properties:
   - type: OpenAPI
@@ -254,6 +261,8 @@ apis:
   humanURL: https://apidocs.lumahealth.io/#tag/appointments
   baseURL: https://api.lumahealth.io/api/v2
   tags:
+  - Authentication
+  tags_raw:
   - auth
   properties:
   - type: OpenAPI
@@ -294,6 +303,8 @@ apis:
   humanURL: https://apidocs.lumahealth.io/#tag/appointments
   baseURL: https://api.lumahealth.io/api/v2
   tags:
+  - Availabilities
+  tags_raw:
   - availabilities
   properties:
   - type: OpenAPI
@@ -333,7 +344,8 @@ apis:
   description: Financial charges tracked against a patient, such as copays and patient balances
   humanURL: https://apidocs.lumahealth.io/#tag/appointments
   baseURL: https://api.lumahealth.io/api/v2
-  tags:
+  tags: []
+  tags_raw:
   - billingCharges
   properties:
   - type: OpenAPI
@@ -374,7 +386,8 @@ apis:
     Copay amounts configured per source (system, EHR, or manual) and referenced by patient form templates
   humanURL: https://apidocs.lumahealth.io/#tag/appointments
   baseURL: https://api.lumahealth.io/api/v2
-  tags:
+  tags: []
+  tags_raw:
   - billingCopays
   properties:
   - type: OpenAPI
@@ -454,7 +467,8 @@ apis:
   description: Broadcast event logs and history
   humanURL: https://apidocs.lumahealth.io/#tag/appointments
   baseURL: https://api.lumahealth.io/api/v2
-  tags:
+  tags: []
+  tags_raw:
   - broadcastEvents
   properties:
   - type: OpenAPI
@@ -494,7 +508,8 @@ apis:
   description: Broadcast flows for mass messaging campaigns
   humanURL: https://apidocs.lumahealth.io/#tag/appointments
   baseURL: https://api.lumahealth.io/api/v2
-  tags:
+  tags: []
+  tags_raw:
   - broadcastFlows
   properties:
   - type: OpenAPI
@@ -537,6 +552,8 @@ apis:
   humanURL: https://apidocs.lumahealth.io/#tag/appointments
   baseURL: https://api.lumahealth.io/api/v2
   tags:
+  - Campaigns
+  tags_raw:
   - campaigns
   properties:
   - type: OpenAPI
@@ -576,7 +593,8 @@ apis:
   description: conversations with a patient
   humanURL: https://apidocs.lumahealth.io/#tag/appointments
   baseURL: https://api.lumahealth.io/api/v2
-  tags:
+  tags: []
+  tags_raw:
   - chatActivities
   properties:
   - type: OpenAPI
@@ -616,7 +634,8 @@ apis:
   description: reason why a chatActivity was closed
   humanURL: https://apidocs.lumahealth.io/#tag/appointments
   baseURL: https://api.lumahealth.io/api/v2
-  tags:
+  tags: []
+  tags_raw:
   - chatActivitiesReasons
   properties:
   - type: OpenAPI
@@ -656,7 +675,8 @@ apis:
   description: Audits for message chat
   humanURL: https://apidocs.lumahealth.io/#tag/appointments
   baseURL: https://api.lumahealth.io/api/v2
-  tags:
+  tags: []
+  tags_raw:
   - chatAudits
   properties:
   - type: OpenAPI
@@ -698,6 +718,8 @@ apis:
   humanURL: https://apidocs.lumahealth.io/#tag/appointments
   baseURL: https://api.lumahealth.io/api/v2
   tags:
+  - Checklists
+  tags_raw:
   - checklists
   properties:
   - type: OpenAPI
@@ -738,6 +760,8 @@ apis:
   humanURL: https://apidocs.lumahealth.io/#tag/appointments
   baseURL: https://api.lumahealth.io/api/v2
   tags:
+  - Checklist Templates
+  tags_raw:
   - checklistTemplates
   properties:
   - type: OpenAPI
@@ -777,7 +801,8 @@ apis:
   description: custom styles, CSS, logo images for customers
   humanURL: https://apidocs.lumahealth.io/#tag/appointments
   baseURL: https://api.lumahealth.io/api/v2
-  tags:
+  tags: []
+  tags_raw:
   - customWebStyles
   properties:
   - type: OpenAPI
@@ -818,6 +843,8 @@ apis:
   humanURL: https://apidocs.lumahealth.io/#tag/appointments
   baseURL: https://api.lumahealth.io/api/v2
   tags:
+  - Engagement Events
+  tags_raw:
   - engagementEvents
   properties:
   - type: OpenAPI
@@ -859,6 +886,8 @@ apis:
   humanURL: https://apidocs.lumahealth.io/#tag/appointments
   baseURL: https://api.lumahealth.io/api/v2
   tags:
+  - Engagements
+  tags_raw:
   - engagements
   properties:
   - type: OpenAPI
@@ -899,6 +928,8 @@ apis:
   humanURL: https://apidocs.lumahealth.io/#tag/appointments
   baseURL: https://api.lumahealth.io/api/v2
   tags:
+  - Engagement Settings
+  tags_raw:
   - engagementSettings
   properties:
   - type: OpenAPI
@@ -939,6 +970,8 @@ apis:
   humanURL: https://apidocs.lumahealth.io/#tag/appointments
   baseURL: https://api.lumahealth.io/api/v2
   tags:
+  - Estimates
+  tags_raw:
   - estimates
   properties:
   - type: OpenAPI
@@ -979,6 +1012,8 @@ apis:
   humanURL: https://apidocs.lumahealth.io/#tag/appointments
   baseURL: https://api.lumahealth.io/api/v2
   tags:
+  - Facilities
+  tags_raw:
   - facilities
   properties:
   - type: OpenAPI
@@ -1018,7 +1053,8 @@ apis:
   description: Patient responses to NPS feedback surveys and clicks on feedback links
   humanURL: https://apidocs.lumahealth.io/#tag/appointments
   baseURL: https://api.lumahealth.io/api/v2
-  tags:
+  tags: []
+  tags_raw:
   - feedbackResponses
   properties:
   - type: OpenAPI
@@ -1058,7 +1094,8 @@ apis:
   description: AI-generated reply drafts for external reviews, with approve/reject workflow
   humanURL: https://apidocs.lumahealth.io/#tag/appointments
   baseURL: https://api.lumahealth.io/api/v2
-  tags:
+  tags: []
+  tags_raw:
   - feedbackResponsesExternalReviewReplies
   properties:
   - type: OpenAPI
@@ -1098,7 +1135,8 @@ apis:
   description: Scraped external reviews from Google Business Profile and Yelp
   humanURL: https://apidocs.lumahealth.io/#tag/appointments
   baseURL: https://api.lumahealth.io/api/v2
-  tags:
+  tags: []
+  tags_raw:
   - feedbackResponsesExternalReviews
   properties:
   - type: OpenAPI
@@ -1138,7 +1176,8 @@ apis:
   description: Per-patient platform rotation history for NPS promoter review requests
   humanURL: https://apidocs.lumahealth.io/#tag/appointments
   baseURL: https://api.lumahealth.io/api/v2
-  tags:
+  tags: []
+  tags_raw:
   - feedbackResponsesPromoterHistories
   properties:
   - type: OpenAPI
@@ -1179,6 +1218,8 @@ apis:
   humanURL: https://apidocs.lumahealth.io/#tag/appointments
   baseURL: https://api.lumahealth.io/api/v2
   tags:
+  - File Uploads
+  tags_raw:
   - fileUploads
   properties:
   - type: OpenAPI
@@ -1219,6 +1260,8 @@ apis:
   humanURL: https://apidocs.lumahealth.io/#tag/appointments
   baseURL: https://api.lumahealth.io/api/v2
   tags:
+  - Group
+  tags_raw:
   - groups
   properties:
   - type: OpenAPI
@@ -1258,7 +1301,8 @@ apis:
   description: Insurance payors/carriers maintained in Luma's payor directory
   humanURL: https://apidocs.lumahealth.io/#tag/appointments
   baseURL: https://api.lumahealth.io/api/v2
-  tags:
+  tags: []
+  tags_raw:
   - insurancePayors
   properties:
   - type: OpenAPI
@@ -1338,7 +1382,8 @@ apis:
   description: Question and answer entries for knowledge bases
   humanURL: https://apidocs.lumahealth.io/#tag/appointments
   baseURL: https://api.lumahealth.io/api/v2
-  tags:
+  tags: []
+  tags_raw:
   - knowledgeBaseQuestionAnswers
   properties:
   - type: OpenAPI
@@ -1378,7 +1423,8 @@ apis:
   description: LumaBot Flows answered by patients
   humanURL: https://apidocs.lumahealth.io/#tag/appointments
   baseURL: https://api.lumahealth.io/api/v2
-  tags:
+  tags: []
+  tags_raw:
   - lumabotFlows
   properties:
   - type: OpenAPI
@@ -1418,7 +1464,8 @@ apis:
   description: Templates for LumaBot flows
   humanURL: https://apidocs.lumahealth.io/#tag/appointments
   baseURL: https://api.lumahealth.io/api/v2
-  tags:
+  tags: []
+  tags_raw:
   - lumabotFlowTemplates
   properties:
   - type: OpenAPI
@@ -1459,6 +1506,8 @@ apis:
   humanURL: https://apidocs.lumahealth.io/#tag/appointments
   baseURL: https://api.lumahealth.io/api/v2
   tags:
+  - Message
+  tags_raw:
   - messages
   properties:
   - type: OpenAPI
@@ -1498,7 +1547,8 @@ apis:
   description: Reusable partials that can be composed into message templates
   humanURL: https://apidocs.lumahealth.io/#tag/appointments
   baseURL: https://api.lumahealth.io/api/v2
-  tags:
+  tags: []
+  tags_raw:
   - messageTemplatePartials
   properties:
   - type: OpenAPI
@@ -1539,6 +1589,8 @@ apis:
   humanURL: https://apidocs.lumahealth.io/#tag/appointments
   baseURL: https://api.lumahealth.io/api/v2
   tags:
+  - Offers
+  tags_raw:
   - offers
   properties:
   - type: OpenAPI
@@ -1578,7 +1630,8 @@ apis:
   description: Outbound Referral
   humanURL: https://apidocs.lumahealth.io/#tag/appointments
   baseURL: https://api.lumahealth.io/api/v2
-  tags:
+  tags: []
+  tags_raw:
   - outboundReferrals
   properties:
   - type: OpenAPI
@@ -1618,7 +1671,8 @@ apis:
   description: Luma Health patient credit cards
   humanURL: https://apidocs.lumahealth.io/#tag/appointments
   baseURL: https://api.lumahealth.io/api/v2
-  tags:
+  tags: []
+  tags_raw:
   - patientCreditCards
   properties:
   - type: OpenAPI
@@ -1659,6 +1713,8 @@ apis:
   humanURL: https://apidocs.lumahealth.io/#tag/appointments
   baseURL: https://api.lumahealth.io/api/v2
   tags:
+  - Patient Forms
+  tags_raw:
   - patientForms
   properties:
   - type: OpenAPI
@@ -1698,7 +1754,8 @@ apis:
   description: Templates from patient forms
   humanURL: https://apidocs.lumahealth.io/#tag/appointments
   baseURL: https://api.lumahealth.io/api/v2
-  tags:
+  tags: []
+  tags_raw:
   - patientFormTemplates
   properties:
   - type: OpenAPI
@@ -1738,7 +1795,8 @@ apis:
   description: Message templates used to compose patient communications
   humanURL: https://apidocs.lumahealth.io/#tag/appointments
   baseURL: https://api.lumahealth.io/api/v2
-  tags:
+  tags: []
+  tags_raw:
   - patientMessageTemplates
   properties:
   - type: OpenAPI
@@ -1779,6 +1837,8 @@ apis:
   humanURL: https://apidocs.lumahealth.io/#tag/appointments
   baseURL: https://api.lumahealth.io/api/v2
   tags:
+  - Patients
+  tags_raw:
   - patients
   properties:
   - type: OpenAPI
@@ -1819,6 +1879,8 @@ apis:
   humanURL: https://apidocs.lumahealth.io/#tag/appointments
   baseURL: https://api.lumahealth.io/api/v2
   tags:
+  - Providers
+  tags_raw:
   - providers
   properties:
   - type: OpenAPI
@@ -1859,7 +1921,8 @@ apis:
     Groups of providers configured for shared scheduling behavior, such as round-robin or waterfall assignment
   humanURL: https://apidocs.lumahealth.io/#tag/appointments
   baseURL: https://api.lumahealth.io/api/v2
-  tags:
+  tags: []
+  tags_raw:
   - providerSchedulingGroups
   properties:
   - type: OpenAPI
@@ -1899,7 +1962,8 @@ apis:
   description: Instances of queue manager templates representing items in a queue
   humanURL: https://apidocs.lumahealth.io/#tag/appointments
   baseURL: https://api.lumahealth.io/api/v2
-  tags:
+  tags: []
+  tags_raw:
   - queueManagerInstances
   properties:
   - type: OpenAPI
@@ -1940,6 +2004,8 @@ apis:
   humanURL: https://apidocs.lumahealth.io/#tag/appointments
   baseURL: https://api.lumahealth.io/api/v2
   tags:
+  - Recalls
+  tags_raw:
   - recalls
   properties:
   - type: OpenAPI
@@ -1980,6 +2046,8 @@ apis:
   humanURL: https://apidocs.lumahealth.io/#tag/appointments
   baseURL: https://api.lumahealth.io/api/v2
   tags:
+  - Referrals
+  tags_raw:
   - referrals
   properties:
   - type: OpenAPI
@@ -2020,6 +2088,8 @@ apis:
   humanURL: https://apidocs.lumahealth.io/#tag/appointments
   baseURL: https://api.lumahealth.io/api/v2
   tags:
+  - Reminders
+  tags_raw:
   - reminders
   properties:
   - type: OpenAPI
@@ -2060,6 +2130,8 @@ apis:
   humanURL: https://apidocs.lumahealth.io/#tag/appointments
   baseURL: https://api.lumahealth.io/api/v2
   tags:
+  - Reports
+  tags_raw:
   - reports
   properties:
   - type: OpenAPI
@@ -2100,6 +2172,8 @@ apis:
   humanURL: https://apidocs.lumahealth.io/#tag/appointments
   baseURL: https://api.lumahealth.io/api/v2
   tags:
+  - Schedulers
+  tags_raw:
   - schedulers
   properties:
   - type: OpenAPI
@@ -2140,6 +2214,8 @@ apis:
   humanURL: https://apidocs.lumahealth.io/#tag/appointments
   baseURL: https://api.lumahealth.io/api/v2
   tags:
+  - Settings
+  tags_raw:
   - settings
   properties:
   - type: OpenAPI
@@ -2180,6 +2256,8 @@ apis:
   humanURL: https://apidocs.lumahealth.io/#tag/appointments
   baseURL: https://api.lumahealth.io/api/v2
   tags:
+  - Specialties
+  tags_raw:
   - specialties
   properties:
   - type: OpenAPI
@@ -2259,7 +2337,8 @@ apis:
   description: Audit logs for certain system events in a given account
   humanURL: https://apidocs.lumahealth.io/#tag/appointments
   baseURL: https://api.lumahealth.io/api/v2
-  tags:
+  tags: []
+  tags_raw:
   - systemAudits
   properties:
   - type: OpenAPI
@@ -2300,6 +2379,8 @@ apis:
   humanURL: https://apidocs.lumahealth.io/#tag/appointments
   baseURL: https://api.lumahealth.io/api/v2
   tags:
+  - User
+  tags_raw:
   - users
   properties:
   - type: OpenAPI
@@ -2340,6 +2421,8 @@ apis:
   humanURL: https://apidocs.lumahealth.io/#tag/appointments
   baseURL: https://api.lumahealth.io/api/v2
   tags:
+  - Waitlists
+  tags_raw:
   - waitlists
   properties:
   - type: OpenAPI
