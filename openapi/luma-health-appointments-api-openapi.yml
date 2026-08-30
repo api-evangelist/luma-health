@@ -1,0 +1,523 @@
+openapi: 3.2.0
+info:
+  version: 2.0.0
+  title: Rest-Service Appointments API
+  x-logo:
+    url: https://lumahealth-assets.s3.us-west-2.amazonaws.com/new_luma_logo_black.png
+    backgroundColor: '#FFFFFF'
+    altText: Luma Health
+  description: OpenAPI [Basic Structure](https://swagger.io/docs/specification/basic-structure/)
+servers:
+- url: https://api.lumahealth.io/api/v2
+security:
+- Bearer: []
+tags:
+- name: appointments
+  description: Patient's appointments to see a doctor
+paths:
+  /appointments/{appointmentId}:
+    get:
+      summary: Get appointment by id
+      operationId: appointmentGet
+      tags:
+      - appointments
+      parameters:
+      - name: appointmentId
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      responses:
+        '200':
+          description: Appointment
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Appointment'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+    put:
+      summary: Update an appointment
+      operationId: appointmentUpdate
+      tags:
+      - appointments
+      parameters:
+      - name: appointmentId
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      requestBody:
+        description: An appointment (full or partial) to be updated
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Appointment'
+      responses:
+        '200':
+          description: Appointment
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Appointment'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+    delete:
+      summary: Delete an appointment
+      operationId: appointmentDelete
+      tags:
+      - appointments
+      parameters:
+      - name: appointmentId
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      responses:
+        '200':
+          description: Deleted appointment
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Appointment'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+  /appointments:
+    get:
+      summary: List appointments
+      operationId: appointmentsList
+      tags:
+      - appointments
+      parameters:
+      - name: patient
+        in: query
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: provider
+        in: query
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: facility
+        in: query
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: type
+        in: query
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: date
+        in: query
+        schema:
+          type: string
+          format: date-time
+      - name: duration
+        in: query
+        schema:
+          type: integer
+          format: int32
+      - name: source
+        in: query
+        schema:
+          type: string
+          enum:
+          - integrator
+          - reminder
+          - ui
+          - waitlist
+          - reschedule
+          - telehealth
+      - name: status
+        in: query
+        schema:
+          type: string
+          enum:
+          - unconfirmed
+          - confirmed
+          - cancelled
+      - $ref: '#/components/parameters/userParam'
+      - $ref: '#/components/parameters/deletedParam'
+      - $ref: '#/components/parameters/createdByParam'
+      - $ref: '#/components/parameters/updatedByParam'
+      - $ref: '#/components/parameters/createdAtParam'
+      - $ref: '#/components/parameters/updatedAtParam'
+      - $ref: '#/components/parameters/pageParam'
+      - $ref: '#/components/parameters/limitParam'
+      - $ref: '#/components/parameters/populateParam'
+      - $ref: '#/components/parameters/selectParam'
+      responses:
+        '200':
+          description: List of appointments
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - response
+                - page
+                - size
+                properties:
+                  response:
+                    type: array
+                    minItems: 0
+                    items:
+                      $ref: '#/components/schemas/Appointment'
+                  page:
+                    type: integer
+                    format: int32
+                    minimum: 1
+                  size:
+                    type: integer
+                    format: int32
+                    minimum: 0
+                additionalProperties: false
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+    post:
+      summary: Create appointment
+      operationId: appointmentCreate
+      tags:
+      - appointments
+      requestBody:
+        description: Optional description in *Markdown*
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Appointment'
+      responses:
+        '201':
+          description: Successful creation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Appointment'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  parameters:
+    pageParam:
+      in: query
+      name: page
+      required: false
+      type: integer
+      format: int32
+      default: 1
+      minimum: 1
+      schema:
+        type: integer
+        format: int32
+        default: 1
+        minimum: 1
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
+    updatedByParam:
+      in: query
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+    populateParam:
+      name: _populate
+      in: query
+      description: Response properties which will be replaced by the referenced objects, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    selectParam:
+      name: _select
+      in: query
+      description: Response properties that should be returned, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+    limitParam:
+      name: limit
+      in: query
+      description: How many items to fetch per page
+      required: false
+      type: integer
+      format: int32
+      default: 500
+      minimum: 1
+      maximum: 1000
+      schema:
+        type: integer
+        format: int32
+        default: 500
+        minimum: 1
+        maximum: 1000
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+  schemas:
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    idParam:
+      in: query
+      name: _id
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      required: false
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: Luma's internal ID of an object.
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
+    Appointment:
+      type: object
+      description: An Appointment represents a scheduled visit between a patient and a provider at a facility, including the date, duration, appointment type, and status (unconfirmed, confirmed, or cancelled). It tracks how the appointment was created or updated, for example through an EHR integration sync, the scheduling UI, telehealth, or a patient rescheduling via text, and is the core object driving Luma Health's scheduling, reminders, and check-in workflows.
+      properties:
+        _id:
+          $ref: '#/components/schemas/idParam'
+        user:
+          $ref: '#/components/schemas/userParam'
+        deleted:
+          $ref: '#/components/schemas/deletedParam'
+        createdBy:
+          $ref: '#/components/schemas/createdByParam'
+        updatedBy:
+          $ref: '#/components/schemas/updatedByParam'
+        createdAt:
+          $ref: '#/components/schemas/createdAtParam'
+        updatedAt:
+          $ref: '#/components/schemas/updatedAtParam'
+        patient:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        provider:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        facility:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        type:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        date:
+          type: string
+          format: date-time
+        duration:
+          type: integer
+          format: int32
+          default: 15
+        source:
+          type: string
+          enum:
+          - integrator
+          - reminder
+          - ui
+          - waitlist
+          - reschedule
+          - telehealth
+        status:
+          type: string
+          enum:
+          - unconfirmed
+          - confirmed
+          - cancelled
+    updatedByParam:
+      in: query
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+  securitySchemes:
+    Bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

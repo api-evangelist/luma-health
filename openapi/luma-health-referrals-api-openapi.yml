@@ -1,0 +1,3944 @@
+openapi: 3.2.0
+info:
+  version: 2.0.0
+  title: Rest-Service Referrals API
+  x-logo:
+    url: https://lumahealth-assets.s3.us-west-2.amazonaws.com/new_luma_logo_black.png
+    backgroundColor: '#FFFFFF'
+    altText: Luma Health
+  description: OpenAPI [Basic Structure](https://swagger.io/docs/specification/basic-structure/)
+servers:
+- url: https://api.lumahealth.io/api/v2
+security:
+- Bearer: []
+tags:
+- name: referrals
+  description: Luma Patient referrals
+paths:
+  /referrals/{referralId}:
+    get:
+      summary: Get a referral by id
+      operationId: referralGet
+      tags:
+      - referrals
+      parameters:
+      - name: referralId
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      responses:
+        '200':
+          description: A referral
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Referral'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+    put:
+      summary: Update a referral
+      operationId: referralUpdate
+      tags:
+      - referrals
+      parameters:
+      - name: referralId
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      requestBody:
+        description: A referral (full or partial) to be updated
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Referral'
+      responses:
+        '200':
+          description: Updated referral
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Referral'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+    delete:
+      summary: Delete a referral
+      operationId: referralDelete
+      tags:
+      - referrals
+      parameters:
+      - name: referralId
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      responses:
+        '200':
+          description: Deleted referral
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Referral'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+  /referrals:
+    get:
+      summary: List referrals
+      operationId: referralsList
+      tags:
+      - referrals
+      parameters:
+      - $ref: '#/components/parameters/idParam'
+      - $ref: '#/components/parameters/userParam'
+      - $ref: '#/components/parameters/deletedParam'
+      - $ref: '#/components/parameters/createdByParam'
+      - $ref: '#/components/parameters/updatedByParam'
+      - $ref: '#/components/parameters/createdAtParam'
+      - $ref: '#/components/parameters/updatedAtParam'
+      - $ref: '#/components/parameters/pageParam'
+      - $ref: '#/components/parameters/limitParam'
+      - $ref: '#/components/parameters/populateParam'
+      - $ref: '#/components/parameters/selectParam'
+      - name: facility
+        in: query
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: provider
+        in: query
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: patient
+        in: query
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: referringProviderId
+        in: query
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: referringProvider
+        in: query
+        description: The name of the referring provider
+        schema:
+          type: string
+      - name: duration
+        description: Optional duration for how long the patient should be seen for
+        in: query
+        schema:
+          type: number
+          format: int32
+      - name: statusReason
+        in: query
+        description: Reason why there's a status update to this referral
+        schema:
+          type: string
+          enum:
+          - patient-cancelled
+          - invalid-insurance
+          - missing-data
+          - other
+      - name: statusReasonDescription
+        in: query
+        description: Free text explaining more details about closing chat activities
+        schema:
+          type: string
+      - name: source
+        in: query
+        schema:
+          type: string
+          enum:
+          - upload
+          - patient-referral-form
+          - ui
+          - integrator
+          - followup
+          - manual
+      - name: status
+        in: query
+        schema:
+          type: string
+          enum:
+          - active
+          - called
+          - called-late
+          - scheduled
+          - scheduled-late
+          - incomplete
+          - expired
+          - cancelled
+          - pending
+          - closed
+      - name: startOn
+        in: query
+        schema:
+          type: string
+          format: date-time
+      - name: expireAt
+        in: query
+        schema:
+          type: string
+          format: date-time
+      - name: attempt
+        in: query
+        schema:
+          type: number
+          format: int32
+      - name: lastAttemptSentAt
+        in: query
+        schema:
+          type: string
+          format: date-time
+      - name: calledAt
+        in: query
+        schema:
+          type: string
+          format: date-time
+      - name: acceptedAt
+        in: query
+        schema:
+          type: string
+          format: date-time
+      - name: scheduledAt
+        in: query
+        schema:
+          type: string
+          format: date-time
+      - name: notes
+        in: query
+        schema:
+          type: string
+      - name: customerNotes
+        in: query
+        schema:
+          type: string
+      - name: appointmentType
+        in: query
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: reason
+        in: query
+        schema:
+          type: string
+      - name: departmentOrFacility
+        description: When the costumer has multiple departments/facilities, this field makes it easier to handle where the referral should go
+        in: query
+        schema:
+          type: string
+      - name: scheduledByAppointment
+        in: query
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: scheduledByOffer
+        in: query
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: processedReferralFollowup
+        in: query
+        schema:
+          type: string
+          enum:
+          - pending
+          - skipped
+          - failed
+          - success
+      - name: upload
+        in: query
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: faxUpload
+        in: query
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: faxSentAt
+        in: query
+        schema:
+          type: string
+          format: date-time
+      - name: scheduleStartOn
+        in: query
+        schema:
+          type: string
+          format: date-time
+      - name: referringProviderFaxNumberOverride
+        in: query
+        description: If set, the fax sent back to the referring provider will be sent to this value instead of the fax contact on the referring provider record.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: List of referrals
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - response
+                - page
+                - size
+                properties:
+                  response:
+                    type: array
+                    minItems: 0
+                    items:
+                      $ref: '#/components/schemas/Referral'
+                  page:
+                    type: integer
+                    format: int32
+                    minimum: 1
+                  size:
+                    type: integer
+                    format: int32
+                    minimum: 0
+                additionalProperties: false
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+    post:
+      summary: Create referral
+      operationId: referralCreate
+      tags:
+      - referrals
+      requestBody:
+        description: Create a referral
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Referral'
+      responses:
+        '201':
+          description: Successful creation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Referral'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /referrals/inbound:
+    post:
+      summary: Get a list of referrals
+      tags:
+      - referrals
+      requestBody:
+        description: Request body description will be here
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                page:
+                  $ref: '#/components/schemas/pageParam'
+                limit:
+                  $ref: '#/components/schemas/limitParam'
+                dateFrom:
+                  type: string
+                  format: date
+                  description: If this is missing, it will take the value of dateTo.
+                dateTo:
+                  type: string
+                  format: date
+                  description: If this field is missing, the default date is today.
+                search:
+                  type: string
+                  minLength: 3
+                  maxLength: 15
+                filterFacility:
+                  description: Filter out the facilities by their ids.
+                  type: array
+                  minItems: 0
+                  maxItems: 20
+                  items:
+                    type: string
+                filterAppointment:
+                  type: array
+                  minItems: 0
+                  maxItems: 10
+                  items:
+                    type: string
+                filterReferringProvider:
+                  description: Default filter is `any`. If list of referring provider ids are given, resulting response will remove those providers.
+                  type: array
+                  minItems: 0
+                  maxItems: 10
+                  items:
+                    type: string
+                statuses:
+                  type: array
+                  items:
+                    type: string
+                    enum:
+                    - active
+                    - called
+                    - called-late
+                    - scheduled
+                    - scheduled-late
+                    - incomplete
+                    - expired
+                    - cancelled
+                    - pending
+                    - closed
+              additionalProperties: false
+      responses:
+        '200':
+          description: Returns a list of referrals after applying the filters
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - referrals
+                - page
+                - totalCount
+                properties:
+                  referrals:
+                    type: array
+                    minItems: 0
+                    items:
+                      type: object
+                      properties:
+                        patient:
+                          $ref: '#/components/schemas/PatientResponse'
+                        facility:
+                          $ref: '#/components/schemas/FacilityResponse'
+                        status:
+                          type: string
+                          enum:
+                          - active
+                          - called
+                          - called-late
+                          - scheduled
+                          - scheduled-late
+                          - incomplete
+                          - expired
+                          - cancelled
+                          - pending
+                          - closed
+                        startOn:
+                          type: string
+                          format: date
+                        createdAt:
+                          type: string
+                          format: date-time
+                        customerNotes:
+                          type: string
+                          minLength: 4
+                          maxLength: 1024
+                        notes:
+                          type: string
+                          minLength: 4
+                          maxLength: 2048
+                  page:
+                    type: integer
+                    format: int32
+                    minimum: 1
+                  totalCount:
+                    type: integer
+                    format: int32
+                    minimum: 0
+                additionalProperties: false
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+        default:
+          description: unexpected error - need to finalize the error codes
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  parameters:
+    pageParam:
+      in: query
+      name: page
+      required: false
+      type: integer
+      format: int32
+      default: 1
+      minimum: 1
+      schema:
+        type: integer
+        format: int32
+        default: 1
+        minimum: 1
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
+    idParam:
+      in: query
+      name: _id
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      required: false
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: Luma's internal ID of an object.
+    updatedByParam:
+      in: query
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+    populateParam:
+      name: _populate
+      in: query
+      description: Response properties which will be replaced by the referenced objects, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    selectParam:
+      name: _select
+      in: query
+      description: Response properties that should be returned, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+    limitParam:
+      name: limit
+      in: query
+      description: How many items to fetch per page
+      required: false
+      type: integer
+      format: int32
+      default: 500
+      minimum: 1
+      maximum: 1000
+      schema:
+        type: integer
+        format: int32
+        default: 500
+        minimum: 1
+        maximum: 1000
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+  schemas:
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    Referral:
+      type: object
+      description: A Referral tracks a patient being referred to a provider or facility for care, following the referral from creation through outreach, scheduling, and completion. It captures the referring and schedulable providers, status and status reason, scheduling window, and any related fax, upload, or appointment records used in referral management workflows.
+      properties:
+        _id:
+          $ref: '#/components/schemas/idParam'
+        user:
+          $ref: '#/components/schemas/userParam'
+        deleted:
+          $ref: '#/components/schemas/deletedParam'
+        createdBy:
+          $ref: '#/components/schemas/createdByParam'
+        updatedBy:
+          $ref: '#/components/schemas/updatedByParam'
+        createdAt:
+          $ref: '#/components/schemas/createdAtParam'
+        updatedAt:
+          $ref: '#/components/schemas/updatedAtParam'
+        name:
+          type: string
+        facility:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        provider:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        patient:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        referringProviderId:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        referringProvider:
+          type: string
+        duration:
+          type: number
+          format: int32
+        statusReason:
+          type: string
+          enum:
+          - patient-cancelled
+          - invalid-insurance
+          - missing-data
+          - other
+        statusReasonDescription:
+          type: string
+        source:
+          type: string
+          enum:
+          - upload
+          - patient-referral-form
+          - ui
+          - integrator
+          - followup
+          - manual
+        status:
+          type: string
+          enum:
+          - active
+          - called
+          - called-late
+          - scheduled
+          - scheduled-late
+          - incomplete
+          - expired
+          - cancelled
+          - pending
+          - closed
+        startOn:
+          type: string
+          format: date-time
+        expireAt:
+          type: string
+          format: date-time
+        attempt:
+          type: number
+          format: int32
+        lastAttemptSentAt:
+          type: string
+          format: date-time
+        calledAt:
+          type: string
+          format: date-time
+        acceptedAt:
+          type: string
+          format: date-time
+        scheduledAt:
+          type: string
+          format: date-time
+        notes:
+          type: string
+        customerNotes:
+          type: string
+        appointmentType:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        reason:
+          type: string
+        departmentOrFacility:
+          type: string
+        scheduledByAppointment:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        scheduledByOffer:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        processedReferralFollowup:
+          type: string
+          enum:
+          - pending
+          - skipped
+          - failed
+          - success
+        upload:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        faxUpload:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        faxSentAt:
+          type: string
+          format: date-time
+        scheduleStartOn:
+          type: string
+          format: date-time
+        referringProviderFaxNumberOverride:
+          type: string
+    limitParam:
+      name: limit
+      in: query
+      description: How many items to fetch per page
+      required: false
+      type: integer
+      format: int32
+      default: 500
+      minimum: 1
+      maximum: 1000
+      schema:
+        type: integer
+        format: int32
+        default: 500
+        minimum: 1
+        maximum: 1000
+    pageParam:
+      in: query
+      name: page
+      required: false
+      type: integer
+      format: int32
+      default: 1
+      minimum: 1
+      schema:
+        type: integer
+        format: int32
+        default: 1
+        minimum: 1
+    idParam:
+      in: query
+      name: _id
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      required: false
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: Luma's internal ID of an object.
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
+    updatedByParam:
+      in: query
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
+    RolesByUser:
+      type: object
+      description: Object containing 2 keys, referringProvider and renderingProvider. The value for each key is an array. The content of the array should be the root account ids under the same organization, where this user has the role with the same name of the key.
+      required: []
+      properties:
+        referringProvider:
+          type: array
+          description: List of root account IDs under an organization where the user has the role referringProvider
+          items:
+            type: string
+            pattern: '[0-9a-f]'
+            minLength: 24
+            maxLength: 24
+        renderingProvider:
+          type: array
+          description: List of root account IDs under an organization where the user has the role renderingProvider
+          items:
+            type: string
+            pattern: '[0-9a-f]'
+            minLength: 24
+            maxLength: 24
+    SalesforceData:
+      type: object
+      description: Salesforce internal meta data for this account.
+      required:
+      - respectProvisioning
+      properties:
+        customerSuccessManager:
+          type: object
+          properties:
+            name:
+              type: string
+            email:
+              type: string
+            phone:
+              type: string
+        provisioning:
+          type: array
+          items:
+            type: string
+            enum:
+            - reminder
+            - waitlist
+            - feedback
+            - followup
+            - referral
+            - outbound-referral
+            - chat
+            - scheduler
+            - recall
+            - insurance
+            - broadcast
+            - form
+            - intake-form
+            - prequal-form
+            - branding
+            - upload
+            - telehealth
+            - waiting-room
+            - luma-pay
+            - insurance-verification
+        respectProvisioning:
+          type: boolean
+          default: true
+        lifeline:
+          type: string
+          enum:
+          - trial
+          - converted
+          - active
+          - churn
+        mrr:
+          type: number
+        arr:
+          type: number
+        renewalDate:
+          type: string
+          format: date-time
+        providers:
+          type: number
+        specialty:
+          type: string
+        referralTrialLimit:
+          type: number
+        recordType:
+          type: string
+        domesticAccessRequired:
+          type: boolean
+        goLiveAt:
+          type: string
+          format: date-time
+        fullyImplementedAt:
+          type: string
+          format: date-time
+        contractSignedAt:
+          type: string
+          format: date-time
+        contractLength:
+          type: number
+        healthStatus:
+          type: string
+          default: green
+          enum:
+          - green
+          - yellow
+          - red
+          - poor fit
+          - Healthy
+          - Neutral
+          - Churn Risk
+          - Advocate
+        boardSegment:
+          type: string
+          default: Unknown
+          enum:
+          - Reseller
+          - Strategic
+          - Majors
+          - Core
+          - Sub 20
+          - Unknown
+        onboardingState:
+          type: string
+          default: Customer Success Introduction
+          enum:
+          - Customer Success Introduction
+          - Kickoff
+          - Integration
+          - Discovery Call
+          - Customization
+          - Testing
+          - Staff Training
+          - Ready To Launch
+          - Go-Live
+          - Fully Implemented
+        accountLifeline:
+          type: string
+          default: Active
+          enum:
+          - Unassigned
+          - Assigned
+          - Sales Accepted
+          - Working
+          - Sales Qualified
+          - Open Opportunity
+          - Nurture
+          - Disqualified
+          - Trial
+          - Converted
+          - Active
+          - Churned
+          - Partnered
+          - Trial Ended (No Conversion)
+    ExternalId:
+      type: object
+      properties:
+        source:
+          description: externalId.source
+          type: string
+          enum:
+          - gcalendar
+          - successehs
+          - drchrono
+          - dentrix
+          - webpt
+          - theraoffice
+          - mi7
+          - practicefusion
+          - advancedmd
+          - acomrapidpm
+          - kareo
+          - nextech
+          - mwtherapy
+          - clinicient
+          - carecloud
+          - eclinicalmobile
+          - duxware
+          - labretriever
+          - optimispt
+          - referral
+          - recall
+          - allscriptspm
+          - lytec
+          - brightree
+          - fullslate
+          - nuemd
+          - centricityps
+          - officeally
+          - greenwayintergy
+          - compulink
+          - adspm
+          - dsnpm
+          - lumamock
+          - medicalmastermind
+          - meditouch
+          - healthnautica
+          - ezemrx
+          - hl7
+          - amazingcharts
+          - greenwayprimesuite
+          - raintree
+          - athenahealth
+          - revflow
+          - eclinicalworks10e
+          - hl7pickup
+          - mindbody
+          - eclinicalworkssql
+          - nextgen
+          - practiceperfect
+          - avimark
+          - clinix
+          - keymedical
+          - mdoffice
+          - webedoctor
+          - emapm
+          - medinformatix
+          - imsgo
+          - emds
+          - allscriptsunity
+          - medevolve
+          - caretracker
+          - clearpractice
+          - valant
+          - micromd
+          - systemedx
+          - medicalmaster
+          - athenamdp
+          - gmed
+          - roche
+          - onetouch
+          - somnoware
+          - managementplus
+          - lumacare
+          - nextechfhir
+          - curemd
+          - epic
+          - phoenixortho
+          - ezderm
+          - ggastromobile
+          - epicconfirmationpickup
+          - cerner
+          - allmeds
+          - oncoemrfilepickup
+          - imedicware
+          - modmedfhir
+          - clinux
+          - acuityscheduling
+          - medstreaming
+          - isalus
+          - meditechexpanse
+          - openemr
+          - genericfhir
+          - nextechpracticeplus
+          - sms
+          - voice
+          - email
+          - none
+        value:
+          description: externalId.value
+          type: string
+    Language:
+      description: Language
+      type: string
+      enum:
+      - ar
+      - bn
+      - cn
+      - de
+      - en
+      - es
+      - fa
+      - fl
+      - fr
+      - gr
+      - gu
+      - hi
+      - ht
+      - hy
+      - it
+      - ja
+      - km
+      - ko
+      - mr
+      - my
+      - pa
+      - pl
+      - pt
+      - ru
+      - so
+      - th
+      - ti
+      - ur
+      - vi
+      - zh-t
+      - zh
+    PatientResponse:
+      type: object
+      description: A Patient represents an individual receiving care through a Luma Health customer's practice. It stores demographic and contact information, communication preferences and history, EHR sync identifiers, billing balances, and engagement stats used to power scheduling, messaging, and referral workflows.
+      properties:
+        _id:
+          $ref: '#/components/schemas/idParam'
+        user:
+          $ref: '#/components/schemas/userParam'
+        deleted:
+          $ref: '#/components/schemas/deletedParam'
+        createdBy:
+          $ref: '#/components/schemas/createdByParam'
+        updatedBy:
+          $ref: '#/components/schemas/updatedByParam'
+        createdAt:
+          $ref: '#/components/schemas/createdAtParam'
+        updatedAt:
+          $ref: '#/components/schemas/updatedAtParam'
+        culture:
+          description: culture
+          type: string
+          enum:
+          - cn
+          - hk
+        birthSex:
+          description: birthSex
+          type: string
+          enum:
+          - M
+          - F
+          - UNK
+        race:
+          description: race
+          type: string
+          enum:
+          - american-indian-or-alaska-native
+          - asian
+          - black-or-african-american
+          - native-hawaiian-or-other-pacific-islander
+          - white
+          - other-race
+        ethnicityGroup:
+          description: ethnicityGroup
+          type: string
+          enum:
+          - hispanic-or-latino
+          - not-hispanic-or-latino
+        suffix:
+          description: suffix
+          type: string
+          enum:
+          - II
+          - III
+          - IV
+          - Jr.
+          - Sr.
+        previousAddress:
+          description: previousAddress
+          type: string
+        stats:
+          type: object
+          properties:
+            counters:
+              type: object
+              properties:
+                messagesSentToPatient:
+                  description: stats.counters.messagesSentToPatient
+                  type: number
+                confirmedAppointments:
+                  description: stats.counters.confirmedAppointments
+                  type: number
+                cancelledAppointments:
+                  description: stats.counters.cancelledAppointments
+                  type: number
+                offersSent:
+                  description: stats.counters.offersSent
+                  type: number
+                offersAccepted:
+                  description: stats.counters.offersAccepted
+                  type: number
+                appointmentOffersReplied:
+                  description: stats.counters.appointmentOffersReplied
+                  type: number
+            average:
+              type: object
+              properties:
+                appointmentOfferReplyTime:
+                  description: stats.average.appointmentOfferReplyTime
+                  type: number
+            metadata:
+              type: object
+              properties:
+                lastAppointmentAt:
+                  description: stats.metadata.lastAppointmentAt
+                  type: string
+                  format: date-time
+            oldestAppointment:
+              description: stats.oldestAppointment
+              type: string
+              format: date-time
+        lastProcessedAt:
+          description: lastProcessedAt
+          type: string
+          format: date-time
+          default: '2022-03-31T12:01:59.227Z'
+        source:
+          description: source
+          type: string
+          enum:
+          - widget
+          - integrator
+          - ui
+          - referring-provider
+          - hub
+        widget:
+          description: widget
+          type: string
+          enum:
+          - lumabot
+        mergedInto:
+          description: ID of Patient
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        subscribers:
+          description: subscribers
+          type: array
+          items:
+            type: object
+            properties:
+              subscribed:
+                description: subscribed
+                type: boolean
+              user:
+                description: ID of User
+                type: string
+                pattern: '[0-9a-f]'
+                minLength: 24
+                maxLength: 24
+              _id:
+                description: _id
+                type: string
+                pattern: '[0-9a-f]'
+                minLength: 24
+                maxLength: 24
+        outboundContact:
+          description: outboundContact
+          type: array
+          items:
+            type: object
+            properties:
+              provider:
+                description: provider
+                type: string
+                enum:
+                - mandrill
+                - twilio
+                - nexmo
+                - sendgrid
+                - plivo
+                - bandwidth
+                - ringcentral
+                - awsses
+                - interfax
+              channel:
+                description: channel
+                type: string
+                enum:
+                - sms
+                - voice
+                - fax
+                - email
+                - whatsapp
+              value:
+                description: value
+                type: string
+              active:
+                description: active
+                type: boolean
+              _id:
+                description: _id
+                type: string
+                pattern: '[0-9a-f]'
+                minLength: 24
+                maxLength: 24
+        primaryCareProvider:
+          description: ID of Provider
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        recommendations:
+          type: object
+          properties:
+            reminderTime:
+              description: recommendations.reminderTime
+              type: number
+        balance:
+          description: balance
+          type: number
+        balanceUpdatedAt:
+          description: balanceUpdatedAt
+          type: string
+          format: date-time
+        searchIds:
+          description: searchIds
+          type: array
+          items:
+            type: string
+        randomName:
+          description: randomName
+          type: boolean
+        name:
+          description: name
+          type: string
+        normalizedName:
+          description: normalizedName
+          type: string
+        firstname:
+          description: firstname
+          type: string
+        lastname:
+          description: lastname
+          type: string
+        middlename:
+          description: middlename
+          type: string
+        displayPhone:
+          description: displayPhone
+          type: string
+        displayStatus:
+          description: displayStatus
+          type: string
+          default: pending
+          enum:
+          - active
+          - pending
+          - suspended
+        email:
+          description: email
+          type: string
+        safeId:
+          description: safeId
+          type: string
+        type:
+          description: type
+          type: string
+          enum:
+          - doctor
+          - staff
+          - patient
+          - guest
+        roles:
+          description: roles
+          type: array
+          items:
+            type: string
+        rolesByUser:
+          $ref: '#/components/schemas/RolesByUser'
+        organization:
+          description: ID of Organization
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        contact:
+          description: contact
+          type: array
+          items:
+            type: object
+            properties:
+              type:
+                description: type
+                type: string
+                default: email
+                enum:
+                - inapp
+                - sms
+                - voice
+                - email
+                - fax
+                - whatsapp
+              value:
+                description: value
+                type: string
+              active:
+                description: active
+                type: boolean
+              archived:
+                description: archived
+                type: boolean
+              archivedReason:
+                description: archivedReason
+                type: string
+                default: none
+                enum:
+                - none
+                - unreachable
+                - do-not-contact
+              archivedMessage:
+                description: ID of Message
+                type: string
+                pattern: '[0-9a-f]'
+                minLength: 24
+                maxLength: 24
+        doNotContact:
+          description: doNotContact
+          type: boolean
+        doNotContactMessage:
+          description: ID of Message
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        groups:
+          description: groups
+          type: array
+          items:
+            type: objectid
+        stripeCustomerId:
+          description: stripeCustomerId
+          type: string
+        stripeSubscriptionId:
+          description: stripeSubscriptionId
+          type: string
+        salesforceId:
+          description: salesforceId
+          type: string
+        lastLogin:
+          description: lastLogin
+          type: string
+          format: date-time
+        active:
+          description: active
+          type: number
+        master:
+          description: master
+          type: boolean
+        language:
+          $ref: '#/components/schemas/Language'
+        setting:
+          description: ID of Setting
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        settings:
+          $ref: '#/components/schemas/SettingProperty'
+        address:
+          description: address
+          type: string
+        city:
+          description: city
+          type: string
+        state:
+          description: state
+          type: string
+        country:
+          description: country
+          type: string
+          default: US
+        postcode:
+          description: postcode
+          type: string
+        gender:
+          description: gender
+          type: string
+          default: unknown
+          enum:
+          - male
+          - female
+          - unknown
+          - nonbinary
+        allowedIps:
+          description: allowedIps
+          type: array
+          items:
+            type: string
+        avatar:
+          description: ID of FileUpload
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        publicKey:
+          description: publicKey
+          type: string
+        directMessagingEmail:
+          description: directMessagingEmail
+          type: string
+        demoConfiguration:
+          type: object
+          properties:
+            type:
+              type: string
+              enum:
+              - default
+        website:
+          description: website
+          type: string
+        salesforceData:
+          $ref: '#/components/schemas/SalesforceData'
+        externalId:
+          $ref: '#/components/schemas/ExternalId'
+        secondaryExternalId:
+          $ref: '#/components/schemas/ExternalId'
+        dateOfBirth:
+          type: object
+          properties:
+            year:
+              description: dateOfBirth.year
+              type: number
+            month:
+              description: dateOfBirth.month
+              type: number
+            day:
+              description: dateOfBirth.day
+              type: number
+        twoFactorAuthSecret:
+          type: object
+          properties:
+            enabled:
+              description: twoFactorAuthSecret.enabled
+              type: boolean
+        __v:
+          description: __v
+          type: number
+        __t:
+          description: __t
+          type: string
+          default: Patient
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+    FacilityResponse:
+      type: object
+      description: Represents a physical facility or location belonging to a healthcare organization, including its name, alternative and phonetic names, address, phone, alternative phone, and fax numbers normalized to international format, plus visibility and integration settings. Facilities provide the location context for scheduling appointments and routing patient communications, and can be linked to external systems such as an EHR.
+      properties:
+        _id:
+          $ref: '#/components/schemas/idParam'
+        user:
+          $ref: '#/components/schemas/userParam'
+        deleted:
+          $ref: '#/components/schemas/deletedParam'
+        createdBy:
+          $ref: '#/components/schemas/createdByParam'
+        updatedBy:
+          $ref: '#/components/schemas/updatedByParam'
+        createdAt:
+          $ref: '#/components/schemas/createdAtParam'
+        updatedAt:
+          $ref: '#/components/schemas/updatedAtParam'
+        settings:
+          $ref: '#/components/schemas/SettingProperty'
+        name:
+          description: name
+          type: string
+        alternativeName:
+          description: alternativeName
+          type: string
+        phonetic:
+          description: phonetic
+          type: string
+        address:
+          description: address
+          type: string
+        city:
+          description: city
+          type: string
+        state:
+          description: state
+          type: string
+        country:
+          description: country
+          type: string
+          default: US
+        postcode:
+          description: postcode
+          type: string
+        phone:
+          description: phone
+          type: string
+        fax:
+          description: fax
+          type: string
+        alternativePhone:
+          description: alternativePhone
+          type: string
+        visible:
+          description: visible
+          type: boolean
+          default: true
+        specialInstructions:
+          description: specialInstructions
+          type: string
+        integrator:
+          description: integrator
+          type: string
+          enum:
+          - gcalendar
+          - successehs
+          - drchrono
+          - dentrix
+          - webpt
+          - theraoffice
+          - mi7
+          - practicefusion
+          - advancedmd
+          - acomrapidpm
+          - kareo
+          - nextech
+          - mwtherapy
+          - clinicient
+          - carecloud
+          - eclinicalmobile
+          - duxware
+          - labretriever
+          - optimispt
+          - referral
+          - recall
+          - allscriptspm
+          - lytec
+          - brightree
+          - fullslate
+          - nuemd
+          - centricityps
+          - officeally
+          - greenwayintergy
+          - compulink
+          - adspm
+          - dsnpm
+          - lumamock
+          - medicalmastermind
+          - meditouch
+          - healthnautica
+          - ezemrx
+          - hl7
+          - amazingcharts
+          - greenwayprimesuite
+          - raintree
+          - athenahealth
+          - revflow
+          - eclinicalworks10e
+          - hl7pickup
+          - mindbody
+          - eclinicalworkssql
+          - nextgen
+          - practiceperfect
+          - avimark
+          - clinix
+          - keymedical
+          - mdoffice
+          - webedoctor
+          - emapm
+          - medinformatix
+          - imsgo
+          - emds
+          - allscriptsunity
+          - medevolve
+          - caretracker
+          - clearpractice
+          - valant
+          - micromd
+          - systemedx
+          - medicalmaster
+          - athenamdp
+          - gmed
+          - roche
+          - onetouch
+          - somnoware
+          - managementplus
+          - lumacare
+          - nextechfhir
+          - curemd
+          - epic
+          - phoenixortho
+          - ezderm
+          - ggastromobile
+          - epicconfirmationpickup
+          - cerner
+          - allmeds
+          - oncoemrfilepickup
+          - imedicware
+          - modmedfhir
+          - clinux
+          - acuityscheduling
+          - medstreaming
+          - isalus
+          - meditechexpanse
+          - openemr
+          - genericfhir
+          - nextechpracticeplus
+        externalId:
+          $ref: '#/components/schemas/ExternalId'
+        externalRawSource:
+          description: externalRawSource
+          type: object
+        setting:
+          description: ID of Setting
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+    SettingProperty:
+      type: object
+      properties:
+        session:
+          type: object
+          properties:
+            logoutTimeout:
+              description: settings.session.logoutTimeout
+              type: number
+              default: 30
+        welcome:
+          type: object
+          properties:
+            currentStep:
+              description: settings.welcome.currentStep
+              type: number
+            termsAgreementDate:
+              description: settings.welcome.termsAgreementDate
+              type: string
+              format: date-time
+        telehealth:
+          type: object
+          properties:
+            enabled:
+              description: settings.telehealth.enabled
+              type: boolean
+            sessionReminderMinutes:
+              description: settings.telehealth.sessionReminderMinutes
+              type: number
+              default: 30
+            sessionFinalReminderMinutes:
+              description: settings.telehealth.sessionFinalReminderMinutes
+              type: number
+              default: 5
+            maximumNoShowMinutes:
+              description: settings.telehealth.maximumNoShowMinutes
+              type: number
+              default: 240
+            vendor:
+              description: settings.telehealth.vendor
+              type: string
+              default: twilio
+              enum:
+              - twilio
+              - zoom
+            vendors:
+              type: object
+              properties:
+                zoom:
+                  type: object
+                  properties:
+                    apiKey:
+                      description: settings.telehealth.vendors.zoom.apiKey
+                      type: string
+                    apiSecret:
+                      description: settings.telehealth.vendors.zoom.apiSecret
+                      type: string
+                    type:
+                      description: settings.telehealth.vendors.zoom.type
+                      type: string
+                      default: free
+                      enum:
+                      - free
+                      - pro
+                      - business
+            showTimer:
+              description: settings.telehealth.showTimer
+              type: boolean
+            requireProviderLogin:
+              description: settings.telehealth.requireProviderLogin
+              type: boolean
+            telehealthGroup:
+              type: object
+              properties:
+                createDefaultGroup:
+                  type: object
+                  properties:
+                    enabled:
+                      description: settings.telehealth.telehealthGroup.createDefaultGroup.enabled
+                      type: boolean
+                      default: true
+                addProviderToDefaultGroup:
+                  type: object
+                  properties:
+                    enabled:
+                      description: settings.telehealth.telehealthGroup.addProviderToDefaultGroup.enabled
+                      type: boolean
+                      default: true
+        labs:
+          type: object
+          properties:
+            enabled:
+              description: settings.labs.enabled
+              type: boolean
+        lumabot:
+          type: object
+          properties:
+            enabled:
+              description: settings.lumabot.enabled
+              type: boolean
+              default: true
+            includePoweredByLuma:
+              description: settings.lumabot.includePoweredByLuma
+              type: boolean
+              default: true
+            placement:
+              description: settings.lumabot.placement
+              type: string
+              default: right
+            name:
+              description: settings.lumabot.name
+              type: string
+              default: LumaBot
+            header:
+              description: settings.lumabot.header
+              type: string
+              default: Virtual Assistant
+            prompt:
+              description: settings.lumabot.prompt
+              type: string
+              default: Hello! How can I help you today?
+            avatar:
+              description: ID of FileUpload
+              type: string
+              pattern: '[0-9a-f]'
+              minLength: 24
+              maxLength: 24
+            theme:
+              type: object
+              properties:
+                palette:
+                  type: object
+                  properties:
+                    primary:
+                      type: object
+                      properties:
+                        light:
+                          description: settings.lumabot.theme.palette.primary.light
+                          type: string
+                        main:
+                          description: settings.lumabot.theme.palette.primary.main
+                          type: string
+                        dark:
+                          description: settings.lumabot.theme.palette.primary.dark
+                          type: string
+                        contrastText:
+                          description: settings.lumabot.theme.palette.primary.contrastText
+                          type: string
+                    secondary:
+                      type: object
+                      properties:
+                        light:
+                          description: settings.lumabot.theme.palette.secondary.light
+                          type: string
+                        main:
+                          description: settings.lumabot.theme.palette.secondary.main
+                          type: string
+                        dark:
+                          description: settings.lumabot.theme.palette.secondary.dark
+                          type: string
+                        contrastText:
+                          description: settings.lumabot.theme.palette.secondary.contrastText
+                          type: string
+                    tertiary:
+                      type: object
+                      properties:
+                        light:
+                          description: settings.lumabot.theme.palette.tertiary.light
+                          type: string
+                        main:
+                          description: settings.lumabot.theme.palette.tertiary.main
+                          type: string
+                        dark:
+                          description: settings.lumabot.theme.palette.tertiary.dark
+                          type: string
+                        contrastText:
+                          description: settings.lumabot.theme.palette.tertiary.contrastText
+                          type: string
+                    background:
+                      type: object
+                      properties:
+                        default:
+                          description: settings.lumabot.theme.palette.background.default
+                          type: string
+                        paper:
+                          description: settings.lumabot.theme.palette.background.paper
+                          type: string
+        communication:
+          type: object
+          properties:
+            defaultChatVisibility:
+              description: settings.communication.defaultChatVisibility
+              type: string
+              default: internal
+              enum:
+              - public
+              - internal
+            defaultChatCommunicationSecurity:
+              type: object
+              properties:
+                level:
+                  description: settings.communication.defaultChatCommunicationSecurity.level
+                  type: string
+                  default: secure
+                  enum:
+                  - secure
+                  - insecure
+                acknowledgedBy:
+                  description: ID of User
+                  type: string
+                  pattern: '[0-9a-f]'
+                  minLength: 24
+                  maxLength: 24
+                acknowledgedAt:
+                  description: settings.communication.defaultChatCommunicationSecurity.acknowledgedAt
+                  type: string
+                  format: date-time
+            useFacilityPhoneAsFromNumber:
+              description: settings.communication.useFacilityPhoneAsFromNumber
+              type: boolean
+            useFacilityAlternativePhoneAsFromNumber:
+              description: settings.communication.useFacilityAlternativePhoneAsFromNumber
+              type: boolean
+            useFacilityNumberFallback:
+              type: object
+              properties:
+                enabled:
+                  description: settings.communication.useFacilityNumberFallback.enabled
+                  type: boolean
+                phone:
+                  description: settings.communication.useFacilityNumberFallback.phone
+                  type: string
+            unsubscribedMessages:
+              description: settings.communication.unsubscribedMessages
+              type: array
+              default:
+              - email.providerPatientCancelled
+              - sms.providerPatientCancelled
+              - email.providerNewInboundChatActivity
+              - inapp.providerNewInboundChatActivity
+              - email.providerPatientDoNotContact
+              - inapp.patientIntakeFormCompleted
+              - email.patientIntakeFormCompleted
+              - inapp.providerPatientInsuranceUpload
+              - email.providerPatientInsuranceUpload
+              - inapp.providerReferralCalled
+              - email.providerReferralCalled
+              - inapp.providerReferralIncomplete
+              - inapp.providerOutreachCalled
+              - email.providerOutreachCalled
+              - inapp.providerOutreachIncomplete
+              - email.provider:Incomplete
+              - inapp.providerOutboundReferralIncomplete
+              - email.providerOutboundReferralIncomplete
+              - inapp.providerReferralExpired
+              - email.providerReferralExpired
+              - inapp.providerReferralCalledLate
+              - email.providerReferralCalledLate
+              - inapp.providerOutreachExpired
+              - email.providerOutreachExpired
+              - inapp.providerOutreachCalledLate
+              - email.providerOutreachCalledLate
+              - inapp.providerOutboundReferralCalledLate
+              - email.providerOutboundReferralCalledLate
+              - inapp.patientAddedToWaitlist
+              - inapp.providerApptOfferSearchStarted
+              - email.providerApptOfferSearchStarted
+              - inapp.providerFailedToFind
+              - email.providerFailedToFind
+              - inapp.providerOfferSearchCancelled
+              - email.providerOfferSearchCancelled
+              - inapp.providerPatientCancelled
+              - email.providerPatientCancelled
+              - email.newReferralCreated
+              - inapp.patientAutoRemovedWaitlist
+              - email.patientAutoRemovedWaitlist
+              - email.broadcastFailed
+              - email.staffLumabotQuestionAnswered
+            blockedContacts:
+              description: settings.communication.blockedContacts
+              type: array
+              default: []
+            limitedContacts:
+              description: settings.communication.limitedContacts
+              type: array
+              default: []
+            expirePatientData:
+              type: object
+              properties:
+                enabled:
+                  description: settings.communication.expirePatientData.enabled
+                  type: boolean
+                maxAgeInDays:
+                  description: settings.communication.expirePatientData.maxAgeInDays
+                  type: number
+                  default: 14
+            urlReplacers:
+              description: settings.communication.urlReplacers
+              type: array
+              items:
+                type: object
+                properties:
+                  find:
+                    description: find
+                    type: string
+                  replace:
+                    description: replace
+                    type: string
+                  _id:
+                    description: _id
+                    type: string
+                    pattern: '[0-9a-f]'
+                    minLength: 24
+                    maxLength: 24
+            disableAutomaticLinkShortening:
+              description: settings.communication.disableAutomaticLinkShortening
+              type: boolean
+            filterPatientMessageHistory:
+              description: settings.communication.filterPatientMessageHistory
+              type: array
+            staffDisabledChannels:
+              description: settings.communication.staffDisabledChannels
+              type: array
+              items:
+                type: string
+                enum:
+                - sms
+                - voice
+                - email
+                - fax
+                - whatsapp
+              default: []
+            reopenChatsForUnclassifiedReplies:
+              description: settings.communication.reopenChatsForUnclassifiedReplies
+              type: boolean
+              default: true
+            minLengthToReopenChat:
+              description: settings.communication.minLengthToReopenChat
+              type: number
+              default: 15
+            minLengthToReopenChatPerTemplate:
+              description: settings.communication.minLengthToReopenChatPerTemplate
+              type: mixed
+            reopenChatsWithStatusUnassigned:
+              description: settings.communication.reopenChatsWithStatusUnassigned
+              type: boolean
+              default: true
+            sendAfterHoursMessageForInboundChats:
+              description: settings.communication.sendAfterHoursMessageForInboundChats
+              type: boolean
+              default: true
+            broadcastSkipPatientLookup:
+              description: settings.communication.broadcastSkipPatientLookup
+              type: boolean
+            officeHoursPerDay:
+              description: settings.communication.officeHoursPerDay
+              type: array
+              items:
+                type: object
+                properties:
+                  weekDay:
+                    description: weekDay
+                    type: number
+                  beginAt:
+                    description: beginAt
+                    type: number
+                  endAt:
+                    description: endAt
+                    type: number
+                  _id:
+                    description: _id
+                    type: string
+                    pattern: '[0-9a-f]'
+                    minLength: 24
+                    maxLength: 24
+              default:
+              - beginAt: 500
+                endAt: 1600
+                weekDay: 0
+              - beginAt: 500
+                endAt: 1600
+                weekDay: 1
+              - beginAt: 500
+                endAt: 1600
+                weekDay: 2
+              - beginAt: 500
+                endAt: 1600
+                weekDay: 3
+              - beginAt: 500
+                endAt: 1600
+                weekDay: 4
+              - beginAt: 500
+                endAt: 1600
+                weekDay: 5
+              - beginAt: 500
+                endAt: 1600
+                weekDay: 6
+            customHolidays:
+              description: settings.communication.customHolidays
+              type: object
+              properties:
+                dates:
+                  description: settings.communication.customHolidays.dates
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      date:
+                        description: date
+                        type: string
+                        format: date-time
+                      description:
+                        description: description
+                        type: string
+                      closed:
+                        description: closed
+                        type: boolean
+                      sendAppointmentReminders:
+                        description: sendAppointmentReminders
+                        type: string
+                        enum:
+                        - before
+                        - as-scheduled
+                      sendReferralReminders:
+                        description: sendReferralReminders
+                        type: string
+                        enum:
+                        - after
+                        - as-scheduled
+                      _id:
+                        description: _id
+                        type: string
+                        pattern: '[0-9a-f]'
+                        minLength: 24
+                        maxLength: 24
+            officeHours:
+              type: object
+              properties:
+                beginAt:
+                  description: settings.communication.officeHours.beginAt
+                  type: number
+                  default: 5
+                endAt:
+                  description: settings.communication.officeHours.endAt
+                  type: number
+                  default: 16
+            numberMasking:
+              type: object
+              properties:
+                enabled:
+                  description: settings.communication.numberMasking.enabled
+                  type: boolean
+            emailMasking:
+              type: object
+              properties:
+                enabled:
+                  description: settings.communication.emailMasking.enabled
+                  type: boolean
+                fromName:
+                  description: settings.communication.emailMasking.fromName
+                  type: string
+                fromEmail:
+                  description: settings.communication.emailMasking.fromEmail
+                  type: string
+            contactVerification:
+              type: object
+              properties:
+                enabled:
+                  description: settings.communication.contactVerification.enabled
+                  type: boolean
+                  default: true
+            patientInitiatedTexting:
+              type: object
+              properties:
+                enabled:
+                  description: settings.communication.patientInitiatedTexting.enabled
+                  type: boolean
+                lookupCallerId:
+                  description: settings.communication.patientInitiatedTexting.lookupCallerId
+                  type: boolean
+                useRandomNumbersAsGeneratedName:
+                  description: settings.communication.patientInitiatedTexting.useRandomNumbersAsGeneratedName
+                  type: boolean
+            searchByToAndFrom:
+              description: settings.communication.searchByToAndFrom
+              type: boolean
+            systemMessagesExpiration:
+              type: object
+              properties:
+                enabled:
+                  description: settings.communication.systemMessagesExpiration.enabled
+                  type: boolean
+                value:
+                  description: settings.communication.systemMessagesExpiration.value
+                  type: number
+                unit:
+                  description: settings.communication.systemMessagesExpiration.unit
+                  type: string
+                  enum:
+                  - years
+                  - months
+                  - weeks
+                  - days
+                  - hours
+            inboundMessageReplies:
+              type: object
+              properties:
+                length:
+                  description: settings.communication.inboundMessageReplies.length
+                  type: number
+                  default: 16
+                keys:
+                  description: settings.communication.inboundMessageReplies.keys
+                  type: array
+                  default:
+                  - broadcastMessage
+            outboundMessages:
+              type: object
+              properties:
+                allowRetries:
+                  description: settings.communication.outboundMessages.allowRetries
+                  type: boolean
+                  default: true
+                skipSmsToLandline:
+                  description: settings.communication.outboundMessages.skipSmsToLandline
+                  type: boolean
+                allowSmsOverLongCode:
+                  type: object
+                  properties:
+                    enabled:
+                      description: settings.communication.outboundMessages.allowSmsOverLongCode.enabled
+                      type: boolean
+                multiChannelRetries:
+                  type: object
+                  properties:
+                    enabled:
+                      description: settings.communication.outboundMessages.multiChannelRetries.enabled
+                      type: boolean
+                    shouldSmsNumberBeRetriedAsVoice:
+                      type: object
+                      properties:
+                        enabled:
+                          description: settings.communication.outboundMessages.multiChannelRetries.shouldSmsNumberBeRetriedAsVoice.enabled
+                          type: boolean
+                    channels:
+                      description: settings.communication.outboundMessages.multiChannelRetries.channels
+                      type: array
+                      items:
+                        type: string
+                        enum:
+                        - sms
+                        - voice
+                        - email
+                        - fax
+                        - whatsapp
+                    failuresToIgnoreByChannel:
+                      description: settings.communication.outboundMessages.multiChannelRetries.failuresToIgnoreByChannel
+                      type: array
+                      items:
+                        type: string
+                        enum:
+                        - sms
+                        - voice
+                        - email
+                        - fax
+                        - whatsapp
+                      default: []
+                    refs:
+                      description: settings.communication.outboundMessages.multiChannelRetries.refs
+                      type: array
+                    number:
+                      description: settings.communication.outboundMessages.multiChannelRetries.number
+                      type: number
+                      default: 1
+            filterChatsByGroupsFacilities:
+              description: settings.communication.filterChatsByGroupsFacilities
+              type: boolean
+            suppressMessagesByProvisioning:
+              description: settings.communication.suppressMessagesByProvisioning
+              type: boolean
+            sortMessagesBy:
+              description: settings.communication.sortMessagesBy
+              type: string
+              default: unreadMessages
+              enum:
+              - unreadMessages
+              - priorityUpdatedAt
+            chatAssignmentOnHubSend:
+              description: settings.communication.chatAssignmentOnHubSend
+              type: string
+              default: reassign
+              enum:
+              - reassign
+              - keepAssignee
+            chatAssignmentOnProfileSend:
+              description: settings.communication.chatAssignmentOnProfileSend
+              type: string
+              default: reassign
+              enum:
+              - reassign
+              - keepAssignee
+            useFixedNumber:
+              type: object
+              properties:
+                enabled:
+                  description: settings.communication.useFixedNumber.enabled
+                  type: boolean
+                vendor:
+                  description: settings.communication.useFixedNumber.vendor
+                  type: string
+                  default: twilio
+                  enum:
+                  - twilio
+                  - bandwidth
+                number:
+                  description: settings.communication.useFixedNumber.number
+                  type: string
+                allowAutoReplacement:
+                  description: settings.communication.useFixedNumber.allowAutoReplacement
+                  type: boolean
+                  default: true
+                numbers:
+                  description: settings.communication.useFixedNumber.numbers
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      enabled:
+                        description: enabled
+                        type: boolean
+                      default:
+                        description: default
+                        type: boolean
+                      vendor:
+                        description: vendor
+                        type: string
+                        default: twilio
+                        enum:
+                        - twilio
+                        - bandwidth
+                      number:
+                        description: number
+                        type: string
+                      allowAutoReplacement:
+                        description: allowAutoReplacement
+                        type: boolean
+                        default: true
+                      _id:
+                        description: _id
+                        type: string
+                        pattern: '[0-9a-f]'
+                        minLength: 24
+                        maxLength: 24
+                  default: []
+            enableInboundCallForwardingToFacilityPhone:
+              description: settings.communication.enableInboundCallForwardingToFacilityPhone
+              type: boolean
+            enableInboundCallForwardingToFacilityAlternativePhone:
+              description: settings.communication.enableInboundCallForwardingToFacilityAlternativePhone
+              type: boolean
+            useExistentLumaContactOnBroadcastsWithEmptyValues:
+              description: settings.communication.useExistentLumaContactOnBroadcastsWithEmptyValues
+              type: boolean
+            broadcast:
+              type: object
+              properties:
+                patientsBatchLimit:
+                  type: object
+                  properties:
+                    enabled:
+                      description: settings.communication.broadcast.patientsBatchLimit.enabled
+                      type: boolean
+                    value:
+                      description: settings.communication.broadcast.patientsBatchLimit.value
+                      type: number
+                      default: 500
+                    interval:
+                      type: object
+                      properties:
+                        value:
+                          description: settings.communication.broadcast.patientsBatchLimit.interval.value
+                          type: number
+                          default: 1
+                        unit:
+                          description: settings.communication.broadcast.patientsBatchLimit.interval.unit
+                          type: string
+                          default: hours
+                          enum:
+                          - minutes
+                          - hours
+                rolesToBeNotifiedOnRequiredAction:
+                  type: object
+                  properties:
+                    shouldNotifyByGroup:
+                      description: settings.communication.broadcast.rolesToBeNotifiedOnRequiredAction.shouldNotifyByGroup
+                      type: boolean
+                    roles:
+                      description: settings.communication.broadcast.rolesToBeNotifiedOnRequiredAction.roles
+                      type: array
+                      items:
+                        type: string
+                        enum:
+                        - admin
+                        - manager
+                      default:
+                      - admin
+                messagesOverrides:
+                  type: object
+                  properties:
+                    enabled:
+                      description: settings.communication.broadcast.messagesOverrides.enabled
+                      type: boolean
+                uploadMapper:
+                  type: object
+                  properties:
+                    enabled:
+                      description: settings.communication.broadcast.uploadMapper.enabled
+                      type: boolean
+                statusChangesNotifications:
+                  type: object
+                  properties:
+                    enabled:
+                      description: settings.communication.broadcast.statusChangesNotifications.enabled
+                      type: boolean
+            ignoreInactiveContactsToSendMessage:
+              type: object
+              properties:
+                enabled:
+                  description: settings.communication.ignoreInactiveContactsToSendMessage.enabled
+                  type: boolean
+        timezone:
+          description: settings.timezone
+          type: string
+          required: true
+          default: America/Los_Angeles
+        useTimezoneFrom:
+          description: settings.useTimezoneFrom
+          type: string
+          default: user
+          enum:
+          - user
+          - facility
+        localization:
+          description: settings.localization
+          type: string
+          default: en-US
+          enum:
+          - en-US
+          - pt-BR
+        scheduler:
+          type: object
+          properties:
+            enabled:
+              description: settings.scheduler.enabled
+              type: boolean
+            alwaysHideToolbar:
+              description: settings.scheduler.alwaysHideToolbar
+              type: boolean
+            zipcodeMaxDistance:
+              description: settings.scheduler.zipcodeMaxDistance
+              type: number
+              default: 50
+            daysAheadToShowAvailability:
+              description: settings.scheduler.daysAheadToShowAvailability
+              type: number
+            hoursAheadToShowAvailability:
+              description: settings.scheduler.hoursAheadToShowAvailability
+              type: number
+              default: 2
+            maxDaysToShow:
+              description: settings.scheduler.maxDaysToShow
+              type: number
+              default: 30
+            skipResettingAvailabilities:
+              description: settings.scheduler.skipResettingAvailabilities
+              type: boolean
+            skipTwoFactorAuthentication:
+              description: settings.scheduler.skipTwoFactorAuthentication
+              type: boolean
+            skipHeatMap:
+              description: settings.scheduler.skipHeatMap
+              type: boolean
+            requireForm:
+              description: settings.scheduler.requireForm
+              type: boolean
+            confirmationQrcode:
+              type: object
+              properties:
+                enabled:
+                  description: settings.scheduler.confirmationQrcode.enabled
+                  type: boolean
+                value:
+                  description: settings.scheduler.confirmationQrcode.value
+                  type: string
+            providerAvailabilityFilter:
+              description: settings.scheduler.providerAvailabilityFilter
+              type: array
+              items:
+                type: object
+                properties:
+                  dayOfMonth:
+                    description: dayOfMonth
+                    type: number
+                  dayOfWeek:
+                    description: dayOfWeek
+                    type: number
+                  startTime:
+                    description: startTime
+                    type: string
+                    format: date-time
+                  endTime:
+                    description: endTime
+                    type: string
+                    format: date-time
+                  _id:
+                    description: _id
+                    type: string
+                    pattern: '[0-9a-f]'
+                    minLength: 24
+                    maxLength: 24
+              default: []
+            availabilityBlocks:
+              description: settings.scheduler.availabilityBlocks
+              type: array
+              items:
+                type: object
+                properties:
+                  dayOfWeek:
+                    description: dayOfWeek
+                    type: number
+                  startTime:
+                    description: startTime
+                    type: number
+                  endTime:
+                    description: endTime
+                    type: number
+                  _id:
+                    description: _id
+                    type: string
+                    pattern: '[0-9a-f]'
+                    minLength: 24
+                    maxLength: 24
+              default: []
+            maxAvailablitiesToRender:
+              description: settings.scheduler.maxAvailablitiesToRender
+              type: number
+              default: 4
+            patientAddress:
+              type: object
+              properties:
+                required:
+                  description: settings.scheduler.patientAddress.required
+                  type: boolean
+                visible:
+                  description: settings.scheduler.patientAddress.visible
+                  type: boolean
+                  required: true
+            patientEmailAddress:
+              type: object
+              properties:
+                required:
+                  description: settings.scheduler.patientEmailAddress.required
+                  type: boolean
+            reschedulerRespectsSchedulerRules:
+              description: settings.scheduler.reschedulerRespectsSchedulerRules
+              type: boolean
+            createPatientOnLookupFailure:
+              description: settings.scheduler.createPatientOnLookupFailure
+              type: boolean
+              default: true
+            minimumIntervalRequiredForBooking:
+              description: settings.scheduler.minimumIntervalRequiredForBooking
+              type: number
+            forceAppointmentTypeDuration:
+              description: settings.scheduler.forceAppointmentTypeDuration
+              type: boolean
+            ignoreDurationOnAvailabilityLookup:
+              description: settings.scheduler.ignoreDurationOnAvailabilityLookup
+              type: boolean
+            useAppointmentDurationOnAvailabilityCoalescing:
+              description: settings.scheduler.useAppointmentDurationOnAvailabilityCoalescing
+              type: boolean
+            botResponses:
+              type: object
+              properties:
+                enabled:
+                  description: settings.scheduler.botResponses.enabled
+                  type: boolean
+            showChatOnCompletion:
+              description: settings.scheduler.showChatOnCompletion
+              type: boolean
+              default: true
+            preQualificationFormTemplate:
+              description: ID of PatientFormTemplate
+              type: string
+              pattern: '[0-9a-f]'
+              minLength: 24
+              maxLength: 24
+            allowMultiLinkedAppointments:
+              description: settings.scheduler.allowMultiLinkedAppointments
+              type: boolean
+            hideProviderDetails:
+              description: settings.scheduler.hideProviderDetails
+              type: boolean
+            queryRealtimeAvailaiblitiesFromIntegration:
+              description: settings.scheduler.queryRealtimeAvailaiblitiesFromIntegration
+              type: boolean
+            sampleAvailabilityQuery:
+              description: settings.scheduler.sampleAvailabilityQuery
+              type: boolean
+            embeddedWidgetHtml:
+              description: settings.scheduler.embeddedWidgetHtml
+              type: string
+            useDependentProviderOnAnchorAvailability:
+              description: settings.scheduler.useDependentProviderOnAnchorAvailability
+              type: boolean
+            singleUseSchedulerLink:
+              type: object
+              properties:
+                enabled:
+                  description: settings.scheduler.singleUseSchedulerLink.enabled
+                  type: boolean
+            onlyNotifyStaffOnAnchorApptBooking:
+              description: settings.scheduler.onlyNotifyStaffOnAnchorApptBooking
+              type: boolean
+            minimumDaysFromLastAppointment:
+              type: object
+              properties:
+                enabled:
+                  description: settings.scheduler.minimumDaysFromLastAppointment.enabled
+                  type: boolean
+                amount:
+                  description: settings.scheduler.minimumDaysFromLastAppointment.amount
+                  type: number
+                status:
+                  description: settings.scheduler.minimumDaysFromLastAppointment.status
+                  type: array
+                  items:
+                    type: string
+                    enum:
+                    - confirmed
+                    - unconfirmed
+                    - cancelled
+                  default:
+                  - confirmed
+        outboundReferral:
+          type: object
+          properties:
+            enabled:
+              description: settings.outboundReferral.enabled
+              type: boolean
+            attempts:
+              description: settings.outboundReferral.attempts
+              type: number
+              default: 3
+            interval:
+              description: settings.outboundReferral.interval
+              type: number
+              default: 7
+            sendReferralFax:
+              description: settings.outboundReferral.sendReferralFax
+              type: boolean
+            sendReferralFaxCoversheet:
+              description: settings.outboundReferral.sendReferralFaxCoversheet
+              type: boolean
+            botResponses:
+              type: object
+              properties:
+                enabled:
+                  description: settings.outboundReferral.botResponses.enabled
+                  type: boolean
+            displayVisitReasonDropdown:
+              description: settings.outboundReferral.displayVisitReasonDropdown
+              type: boolean
+        referral:
+          type: object
+          properties:
+            enabled:
+              description: settings.referral.enabled
+              type: boolean
+            attempts:
+              description: settings.referral.attempts
+              type: number
+              default: 5
+            useOutreachExperience:
+              type: object
+              properties:
+                enabled:
+                  description: settings.referral.useOutreachExperience.enabled
+                  type: boolean
+            interval:
+              description: settings.referral.interval
+              type: number
+              default: 3
+            schedulableWindow:
+              type: object
+              properties:
+                earliest:
+                  description: settings.referral.schedulableWindow.earliest
+                  type: number
+                  default: 10
+                latest:
+                  description: settings.referral.schedulableWindow.latest
+                  type: number
+                  default: 15
+            sendReferralFax:
+              description: settings.referral.sendReferralFax
+              type: boolean
+              default: true
+            sendReferralFaxCoversheet:
+              description: settings.referral.sendReferralFaxCoversheet
+              type: boolean
+            sendReferralFaxStatus:
+              type: object
+              properties:
+                scheduled:
+                  description: settings.referral.sendReferralFaxStatus.scheduled
+                  type: boolean
+                  default: true
+                cancelled:
+                  description: settings.referral.sendReferralFaxStatus.cancelled
+                  type: boolean
+                  default: true
+                incomplete:
+                  description: settings.referral.sendReferralFaxStatus.incomplete
+                  type: boolean
+                  default: true
+            sendReferralEmail:
+              description: settings.referral.sendReferralEmail
+              type: boolean
+            requireFullMatchForAutoSchedule:
+              description: settings.referral.requireFullMatchForAutoSchedule
+              type: boolean
+            requireSpecificMatchForAutoSchedule:
+              description: settings.referral.requireSpecificMatchForAutoSchedule
+              type: boolean
+            skipAutoSchedule:
+              description: settings.referral.skipAutoSchedule
+              type: boolean
+            requireMaxHoursApartFromAppointmentForAutoSchedule:
+              description: settings.referral.requireMaxHoursApartFromAppointmentForAutoSchedule
+              type: number
+              default: 72
+            includeInternalMessagingInFollowupFax:
+              description: settings.referral.includeInternalMessagingInFollowupFax
+              type: boolean
+            formLink:
+              description: settings.referral.formLink
+              type: string
+            botResponses:
+              type: object
+              properties:
+                enabled:
+                  description: settings.referral.botResponses.enabled
+                  type: boolean
+            recommendations:
+              type: object
+              properties:
+                timingPreferences:
+                  type: object
+                  properties:
+                    enabled:
+                      description: settings.referral.recommendations.timingPreferences.enabled
+                      type: boolean
+            markReferralsIncompleteAfterLastOutreachInHours:
+              description: settings.referral.markReferralsIncompleteAfterLastOutreachInHours
+              type: number
+              default: 2
+            useFacilityAlternativeNumber:
+              description: settings.referral.useFacilityAlternativeNumber
+              type: boolean
+            suppressExpiration:
+              type: object
+              properties:
+                enabled:
+                  description: settings.referral.suppressExpiration.enabled
+                  type: boolean
+        reminder:
+          type: object
+          properties:
+            multipleRemindersPerDay:
+              description: settings.reminder.multipleRemindersPerDay
+              type: string
+              default: onlySendEarliest
+              enum:
+              - onlySendEarliest
+              - multipleRemindersPerDay
+            onlySendEarliestForApptTypesWithRemindersEnabled:
+              description: settings.reminder.onlySendEarliestForApptTypesWithRemindersEnabled
+              type: boolean
+            multipleRemindersPerDayShouldOnlyConsiderResourcesWithRemindersEnabledInSquiggly:
+              description: settings.reminder.multipleRemindersPerDayShouldOnlyConsiderResourcesWithRemindersEnabledInSquiggly
+              type: boolean
+              default: true
+            multipleRemindersPerDayRepliesOverride:
+              description: settings.reminder.multipleRemindersPerDayRepliesOverride
+              type: string
+              default: disabled
+              enum:
+              - disabled
+              - allowed
+              - confirmationOnly
+              - none
+            schedule:
+              description: settings.reminder.schedule
+              type: array
+              default:
+              - 168
+              - 96
+              - 48
+            enabled:
+              description: settings.reminder.enabled
+              type: boolean
+            onConfirmation:
+              description: settings.reminder.onConfirmation
+              type: string
+              default: keepLastReminder
+              enum:
+              - skipFurtherReminders
+              - keepLastReminder
+            repliesForLastReminder:
+              description: settings.reminder.repliesForLastReminder
+              type: string
+              required: true
+              default: none
+              enum:
+              - allowed
+              - confirmationOnly
+              - none
+            replies:
+              description: settings.reminder.replies
+              type: string
+              required: true
+              default: allowed
+              enum:
+              - allowed
+              - confirmationOnly
+              - none
+            enabledChannels:
+              description: settings.reminder.enabledChannels
+              type: array
+              items:
+                type: string
+                enum:
+                - sms
+                - voice
+                - email
+                - fax
+                - whatsapp
+              default:
+              - sms
+              - voice
+              - email
+              - fax
+              - whatsapp
+            treatCancellationsAsNoShows:
+              description: settings.reminder.treatCancellationsAsNoShows
+              type: number
+              required: true
+            offerToJoinWaitlistOnCancellation:
+              description: settings.reminder.offerToJoinWaitlistOnCancellation
+              type: string
+              required: true
+              default: from-both
+              enum:
+              - disabled
+              - from-reminder
+              - from-integrator
+              - from-both
+            schedulableWindow:
+              type: object
+              properties:
+                earliest:
+                  description: settings.reminder.schedulableWindow.earliest
+                  type: number
+                  default: 8
+                latest:
+                  description: settings.reminder.schedulableWindow.latest
+                  type: number
+                  default: 20
+            allowSelfSchedule:
+              description: settings.reminder.allowSelfSchedule
+              type: boolean
+            allowSelfReschedule:
+              description: settings.reminder.allowSelfReschedule
+              type: boolean
+              default: true
+            allowSelfRescheduleAvailabilityFilter:
+              description: settings.reminder.allowSelfRescheduleAvailabilityFilter
+              type: array
+              items:
+                type: string
+                enum:
+                - appointment-cancellation
+                - ui
+                - referral
+                - integrator
+              default: []
+            allowSelfRescheduleExpiry:
+              description: settings.reminder.allowSelfRescheduleExpiry
+              type: number
+              default: 1440
+            rescheduleSundayToSaturday:
+              description: settings.reminder.rescheduleSundayToSaturday
+              type: boolean
+            forceVoiceCallsForSmsNonResponders:
+              description: settings.reminder.forceVoiceCallsForSmsNonResponders
+              type: boolean
+            cancelOrConfirmAllAppointmentsInDay:
+              description: settings.reminder.cancelOrConfirmAllAppointmentsInDay
+              type: boolean
+              default: true
+            cancelOrConfirmAppointmentsInDayOnlyIfTypeVisible:
+              description: settings.reminder.cancelOrConfirmAppointmentsInDayOnlyIfTypeVisible
+              type: boolean
+            shouldRespectCancelOrConfirmAllAppointmentsInDay:
+              description: settings.reminder.shouldRespectCancelOrConfirmAllAppointmentsInDay
+              type: boolean
+              default: true
+            allowConfirmAfterCancel:
+              description: settings.reminder.allowConfirmAfterCancel
+              type: boolean
+              default: true
+            allowCancelAfterConfirm:
+              description: settings.reminder.allowCancelAfterConfirm
+              type: boolean
+            allowCancelAfterAppointmentStart:
+              description: settings.reminder.allowCancelAfterAppointmentStart
+              type: boolean
+            strictConfirmCancelTextHandling:
+              description: settings.reminder.strictConfirmCancelTextHandling
+              type: boolean
+            disableCatchupReminders:
+              description: settings.reminder.disableCatchupReminders
+              type: boolean
+            botResponses:
+              type: object
+              properties:
+                enabled:
+                  description: settings.reminder.botResponses.enabled
+                  type: boolean
+            forceMessageTime:
+              type: object
+              properties:
+                enabled:
+                  description: settings.reminder.forceMessageTime.enabled
+                  type: boolean
+                until:
+                  description: settings.reminder.forceMessageTime.until
+                  type: string
+                  default: '1800'
+            sendReminderOnHolidays:
+              type: object
+              properties:
+                enabled:
+                  description: settings.reminder.sendReminderOnHolidays.enabled
+                  type: boolean
+        cancellation:
+          type: object
+          properties:
+            enabled:
+              description: settings.cancellation.enabled
+              type: boolean
+            expiration:
+              description: settings.cancellation.expiration
+              type: number
+              default: 30
+            processAppointmentTypes:
+              description: settings.cancellation.processAppointmentTypes
+              type: boolean
+              default: true
+            requireFrontOfficeAcceptance:
+              description: settings.cancellation.requireFrontOfficeAcceptance
+              type: boolean
+            shadowAppointment:
+              type: object
+              properties:
+                enabled:
+                  description: settings.cancellation.shadowAppointment.enabled
+                  type: boolean
+            allowDoubleBooks:
+              description: settings.cancellation.allowDoubleBooks
+              type: boolean
+            skipAvailabilityCreateFromCancellationStatusSources:
+              description: settings.cancellation.skipAvailabilityCreateFromCancellationStatusSources
+              type: array
+              default: []
+            maxDaysAheadsToProcessCancellation:
+              description: settings.cancellation.maxDaysAheadsToProcessCancellation
+              type: number
+              default: 7
+            minMinutesAheadsToProcessCancellation:
+              description: settings.cancellation.minMinutesAheadsToProcessCancellation
+              type: number
+              default: 120
+            minMinutesAheadsToProcessCancellationProviderOverridePolicy:
+              description: settings.cancellation.minMinutesAheadsToProcessCancellationProviderOverridePolicy
+              type: string
+              default: min
+              enum:
+              - min
+              - max
+            spotsDiscovery:
+              type: object
+              properties:
+                enabled:
+                  description: settings.cancellation.spotsDiscovery.enabled
+                  type: boolean
+                  default: true
+                maxSpots:
+                  description: settings.cancellation.spotsDiscovery.maxSpots
+                  type: number
+                  default: 2
+                hoursAhead:
+                  description: settings.cancellation.spotsDiscovery.hoursAhead
+                  type: number
+                  default: 48
+                includeWhitespace:
+                  description: settings.cancellation.spotsDiscovery.includeWhitespace
+                  type: boolean
+            autoAddToWaitlist:
+              type: object
+              properties:
+                enabled:
+                  description: settings.cancellation.autoAddToWaitlist.enabled
+                  type: boolean
+                daysAhead:
+                  description: settings.cancellation.autoAddToWaitlist.daysAhead
+                  type: number
+                  default: 14
+                maxDaysAhead:
+                  description: settings.cancellation.autoAddToWaitlist.maxDaysAhead
+                  type: number
+                minDaysFromLastAcceptedOfferToJoinWaitlist:
+                  description: settings.cancellation.autoAddToWaitlist.minDaysFromLastAcceptedOfferToJoinWaitlist
+                  type: number
+                  default: 7
+            waitlistOfferFlexibility:
+              description: settings.cancellation.waitlistOfferFlexibility
+              type: string
+              default: strict
+              enum:
+              - strict
+              - facility-match
+              - provider-match
+              - any
+            waitlistOfferSortOrder:
+              description: settings.cancellation.waitlistOfferSortOrder
+              type: string
+              default: longest-waiting
+              enum:
+              - longest-waiting
+              - most-recent-added
+            sendYouveBeenAddedMessage:
+              description: settings.cancellation.sendYouveBeenAddedMessage
+              type: boolean
+              default: true
+            skipOfferBasedOnLastSentOffer:
+              description: settings.cancellation.skipOfferBasedOnLastSentOffer
+              type: boolean
+              default: true
+            maxOffersPerWaitlist:
+              description: settings.cancellation.maxOffersPerWaitlist
+              type: number
+              default: 10
+            protocol:
+              description: settings.cancellation.protocol
+              type: string
+              default: parallel
+              enum:
+              - serial
+              - parallel
+            offerToJoinDuration:
+              description: settings.cancellation.offerToJoinDuration
+              type: number
+              default: 30
+            autoCreateWaitlists:
+              description: settings.cancellation.autoCreateWaitlists
+              type: boolean
+              required: true
+            delayOffers:
+              type: object
+              properties:
+                enabled:
+                  description: settings.cancellation.delayOffers.enabled
+                  type: boolean
+                until:
+                  description: settings.cancellation.delayOffers.until
+                  type: string
+                  default: '1700'
+                delayOn:
+                  description: settings.cancellation.delayOffers.delayOn
+                  type: string
+                  default: weekdays
+                  enum:
+                  - weekdays
+                  - all-days
+                weekdaysDelay:
+                  type: object
+                  properties:
+                    enabled:
+                      description: settings.cancellation.delayOffers.weekdaysDelay.enabled
+                      type: boolean
+                    until:
+                      description: settings.cancellation.delayOffers.weekdaysDelay.until
+                      type: string
+                      default: '1700'
+                weekendsDelay:
+                  type: object
+                  properties:
+                    enabled:
+                      description: settings.cancellation.delayOffers.weekendsDelay.enabled
+                      type: boolean
+                    until:
+                      description: settings.cancellation.delayOffers.weekendsDelay.until
+                      type: string
+                      default: '1700'
+            disableOnWeekends:
+              description: settings.cancellation.disableOnWeekends
+              type: boolean
+            cancelFutureAppointment:
+              description: settings.cancellation.cancelFutureAppointment
+              type: boolean
+              default: true
+            requireFutureAppointment:
+              description: settings.cancellation.requireFutureAppointment
+              type: boolean
+            botResponses:
+              type: object
+              properties:
+                enabled:
+                  description: settings.cancellation.botResponses.enabled
+                  type: boolean
+        appointment:
+          type: object
+          properties:
+            duration:
+              description: settings.appointment.duration
+              type: number
+              default: 15
+            recommendations:
+              type: object
+              properties:
+                timingPreferences:
+                  type: object
+                  properties:
+                    enabled:
+                      description: settings.appointment.recommendations.timingPreferences.enabled
+                      type: boolean
+            validateUpdatedAtTimestamp:
+              description: settings.appointment.validateUpdatedAtTimestamp
+              type: boolean
+        feedback:
+          type: object
+          properties:
+            multipleRemindersPerDay:
+              description: settings.feedback.multipleRemindersPerDay
+              type: string
+              default: multipleRemindersPerDay
+              enum:
+              - onlySendEarliest
+              - multipleRemindersPerDay
+            enabled:
+              description: settings.feedback.enabled
+              type: boolean
+            promoter:
+              type: object
+              properties:
+                type:
+                  description: settings.feedback.promoter.type
+                  type: string
+                  enum:
+                  - facebook
+                  - yelp
+                  - patientfusion
+                  - betterdoctor
+                  - zocdoc
+                  - google
+                  - generic
+                  - healthgrades
+                  - ratemds
+                url:
+                  description: settings.feedback.promoter.url
+                  type: string
+            promoterUrls:
+              description: settings.feedback.promoterUrls
+              type: array
+              items:
+                type: object
+                properties:
+                  type:
+                    description: type
+                    type: string
+                    enum:
+                    - facebook
+                    - yelp
+                    - patientfusion
+                    - betterdoctor
+                    - zocdoc
+                    - google
+                    - generic
+                    - healthgrades
+                    - ratemds
+                  url:
+                    description: url
+                    type: string
+                  enabled:
+                    description: enabled
+                    type: boolean
+                    default: true
+                  _id:
+                    description: _id
+                    type: string
+                    pattern: '[0-9a-f]'
+                    minLength: 24
+                    maxLength: 24
+            detractor:
+              type: object
+              properties:
+                type:
+                  description: settings.feedback.detractor.type
+                  type: string
+                  enum:
+                  - google
+                  - luma
+                url:
+                  description: settings.feedback.detractor.url
+                  type: string
+            detractorUrls:
+              description: settings.feedback.detractorUrls
+              type: array
+              items:
+                type: object
+                properties:
+                  type:
+                    description: type
+                    type: string
+                    enum:
+                    - google
+                    - surveymonkey
+                    - luma
+                  url:
+                    description: url
+                    type: string
+                  enabled:
+                    description: enabled
+                    type: boolean
+                    default: true
+                  _id:
+                    description: _id
+                    type: string
+                    pattern: '[0-9a-f]'
+                    minLength: 24
+                    maxLength: 24
+            schedule:
+              description: settings.feedback.schedule
+              type: number
+              default: 120
+            interval:
+              type: object
+              properties:
+                enabled:
+                  description: settings.feedback.interval.enabled
+                  type: boolean
+                  default: true
+                value:
+                  description: settings.feedback.interval.value
+                  type: number
+                  default: 2
+            limit:
+              type: object
+              properties:
+                enabled:
+                  description: settings.feedback.limit.enabled
+                  type: boolean
+                  default: true
+                value:
+                  description: settings.feedback.limit.value
+                  type: number
+                  default: 3
+            allowFeedbackForPastAppointments:
+              description: settings.feedback.allowFeedbackForPastAppointments
+              type: boolean
+              required: true
+            forceMessageTime:
+              type: object
+              properties:
+                enabled:
+                  description: settings.feedback.forceMessageTime.enabled
+                  type: boolean
+                until:
+                  description: settings.feedback.forceMessageTime.until
+                  type: string
+                  default: '1830'
+            botResponses:
+              type: object
+              properties:
+                enabled:
+                  description: settings.feedback.botResponses.enabled
+                  type: boolean
+            recommendations:
+              type: object
+              properties:
+                timingPreferences:
+                  type: object
+                  properties:
+                    enabled:
+                      description: settings.feedback.recommendations.timingPreferences.enabled
+                      type: boolean
+            forceSkipBlackoutRules:
+              description: settings.feedback.forceSkipBlackoutRules
+              type: boolean
+        followup:
+          type: object
+          properties:
+            enabled:
+              description: settings.followup.enabled
+              type: boolean
+              default: true
+            recommendations:
+              type: object
+              properties:
+                timingPreferences:
+                  type: object
+                  properties:
+                    enabled:
+                      description: settings.followup.recommendations.timingPreferences.enabled
+                      type: boolean
+            sendMessageForceTimeUsingTimezone:
+              description: settings.followup.sendMessageForceTimeUsingTimezone
+              type: boolean
+              default: true
+            ignoreCustomActionOperationsModelsFields:
+              type: object
+              properties:
+                operations:
+                  description: settings.followup.ignoreCustomActionOperationsModelsFields.operations
+                  type: array
+                  default: []
+                models:
+                  description: settings.followup.ignoreCustomActionOperationsModelsFields.models
+                  type: array
+                  default: []
+                fields:
+                  description: settings.followup.ignoreCustomActionOperationsModelsFields.fields
+                  type: array
+                  items:
+                    type: string
+                    enum:
+                    - user
+                    - _id
+                    - deleted
+                    - createdAt
+                    - updatedAt
+                    - createdBy
+                    - updatedBy
+                    - deletedBy
+                    - deletedAt
+                    - provider
+                    - facility
+                    - type
+                    - patient
+                    - source
+                    - statusSource
+                    - status
+                    - statusReason
+                    - notes
+                    - date
+                    - endDate
+                    - duration
+                    - stats
+                    - cancelledAt
+                    - confirmedAt
+                    - arrivedAt
+                    - createdFromReferral
+                    - externalRawSource
+                    - customerRawSource
+                    - telehealth
+                    - externalId.source
+                    - externalId.value
+                    - secondaryExternalId.source
+                    - secondaryExternalId.value
+                    - integratorUpdateResults.status
+                    - integratorUpdateResults.error
+                    - __v
+                  default: []
+            sendImmediatelyWithPastSendAt:
+              description: settings.followup.sendImmediatelyWithPastSendAt
+              type: boolean
+            triggerCustomActionForDeletion:
+              description: Determines if database deletions should trigger custom actions
+              type: boolean
+              default: false
+        integrator:
+          type: object
+          properties:
+            requireLock:
+              description: settings.integrator.requireLock
+              type: boolean
+            lockExpiryInMinutes:
+              description: settings.integrator.lockExpiryInMinutes
+              type: number
+              default: 10
+            syncWindow:
+              type: object
+              properties:
+                earliest:
+                  description: settings.integrator.syncWindow.earliest
+                  type: number
+                  required: true
+                  default: 6
+                latest:
+                  description: settings.integrator.syncWindow.latest
+                  type: number
+                  required: true
+                  default: 20
+                days:
+                  description: settings.integrator.syncWindow.days
+                  type: number
+                  default: 180
+                currentWeekSyncPastDataInDays:
+                  description: settings.integrator.syncWindow.currentWeekSyncPastDataInDays
+                  type: number
+                  default: 1
+            writeDataToIntegrator:
+              type: object
+              properties:
+                createAppointments:
+                  description: settings.integrator.writeDataToIntegrator.createAppointments
+                  type: boolean
+                  default: true
+                createAppointmentsMaxRetries:
+                  description: settings.integrator.writeDataToIntegrator.createAppointmentsMaxRetries
+                  type: number
+                  default: 10
+                updateAvailabilityExternalIdOnCreateAppointmentSuccess:
+                  description: settings.integrator.writeDataToIntegrator.updateAvailabilityExternalIdOnCreateAppointmentSuccess
+                  type: boolean
+                updateStatus:
+                  description: settings.integrator.writeDataToIntegrator.updateStatus
+                  type: boolean
+                  default: true
+                updatePatientDemographics:
+                  description: settings.integrator.writeDataToIntegrator.updatePatientDemographics
+                  type: boolean
+                updatePatientDemographicsName:
+                  description: settings.integrator.writeDataToIntegrator.updatePatientDemographicsName
+                  type: boolean
+                updatePatientDemographicsDateOfBirth:
+                  description: settings.integrator.writeDataToIntegrator.updatePatientDemographicsDateOfBirth
+                  type: boolean
+                flushPatientMessageHistory:
+                  description: settings.integrator.writeDataToIntegrator.flushPatientMessageHistory
+                  type: boolean
+                flushPatientMessageHistoryDelay:
+                  description: settings.integrator.writeDataToIntegrator.flushPatientMessageHistoryDelay
+                  type: number
+                flushPatientMessageHistoryDayOfWeek:
+                  description: settings.integrator.writeDataToIntegrator.flushPatientMessageHistoryDayOfWeek
+                  type: number
+                  default: -1
+                updateAppointmentNotesWithTelehealthLink:
+                  description: settings.integrator.writeDataToIntegrator.updateAppointmentNotesWithTelehealthLink
+                  type: boolean
+                updateAppointmentWithReminderSentStatus:
+                  description: settings.integrator.writeDataToIntegrator.updateAppointmentWithReminderSentStatus
+                  type: boolean
+                createOutboundHl7MessageOn:
+                  description: settings.integrator.writeDataToIntegrator.createOutboundHl7MessageOn
+                  type: array
+                  items:
+                    type: string
+                    enum:
+                    - cancelled
+                    - confirmed
+                    - created
+                  default: []
+                createPatient:
+                  description: settings.integrator.writeDataToIntegrator.createPatient
+                  type: boolean
+                cacheDeletedAppointments:
+                  description: settings.integrator.writeDataToIntegrator.cacheDeletedAppointments
+                  type: boolean
+            frequency:
+              description: settings.integrator.frequency
+              type: number
+              required: true
+              default: 15
+            enforceProviderDeltaCheck:
+              description: settings.integrator.enforceProviderDeltaCheck
+              type: boolean
+              default: true
+            enforceAppointmentDeltaCheck:
+              description: settings.integrator.enforceAppointmentDeltaCheck
+              type: boolean
+              default: true
+            syncProcedures:
+              description: settings.integrator.syncProcedures
+              type: boolean
+            syncDiagnoses:
+              description: settings.integrator.syncDiagnoses
+              type: boolean
+            syncReferrals:
+              description: settings.integrator.syncReferrals
+              type: boolean
+            syncRecalls:
+              description: settings.integrator.syncRecalls
+              type: boolean
+              default: true
+            syncInsurances:
+              description: settings.integrator.syncInsurances
+              type: boolean
+            syncOrders:
+              description: settings.integrator.syncOrders
+              type: boolean
+            verifySlotIsOpenBeforeAppointmentCreation:
+              description: settings.integrator.verifySlotIsOpenBeforeAppointmentCreation
+              type: boolean
+              default: true
+            verifyWhitespaceIsOpenBeforeAppointmentCreation:
+              description: settings.integrator.verifyWhitespaceIsOpenBeforeAppointmentCreation
+              type: boolean
+            requireValueAndTypeMatchOnDemographicsUpdate:
+              description: settings.integrator.requireValueAndTypeMatchOnDemographicsUpdate
+              type: boolean
+            skipGetProvider:
+              description: settings.integrator.skipGetProvider
+              type: boolean
+            syncAppointmentExternalRawSource:
+              description: settings.integrator.syncAppointmentExternalRawSource
+              type: boolean
+            syncProviderUpdates:
+              type: object
+              properties:
+                enabled:
+                  description: settings.integrator.syncProviderUpdates.enabled
+                  type: boolean
+            syncPatientExternalRawSource:
+              description: settings.integrator.syncPatientExternalRawSource
+              type: boolean
+            syncAdditionalDemographicFields:
+              description: settings.integrator.syncAdditionalDemographicFields
+              type: boolean
+            externalCustomResourceOverrides:
+              description: settings.integrator.externalCustomResourceOverrides
+              type: array
+              items:
+                type: object
+                properties:
+                  resource:
+                    description: resource
+                    type: string
+                    enum:
+                    - provider
+                    - appointment-type
+                    - facility
+                  override:
+                    description: override
+                    type: array
+                    items:
+                      type: string
+                  _id:
+                    description: _id
+                    type: string
+                    pattern: '[0-9a-f]'
+                    minLength: 24
+                    maxLength: 24
+            syncNewResourcesAs:
+              type: object
+              properties:
+                hiddenAfterDays:
+                  description: settings.integrator.syncNewResourcesAs.hiddenAfterDays
+                  type: number
+                  default: 10
+                hiddenResources:
+                  description: settings.integrator.syncNewResourcesAs.hiddenResources
+                  type: array
+                  items:
+                    type: string
+                    enum:
+                    - provider
+                    - appointment-type
+                    - facility
+                  default:
+                  - provider
+                  - appointment-type
+                  - facility
+                disabledAfterDays:
+                  description: settings.integrator.syncNewResourcesAs.disabledAfterDays
+                  type: number
+                  default: 10
+                disabledResources:
+                  description: settings.integrator.syncNewResourcesAs.disabledResources
+                  type: array
+                  items:
+                    type: string
+                    enum:
+                    - provider
+                    - appointment-type
+                    - facility
+                  default:
+                  - provider
+                  - appointment-type
+                  - facility
+            historicDataLoader:
+              type: object
+              properties:
+                daysToLoad:
+                  description: settings.integrator.historicDataLoader.daysToLoad
+                  type: number
+                  default: 485
+                daysPerLoad:
+                  description: settings.integrator.historicDataLoader.daysPerLoad
+                  type: number
+                  default: 15
+            disableDedupeIncomingPatientData:
+              description: settings.integrator.disableDedupeIncomingPatientData
+              type: boolean
+            disablePatientsGetByExternalTypeAndComponents:
+              description: settings.integrator.disablePatientsGetByExternalTypeAndComponents
+              type: boolean
+            sftpConfirmationRangeInHours:
+              description: settings.integrator.sftpConfirmationRangeInHours
+              type: number
+              default: 6
+            syncReferralsDisableExpiryForMissingReferrals:
+              description: settings.integrator.syncReferralsDisableExpiryForMissingReferrals
+              type: boolean
+            uploadReferralsPerformCompleteDeltaCheck:
+              description: settings.integrator.uploadReferralsPerformCompleteDeltaCheck
+              type: boolean
+            syncAppointmentsInParallel:
+              description: settings.integrator.syncAppointmentsInParallel
+              type: boolean
+            updateReferralsWithExternalRawSource:
+              description: settings.integrator.updateReferralsWithExternalRawSource
+              type: boolean
+        patients:
+          type: object
+          properties:
+            maxTokenAge:
+              description: settings.patients.maxTokenAge
+              type: number
+              default: 7
+            loginLookupInIntegrator:
+              description: settings.patients.loginLookupInIntegrator
+              type: boolean
+            loginRequireActiveContactMatch:
+              description: settings.patients.loginRequireActiveContactMatch
+              type: boolean
+              default: true
+            requireCaptcha:
+              description: settings.patients.requireCaptcha
+              type: boolean
+              default: true
+            useAtlasSearch:
+              description: settings.patients.useAtlasSearch
+              type: boolean
+            appointmentManagement:
+              type: object
+              properties:
+                enabled:
+                  description: settings.patients.appointmentManagement.enabled
+                  type: boolean
+                  default: false
+        reporting:
+          type: object
+          properties:
+            eventTracking:
+              type: object
+              properties:
+                enabled:
+                  description: settings.reporting.eventTracking.enabled
+                  type: boolean
+                trackingModel:
+                  description: settings.reporting.eventTracking.trackingModel
+                  type: string
+                  default: user
+                  enum:
+                  - patient
+                  - user
+                  - user-and-patient
+                vendors:
+                  description: settings.reporting.eventTracking.vendors
+                  type: array
+                  items:
+                    type: string
+            useUserTimezoneInReports:
+              description: settings.reporting.useUserTimezoneInReports
+              type: boolean
+        waitingRoom:
+          type: object
+          properties:
+            enabled:
+              description: settings.waitingRoom.enabled
+              type: boolean
+        settingsToOverrideFrom:
+          type: object
+          properties:
+            facilities:
+              description: settings.settingsToOverrideFrom.facilities
+              type: array
+              default: []
+            providers:
+              description: settings.settingsToOverrideFrom.providers
+              type: array
+              default: []
+            appointmentTypes:
+              description: settings.settingsToOverrideFrom.appointmentTypes
+              type: array
+              default: []
+            users:
+              description: settings.settingsToOverrideFrom.users
+              type: array
+              default: []
+        billing:
+          type: object
+          properties:
+            vendors:
+              type: object
+              properties:
+                paypal:
+                  type: object
+                  properties:
+                    enabled:
+                      description: settings.billing.vendors.paypal.enabled
+                      type: boolean
+                      default: true
+                instamed:
+                  type: object
+                  properties:
+                    enabled:
+                      description: settings.billing.vendors.instamed.enabled
+                      type: boolean
+                salucro:
+                  type: object
+                  properties:
+                    enabled:
+                      description: settings.billing.vendors.salucro.enabled
+                      type: boolean
+            contactNumber:
+              description: settings.billing.contactNumber
+              type: string
+            contactEmail:
+              description: settings.billing.contactEmail
+              type: string
+              format: email
+        patientForms:
+          type: object
+          properties:
+            filterPatientFormsByFacility:
+              description: settings.patientForms.filterPatientFormsByFacility
+              type: boolean
+            preventRefillingCompletedForms:
+              description: settings.patientForms.preventRefillingCompletedForms
+              type: boolean
+            showMessageOnFormEnd:
+              description: settings.patientForms.showMessageOnFormEnd
+              type: boolean
+              default: true
+            sendDirectMessageForCcdaForms:
+              type: object
+              properties:
+                enabled:
+                  description: settings.patientForms.sendDirectMessageForCcdaForms.enabled
+                  type: boolean
+                vendor:
+                  description: settings.patientForms.sendDirectMessageForCcdaForms.vendor
+                  type: string
+                  default: datamotion
+                  enum:
+                  - datamotion
+                minutesAheadsToLookForAppointments:
+                  description: settings.patientForms.sendDirectMessageForCcdaForms.minutesAheadsToLookForAppointments
+                  type: number
+                  default: 120
+                directMessagingEmail:
+                  description: settings.patientForms.sendDirectMessageForCcdaForms.directMessagingEmail
+                  type: string
+            allowWidgetUserToUploadFile:
+              description: settings.patientForms.allowWidgetUserToUploadFile
+              type: boolean
+            hideProgressBarOnFormsWithJump:
+              description: settings.patientForms.hideProgressBarOnFormsWithJump
+              type: boolean
+            insuranceFormTemplate:
+              description: ID of PatientFormTemplate
+              type: string
+              pattern: '[0-9a-f]'
+              minLength: 24
+              maxLength: 24
+        insurance:
+          type: object
+          properties:
+            verification:
+              type: object
+              properties:
+                enabled:
+                  description: settings.insurance.verification.enabled
+                  type: boolean
+                hoursAheadToVerifyInsurance:
+                  description: settings.insurance.verification.hoursAheadToVerifyInsurance
+                  type: number
+                  default: 24
+        branding:
+          type: object
+          properties:
+            themes:
+              type: array
+              items:
+                description: settings.branding.themes
+                type: object
+                required:
+                - scope
+                properties:
+                  enabled:
+                    description: settings.branding.themes[i].enabled
+                    type: boolean
+                    default: false
+                  scope:
+                    description: settings.branding.themes[i].scope
+                    type: string
+        estimate:
+          type: object
+          properties:
+            updateFileUploadPatient:
+              description: Determines if the file upload document linked to an estimate document must be updated with the patient ID and the estimate ID.
+              type: boolean
+              default: false
+  securitySchemes:
+    Bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

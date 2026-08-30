@@ -1,0 +1,571 @@
+openapi: 3.2.0
+info:
+  version: 2.0.0
+  title: Rest-Service Provider Scheduling Groups API
+  x-logo:
+    url: https://lumahealth-assets.s3.us-west-2.amazonaws.com/new_luma_logo_black.png
+    backgroundColor: '#FFFFFF'
+    altText: Luma Health
+  description: OpenAPI [Basic Structure](https://swagger.io/docs/specification/basic-structure/)
+servers:
+- url: https://api.lumahealth.io/api/v2
+security:
+- Bearer: []
+tags:
+- name: providerSchedulingGroups
+  description: Groups of providers configured for shared scheduling behavior, such as round-robin or waterfall assignment
+paths:
+  /providerSchedulingGroups:
+    get:
+      summary: List provider scheduling groups
+      operationId: providerSchedulingGroupsList
+      tags:
+      - providerSchedulingGroups
+      parameters:
+      - name: name
+        in: query
+        schema:
+          type: string
+      - name: groupType
+        in: query
+        schema:
+          type: string
+          enum:
+          - structured
+          - parallel
+      - name: active
+        in: query
+        schema:
+          type: boolean
+      - $ref: '#/components/parameters/userParam'
+      - $ref: '#/components/parameters/deletedParam'
+      - $ref: '#/components/parameters/createdByParam'
+      - $ref: '#/components/parameters/updatedByParam'
+      - $ref: '#/components/parameters/createdAtParam'
+      - $ref: '#/components/parameters/updatedAtParam'
+      - $ref: '#/components/parameters/pageParam'
+      - $ref: '#/components/parameters/limitParam'
+      - $ref: '#/components/parameters/populateParam'
+      - $ref: '#/components/parameters/selectParam'
+      responses:
+        '200':
+          description: List of provider scheduling groups
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - response
+                - page
+                - size
+                properties:
+                  response:
+                    type: array
+                    minItems: 0
+                    items:
+                      $ref: '#/components/schemas/ProviderSchedulingGroupResponse'
+                  page:
+                    type: integer
+                    format: int32
+                    minimum: 1
+                  size:
+                    type: integer
+                    format: int32
+                    minimum: 0
+                additionalProperties: false
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+    post:
+      summary: Create a provider scheduling group
+      operationId: providerSchedulingGroupCreate
+      tags:
+      - providerSchedulingGroups
+      requestBody:
+        description: Create a provider scheduling group
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProviderSchedulingGroupRequestCreate'
+      responses:
+        '201':
+          description: Successful creation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProviderSchedulingGroupResponse'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+  /providerSchedulingGroups/{providerSchedulingGroupId}:
+    get:
+      summary: Get provider scheduling group by id
+      operationId: providerSchedulingGroupGet
+      tags:
+      - providerSchedulingGroups
+      parameters:
+      - name: providerSchedulingGroupId
+        in: path
+        required: true
+        description: ProviderSchedulingGroup's unique identifier in Luma's database.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      responses:
+        '200':
+          description: ProviderSchedulingGroup
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProviderSchedulingGroupResponse'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+    put:
+      summary: Update a provider scheduling group
+      operationId: providerSchedulingGroupUpdate
+      tags:
+      - providerSchedulingGroups
+      parameters:
+      - name: providerSchedulingGroupId
+        in: path
+        required: true
+        description: ProviderSchedulingGroup's unique identifier in Luma's database.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      requestBody:
+        description: A provider scheduling group (full or partial) to be updated
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProviderSchedulingGroupRequestUpdate'
+      responses:
+        '200':
+          description: ProviderSchedulingGroup
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProviderSchedulingGroupResponse'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+    delete:
+      summary: Delete a provider scheduling group
+      operationId: providerSchedulingGroupDelete
+      tags:
+      - providerSchedulingGroups
+      parameters:
+      - name: providerSchedulingGroupId
+        in: path
+        required: true
+        description: ProviderSchedulingGroup's unique identifier in Luma's database.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      responses:
+        '200':
+          description: Deleted provider scheduling group
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProviderSchedulingGroupResponse'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+components:
+  parameters:
+    pageParam:
+      in: query
+      name: page
+      required: false
+      type: integer
+      format: int32
+      default: 1
+      minimum: 1
+      schema:
+        type: integer
+        format: int32
+        default: 1
+        minimum: 1
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
+    updatedByParam:
+      in: query
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+    populateParam:
+      name: _populate
+      in: query
+      description: Response properties which will be replaced by the referenced objects, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    selectParam:
+      name: _select
+      in: query
+      description: Response properties that should be returned, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+    limitParam:
+      name: limit
+      in: query
+      description: How many items to fetch per page
+      required: false
+      type: integer
+      format: int32
+      default: 500
+      minimum: 1
+      maximum: 1000
+      schema:
+        type: integer
+        format: int32
+        default: 500
+        minimum: 1
+        maximum: 1000
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+  schemas:
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+    ProviderSchedulingGroupRequestUpdate:
+      type: object
+      properties:
+        _id:
+          $ref: '#/components/schemas/idParam'
+        user:
+          $ref: '#/components/schemas/userParam'
+        deleted:
+          $ref: '#/components/schemas/deletedParam'
+        createdBy:
+          $ref: '#/components/schemas/createdByParam'
+        updatedBy:
+          $ref: '#/components/schemas/updatedByParam'
+        createdAt:
+          $ref: '#/components/schemas/createdAtParam'
+        updatedAt:
+          $ref: '#/components/schemas/updatedAtParam'
+        name:
+          type: string
+          description: Name of the provider scheduling group.
+          minLength: 1
+          maxLength: 255
+        groupType:
+          type: string
+          description: The scheduling behavior used to assign appointments across the group's members.
+          enum:
+          - structured
+          - parallel
+        members:
+          type: array
+          description: Members of the scheduling group and their priority tier. Each provider may only appear once in the array.
+          minItems: 1
+          items:
+            type: object
+            additionalProperties: false
+            required:
+            - provider
+            properties:
+              provider:
+                type: string
+                description: ID of a provider.
+                pattern: '[0-9a-f]'
+                minLength: 24
+                maxLength: 24
+              tier:
+                type: integer
+                description: Priority tier for this provider within the group. Lower tiers are prioritized first.
+                default: 1
+                minimum: 1
+        active:
+          type: boolean
+          description: Indicates whether this group is active and should be used by scheduling logic.
+          default: true
+    ProviderSchedulingGroupResponse:
+      type: object
+      description: Represents a group of providers configured for shared scheduling behavior, such as round-robin or waterfall assignment of appointments. Each group has a type (structured or parallel) and a list of member providers, each assigned a tier that determines priority within the group. Groups can be toggled active or inactive without being deleted, and are typically referenced by scheduling logic to determine which provider should receive a given appointment.
+      properties:
+        _id:
+          $ref: '#/components/schemas/idParam'
+        user:
+          $ref: '#/components/schemas/userParam'
+        deleted:
+          $ref: '#/components/schemas/deletedParam'
+        createdBy:
+          $ref: '#/components/schemas/createdByParam'
+        updatedBy:
+          $ref: '#/components/schemas/updatedByParam'
+        createdAt:
+          $ref: '#/components/schemas/createdAtParam'
+        updatedAt:
+          $ref: '#/components/schemas/updatedAtParam'
+        name:
+          type: string
+          description: Name of the provider scheduling group.
+          minLength: 1
+          maxLength: 255
+        groupType:
+          type: string
+          description: The scheduling behavior used to assign appointments across the group's members.
+          enum:
+          - structured
+          - parallel
+        members:
+          type: array
+          description: Members of the scheduling group and their priority tier. Each provider may only appear once in the array.
+          minItems: 1
+          items:
+            type: object
+            additionalProperties: false
+            required:
+            - provider
+            properties:
+              provider:
+                type: string
+                description: ID of a provider.
+                pattern: '[0-9a-f]'
+                minLength: 24
+                maxLength: 24
+              tier:
+                type: integer
+                description: Priority tier for this provider within the group. Lower tiers are prioritized first.
+                default: 1
+                minimum: 1
+        active:
+          type: boolean
+          description: Indicates whether this group is active and should be used by scheduling logic.
+          default: true
+    idParam:
+      in: query
+      name: _id
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      required: false
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: Luma's internal ID of an object.
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
+    updatedByParam:
+      in: query
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
+    ProviderSchedulingGroupRequestCreate:
+      type: object
+      required:
+      - name
+      - groupType
+      - members
+      properties:
+        _id:
+          $ref: '#/components/schemas/idParam'
+        user:
+          $ref: '#/components/schemas/userParam'
+        deleted:
+          $ref: '#/components/schemas/deletedParam'
+        createdBy:
+          $ref: '#/components/schemas/createdByParam'
+        updatedBy:
+          $ref: '#/components/schemas/updatedByParam'
+        createdAt:
+          $ref: '#/components/schemas/createdAtParam'
+        updatedAt:
+          $ref: '#/components/schemas/updatedAtParam'
+        name:
+          type: string
+          description: Name of the provider scheduling group.
+          minLength: 1
+          maxLength: 255
+        groupType:
+          type: string
+          description: The scheduling behavior used to assign appointments across the group's members.
+          enum:
+          - structured
+          - parallel
+        members:
+          type: array
+          description: Members of the scheduling group and their priority tier. Each provider may only appear once in the array.
+          minItems: 1
+          items:
+            type: object
+            additionalProperties: false
+            required:
+            - provider
+            properties:
+              provider:
+                type: string
+                description: ID of a provider.
+                pattern: '[0-9a-f]'
+                minLength: 24
+                maxLength: 24
+              tier:
+                type: integer
+                description: Priority tier for this provider within the group. Lower tiers are prioritized first.
+                default: 1
+                minimum: 1
+        active:
+          type: boolean
+          description: Indicates whether this group is active and should be used by scheduling logic.
+          default: true
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+  securitySchemes:
+    Bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

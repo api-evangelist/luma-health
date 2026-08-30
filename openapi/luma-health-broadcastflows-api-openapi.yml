@@ -1,0 +1,863 @@
+openapi: 3.2.0
+info:
+  version: 2.0.0
+  title: Rest-Service Broadcast Flows API
+  x-logo:
+    url: https://lumahealth-assets.s3.us-west-2.amazonaws.com/new_luma_logo_black.png
+    backgroundColor: '#FFFFFF'
+    altText: Luma Health
+  description: OpenAPI [Basic Structure](https://swagger.io/docs/specification/basic-structure/)
+servers:
+- url: https://api.lumahealth.io/api/v2
+security:
+- Bearer: []
+tags:
+- name: broadcastFlows
+  description: Broadcast flows for mass messaging campaigns
+paths:
+  /broadcastFlows:
+    get:
+      summary: List broadcast flows
+      operationId: broadcastFlowsList
+      tags:
+      - broadcastFlows
+      parameters:
+      - $ref: '#/components/parameters/userParam'
+      - $ref: '#/components/parameters/deletedParam'
+      - $ref: '#/components/parameters/createdByParam'
+      - $ref: '#/components/parameters/updatedByParam'
+      - $ref: '#/components/parameters/createdAtParam'
+      - $ref: '#/components/parameters/updatedAtParam'
+      - $ref: '#/components/parameters/pageParam'
+      - $ref: '#/components/parameters/limitParam'
+      - $ref: '#/components/parameters/populateParam'
+      - $ref: '#/components/parameters/selectParam'
+      responses:
+        '200':
+          description: A list of broadcast flows
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - response
+                - page
+                - size
+                properties:
+                  response:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/BroadcastFlow'
+                  page:
+                    type: integer
+                    format: int32
+                    minimum: 1
+                  size:
+                    type: integer
+                    format: int32
+                    minimum: 0
+                additionalProperties: false
+        '401':
+          description: Not authenticated
+        '403':
+          description: Not authorized
+        '404':
+          description: Not found
+        '500':
+          description: Internal server error
+    post:
+      summary: Create broadcast flow
+      operationId: broadcastFlowsCreate
+      tags:
+      - broadcastFlows
+      requestBody:
+        description: The broadcast flow to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BroadcastFlow'
+      responses:
+        '201':
+          description: The broadcast flow was created successfully
+        '401':
+          description: Not authenticated
+        '403':
+          description: Not authorized
+        '404':
+          description: Not found
+        '500':
+          description: Internal server error
+  /broadcastFlows/{broadcastFlowId}:
+    get:
+      summary: Get broadcast flow by ID
+      operationId: broadcastFlowsGet
+      tags:
+      - broadcastFlows
+      parameters:
+      - name: broadcastFlowId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: ID of the broadcast flow to retrieve
+      - $ref: '#/components/parameters/populateParam'
+      - $ref: '#/components/parameters/selectParam'
+      responses:
+        '200':
+          description: The broadcast flow was retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BroadcastFlow'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Not authorized
+        '404':
+          description: Not found
+        '500':
+          description: Internal server error
+    put:
+      summary: Update broadcast flow
+      operationId: broadcastFlowsUpdate
+      tags:
+      - broadcastFlows
+      parameters:
+      - name: broadcastFlowId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: ID of the broadcast flow to update
+      requestBody:
+        description: The broadcast flow to update
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BroadcastFlow'
+      responses:
+        '200':
+          description: The broadcast flow was updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BroadcastFlow'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Not authorized
+        '404':
+          description: Not found
+        '500':
+          description: Internal server error
+  /broadcastFlows/{broadcastFlowId}/batches:
+    get:
+      summary: List batches for a broadcast flow
+      operationId: broadcastFlowsListBatches
+      tags:
+      - broadcastFlows
+      parameters:
+      - name: broadcastFlowId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: ID of the broadcast flow to list batches for
+      - $ref: '#/components/parameters/pageParam'
+      - $ref: '#/components/parameters/limitParam'
+      - $ref: '#/components/parameters/populateParam'
+      - $ref: '#/components/parameters/selectParam'
+      responses:
+        '200':
+          description: The batches were retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  size:
+                    type: number
+                    description: Number of batches returned
+                  page:
+                    type: number
+                    description: Current page number
+                  response:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/BroadcastFlow'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Not authorized
+        '404':
+          description: Not found
+        '500':
+          description: Internal server error
+  /broadcastFlows/{broadcastFlowId}/recipients:
+    get:
+      summary: List recipients for a broadcast flow
+      operationId: broadcastFlowsListRecipients
+      tags:
+      - broadcastFlows
+      parameters:
+      - name: broadcastFlowId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: ID of the broadcast flow to list recipients for
+      - $ref: '#/components/parameters/pageParam'
+      - $ref: '#/components/parameters/limitParam'
+      - $ref: '#/components/parameters/populateParam'
+      - $ref: '#/components/parameters/selectParam'
+      responses:
+        '200':
+          description: The recipients were retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  size:
+                    type: number
+                    description: Number of recipients returned
+                  page:
+                    type: number
+                    description: Current page number
+                  response:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/BroadcastFlow'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Not authorized
+        '404':
+          description: Not found
+        '500':
+          description: Internal server error
+  /broadcastFlows/{broadcastFlowId}/review/approve:
+    parameters:
+    - name: broadcastFlowId
+      in: path
+      required: true
+      schema:
+        type: string
+      description: The ID of the broadcast flow to approve
+    post:
+      summary: Approve broadcast flow
+      description: 'Approves a broadcast flow for sending. This endpoint creates a review event and updates the broadcast flow status to pre-processing.
+
+
+        **Requirements:**
+
+        - Only admins or managers can approve broadcast flows
+
+        - Broadcast flow must be in `needs-approval` or `needs-edit` status
+
+        - Only the root broadcast flow (not child batches) can be reviewed
+
+        - Broadcast flow must not already be approved
+
+
+        **Actions:**
+
+        - Creates a BroadcastEvent of type ''review'' with approved status
+
+        - Updates the broadcast flow status to `pre-processing`
+
+        - Records the reviewer and review timestamp
+
+        '
+      operationId: broadcastFlowsApprove
+      tags:
+      - broadcastFlows
+      requestBody:
+        description: Optional status reason for the approval
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                statusReason:
+                  type: string
+                  description: Optional reason or comment for the approval
+                  maxLength: 400
+              additionalProperties: false
+      responses:
+        '200':
+          description: Broadcast flow approved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - broadcastFlow
+                - broadcastEvent
+                properties:
+                  broadcastFlow:
+                    $ref: '#/components/schemas/BroadcastFlow'
+                  broadcastEvent:
+                    $ref: '#/components/schemas/BroadcastEvent'
+                additionalProperties: false
+        '400':
+          description: Invalid request - missing or invalid broadcast flow ID
+        '401':
+          description: Not authenticated
+        '403':
+          description: 'Not authorized. Possible reasons:
+
+            - User is not an admin or manager
+
+            - Broadcast flow is not in a valid status for approval
+
+            - Broadcast flow is already approved
+
+            - Cannot review a child broadcast flow (must be root)
+
+            '
+        '404':
+          description: Broadcast flow not found
+        '500':
+          description: Internal server error
+  /broadcastFlows/{broadcastFlowId}/review/decline:
+    parameters:
+    - name: broadcastFlowId
+      in: path
+      required: true
+      schema:
+        type: string
+      description: The ID of the broadcast flow to decline
+    post:
+      summary: Decline broadcast flow
+      description: 'Declines a broadcast flow and requests edits. This endpoint creates a review event and updates the broadcast flow status to needs-edit.
+
+
+        **Requirements:**
+
+        - Only admins or managers can decline broadcast flows
+
+        - A `statusReason` must be provided explaining the required changes
+
+        - The `statusReason` must be between 1 and 400 characters
+
+        - Only the root broadcast flow (not child batches) can be reviewed
+
+
+        **Actions:**
+
+        - Creates a BroadcastEvent of type ''review'' with declined status
+
+        - Updates the broadcast flow status to `needs-edit`
+
+        - Records the reviewer, review timestamp, and required changes
+
+        '
+      operationId: broadcastFlowsDecline
+      tags:
+      - broadcastFlows
+      requestBody:
+        description: The reason for declining the broadcast flow
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - statusReason
+              properties:
+                statusReason:
+                  type: string
+                  description: Required explanation of what changes are needed
+                  minLength: 1
+                  maxLength: 400
+                  example: Please update the message content to be more clear and fix the typo in the subject line.
+              additionalProperties: false
+      responses:
+        '200':
+          description: Broadcast flow declined successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - broadcastFlow
+                - broadcastEvent
+                properties:
+                  broadcastFlow:
+                    $ref: '#/components/schemas/BroadcastFlow'
+                  broadcastEvent:
+                    $ref: '#/components/schemas/BroadcastEvent'
+                additionalProperties: false
+        '400':
+          description: 'Invalid request. Possible reasons:
+
+            - Missing or invalid broadcast flow ID
+
+            - Missing required changes text (statusReason)
+
+            - Required changes text exceeds 400 characters
+
+            '
+        '401':
+          description: Not authenticated
+        '403':
+          description: 'Not authorized. Possible reasons:
+
+            - User is not an admin or manager
+
+            - Cannot review a child broadcast flow (must be root)
+
+            '
+        '404':
+          description: Broadcast flow not found
+        '500':
+          description: Internal server error
+  /broadcastFlows/update-mapping/{broadcastFlowId}:
+    parameters:
+    - name: broadcastFlowId
+      in: path
+      required: true
+      schema:
+        type: string
+      description: The ID of the broadcast flow to update mapping for
+    put:
+      summary: Update broadcast flow mapping
+      description: Updates the file mapping configuration for a broadcast flow. The broadcast flow must be in DRAFT or PENDING_MAPPING status.
+      operationId: broadcastFlowsUpdateMapping
+      tags:
+      - broadcastFlows
+      requestBody:
+        description: The mapping configuration to update
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - mapping
+              properties:
+                mapping:
+                  type: object
+                  description: The file mapping configuration object
+                  additionalProperties: true
+              additionalProperties: false
+      responses:
+        '200':
+          description: Broadcast flow mapping updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BroadcastFlow'
+        '400':
+          description: Invalid request - broadcast flow not in valid status for mapping update
+        '401':
+          description: Not authenticated
+        '403':
+          description: Not authorized
+        '404':
+          description: Broadcast flow or mapping not found
+        '500':
+          description: Internal server error
+components:
+  parameters:
+    pageParam:
+      in: query
+      name: page
+      required: false
+      type: integer
+      format: int32
+      default: 1
+      minimum: 1
+      schema:
+        type: integer
+        format: int32
+        default: 1
+        minimum: 1
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
+    updatedByParam:
+      in: query
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+    populateParam:
+      name: _populate
+      in: query
+      description: Response properties which will be replaced by the referenced objects, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    selectParam:
+      name: _select
+      in: query
+      description: Response properties that should be returned, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+    limitParam:
+      name: limit
+      in: query
+      description: How many items to fetch per page
+      required: false
+      type: integer
+      format: int32
+      default: 500
+      minimum: 1
+      maximum: 1000
+      schema:
+        type: integer
+        format: int32
+        default: 500
+        minimum: 1
+        maximum: 1000
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+  schemas:
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+    idParam:
+      in: query
+      name: _id
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      required: false
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: Luma's internal ID of an object.
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
+    updatedByParam:
+      in: query
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
+    BroadcastFlow:
+      type: object
+      description: A BroadcastFlow represents a bulk patient outreach campaign that sends the same message via SMS, email, or voice to a batch of patients, either from an uploaded contact file, an SFTP feed, or a filtered set of appointments. It tracks the full lifecycle of that campaign including upload and column mapping, optional approval review, scheduling, batched message sending, and per-row success and failure statistics, and can be organized into parent and child flows for large batches, commonly used for patient recall and other mass communications.
+      properties:
+        _id:
+          $ref: '#/components/schemas/idParam'
+        user:
+          $ref: '#/components/schemas/userParam'
+        deleted:
+          $ref: '#/components/schemas/deletedParam'
+        createdBy:
+          $ref: '#/components/schemas/createdByParam'
+        updatedBy:
+          $ref: '#/components/schemas/updatedByParam'
+        createdAt:
+          $ref: '#/components/schemas/createdAtParam'
+        updatedAt:
+          $ref: '#/components/schemas/updatedAtParam'
+        title:
+          type: string
+          required: true
+        type:
+          type: string
+          required: true
+          enum:
+          - scheduled
+          - uploaded
+          - sftp
+        parentBroadcastFlow:
+          $ref: '#/components/schemas/idParam'
+        campaign:
+          $ref: '#/components/schemas/idParam'
+        broadcastTemplate:
+          $ref: '#/components/schemas/idParam'
+        patientMessageTemplate:
+          $ref: '#/components/schemas/idParam'
+        review:
+          type: object
+          properties:
+            user:
+              $ref: '#/components/schemas/idParam'
+            status:
+              type: string
+              enum:
+              - approved
+              - declined
+            declinedReason:
+              type: string
+        message:
+          type: string
+          required: true
+        messageOverrides:
+          type: array
+          items:
+            type: object
+            properties:
+              text:
+                type: string
+              language:
+                type: string
+              channel:
+                type: string
+              subject:
+                type: string
+              patientMessageTemplate:
+                $ref: '#/components/schemas/idParam'
+              secureChat:
+                type: boolean
+        sendAt:
+          type: string
+          format: date-time
+        sentAt:
+          type: string
+          format: date-time
+        configuration:
+          type: object
+          properties:
+            secureChat:
+              type: boolean
+              default: false
+            contactPreference:
+              type: string
+              required: true
+              enum:
+              - all-contacts
+              - primary-contact-only
+              - uploaded-contact-only
+            simulate:
+              type: boolean
+            shouldReprocessFilters:
+              type: boolean
+              default: false
+        processingStatus:
+          type: string
+          enum:
+          - pre-processing
+          - processing-upload
+          - rows-processed
+          - sending-messages
+          - success
+          - failure
+        upload:
+          $ref: '#/components/schemas/idParam'
+        fileUpload:
+          $ref: '#/components/schemas/idParam'
+        mapping:
+          $ref: '#/components/schemas/idParam'
+        rowCount:
+          type: integer
+        stats:
+          type: object
+          properties:
+            totalMessagesSent:
+              type: integer
+            messagesSuccess:
+              type: integer
+            messagesFailed:
+              type: integer
+            messagesSkipped:
+              type: integer
+    BroadcastEvent:
+      type: object
+      description: A BroadcastEvent records a single unit of work within a Luma broadcast flow, a bulk outbound messaging campaign sent to many patients at once (for example a recall or announcement uploaded as a spreadsheet). Each event tracks either a review action taken on the flow or the processing of one row or patient, including its current step (message queued, sent, failed, or skipped), any error encountered, and links to the associated patient and appointment.
+      properties:
+        _id:
+          $ref: '#/components/schemas/idParam'
+        user:
+          $ref: '#/components/schemas/userParam'
+        deleted:
+          $ref: '#/components/schemas/deletedParam'
+        createdBy:
+          $ref: '#/components/schemas/createdByParam'
+        updatedBy:
+          $ref: '#/components/schemas/updatedByParam'
+        createdAt:
+          $ref: '#/components/schemas/createdAtParam'
+        updatedAt:
+          $ref: '#/components/schemas/updatedAtParam'
+        broadcastFlow:
+          $ref: '#/components/schemas/idParam'
+          required: true
+        patient:
+          $ref: '#/components/schemas/idParam'
+        statuses:
+          type: array
+          items:
+            type: object
+            properties:
+              step:
+                type: string
+                required: true
+                enum:
+                - RowProcess
+                - MessageProcess
+              status:
+                type: string
+                required: true
+                enum:
+                - in-progress
+                - success
+                - failure
+                - skipped
+              stepCreatedAt:
+                type: string
+                format: date-time
+                required: true
+              stepUpdatedAt:
+                type: string
+                format: date-time
+                required: true
+              patient:
+                $ref: '#/components/schemas/idParam'
+              retryCount:
+                type: integer
+        row:
+          type: integer
+        rowRecord:
+          type: object
+          additionalProperties:
+            type: string
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+  securitySchemes:
+    Bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

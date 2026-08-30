@@ -1,0 +1,484 @@
+openapi: 3.2.0
+info:
+  version: 2.0.0
+  title: Rest-Service Patient Credit Cards API
+  x-logo:
+    url: https://lumahealth-assets.s3.us-west-2.amazonaws.com/new_luma_logo_black.png
+    backgroundColor: '#FFFFFF'
+    altText: Luma Health
+  description: OpenAPI [Basic Structure](https://swagger.io/docs/specification/basic-structure/)
+servers:
+- url: https://api.lumahealth.io/api/v2
+security:
+- Bearer: []
+tags:
+- name: patientCreditCards
+  description: Luma Health patient credit cards
+paths:
+  /patientCreditCards:
+    get:
+      summary: List patient credit cards
+      operationId: patientCreditCardsList
+      tags:
+      - patientCreditCards
+      parameters:
+      - name: _id
+        in: query
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: externalId
+        in: query
+        schema:
+          type: object
+          properties:
+            source:
+              type: string
+            value:
+              type: string
+      - name: patient
+        in: query
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: cardIssuer
+        in: query
+        schema:
+          type: string
+      - name: lastFourDigits
+        in: query
+        schema:
+          type: string
+      - name: expMonth
+        in: query
+        schema:
+          type: string
+      - name: expYear
+        in: query
+        schema:
+          type: string
+      - $ref: '#/components/parameters/userParam'
+      - $ref: '#/components/parameters/deletedParam'
+      - $ref: '#/components/parameters/createdByParam'
+      - $ref: '#/components/parameters/updatedByParam'
+      - $ref: '#/components/parameters/createdAtParam'
+      - $ref: '#/components/parameters/updatedAtParam'
+      - $ref: '#/components/parameters/pageParam'
+      - $ref: '#/components/parameters/limitParam'
+      - $ref: '#/components/parameters/populateParam'
+      - $ref: '#/components/parameters/selectParam'
+      responses:
+        '200':
+          description: List of patient credit cards
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - response
+                - page
+                - size
+                properties:
+                  response:
+                    type: array
+                    minItems: 0
+                    items:
+                      $ref: '#/components/schemas/PatientCreditCard'
+                  page:
+                    type: integer
+                    format: int32
+                    minimum: 1
+                  size:
+                    type: integer
+                    format: int32
+                    minimum: 0
+                additionalProperties: false
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+    post:
+      summary: Create patient credit cards
+      operationId: patientCreditCardCreate
+      tags:
+      - patientCreditCards
+      requestBody:
+        description: Create an patient credit card
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatientCreditCard'
+      responses:
+        '201':
+          description: Successful creation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatientCreditCard'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /patientCreditCards/{patientCreditCardId}:
+    get:
+      summary: Get patient credit card by id
+      operationId: patientCreditCardGet
+      tags:
+      - patientCreditCards
+      parameters:
+      - name: patientCreditCardId
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      responses:
+        '200':
+          description: PatientCreditCard
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatientCreditCard'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+    put:
+      summary: Update an patient credit card
+      operationId: patientCreditCardUpdate
+      tags:
+      - patientCreditCards
+      parameters:
+      - name: patientCreditCardId
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      requestBody:
+        description: An patient credit card (full or partial) to be updated
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatientCreditCard'
+      responses:
+        '200':
+          description: PatientCreditCard
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatientCreditCard'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+    delete:
+      summary: Delete an patient credit card
+      operationId: patientCreditCardDelete
+      tags:
+      - patientCreditCards
+      parameters:
+      - name: patientCreditCardId
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      responses:
+        '200':
+          description: Deleted patient credit card
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatientCreditCard'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+components:
+  parameters:
+    pageParam:
+      in: query
+      name: page
+      required: false
+      type: integer
+      format: int32
+      default: 1
+      minimum: 1
+      schema:
+        type: integer
+        format: int32
+        default: 1
+        minimum: 1
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
+    updatedByParam:
+      in: query
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+    populateParam:
+      name: _populate
+      in: query
+      description: Response properties which will be replaced by the referenced objects, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    selectParam:
+      name: _select
+      in: query
+      description: Response properties that should be returned, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+    limitParam:
+      name: limit
+      in: query
+      description: How many items to fetch per page
+      required: false
+      type: integer
+      format: int32
+      default: 500
+      minimum: 1
+      maximum: 1000
+      schema:
+        type: integer
+        format: int32
+        default: 500
+        minimum: 1
+        maximum: 1000
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+  schemas:
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    idParam:
+      in: query
+      name: _id
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      required: false
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: Luma's internal ID of an object.
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
+    updatedByParam:
+      in: query
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+    PatientCreditCard:
+      type: object
+      description: A saved credit card on file for a patient, used to charge co-pays, invoices, and other balances without requiring the patient to re-enter card details each time. It stores a reference to the patient, a pointer to the card record held by the external payment processor such as Stripe, and non-sensitive display details like the card issuer, last four digits, and expiration month and year. The actual card number and full payment credentials are never stored here, only in the external payment vendor.
+      required:
+      - _id
+      - patient
+      - externalId
+      properties:
+        _id:
+          $ref: '#/components/schemas/idParam'
+        user:
+          $ref: '#/components/schemas/userParam'
+        deleted:
+          $ref: '#/components/schemas/deletedParam'
+        createdBy:
+          $ref: '#/components/schemas/createdByParam'
+        updatedBy:
+          $ref: '#/components/schemas/updatedByParam'
+        createdAt:
+          $ref: '#/components/schemas/createdAtParam'
+        updatedAt:
+          $ref: '#/components/schemas/updatedAtParam'
+        patient:
+          type: string
+        externalId:
+          type: object
+          properties:
+            source:
+              type: string
+            value:
+              type: string
+        cardIssuer:
+          type: string
+        lastFourDigits:
+          type: string
+        expMonth:
+          type: string
+        expYear:
+          type: string
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+  securitySchemes:
+    Bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

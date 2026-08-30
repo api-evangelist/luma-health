@@ -1,0 +1,553 @@
+openapi: 3.2.0
+info:
+  version: 2.0.0
+  title: Rest-Service Custom Web Styles API
+  x-logo:
+    url: https://lumahealth-assets.s3.us-west-2.amazonaws.com/new_luma_logo_black.png
+    backgroundColor: '#FFFFFF'
+    altText: Luma Health
+  description: OpenAPI [Basic Structure](https://swagger.io/docs/specification/basic-structure/)
+servers:
+- url: https://api.lumahealth.io/api/v2
+security:
+- Bearer: []
+tags:
+- name: customWebStyles
+  description: custom styles, CSS, logo images for customers
+paths:
+  /customWebStyles:
+    get:
+      summary: List customWebStyles
+      operationId: customWebStylesList
+      tags:
+      - customWebStyles
+      parameters:
+      - name: description
+        in: query
+        schema:
+          type: string
+      - name: url
+        in: query
+        schema:
+          type: string
+      - name: scope
+        in: query
+        schema:
+          type: string
+      - $ref: '#/components/parameters/userParam'
+      - $ref: '#/components/parameters/deletedParam'
+      - $ref: '#/components/parameters/createdByParam'
+      - $ref: '#/components/parameters/updatedByParam'
+      - $ref: '#/components/parameters/createdAtParam'
+      - $ref: '#/components/parameters/updatedAtParam'
+      - $ref: '#/components/parameters/pageParam'
+      - $ref: '#/components/parameters/limitParam'
+      - $ref: '#/components/parameters/populateParam'
+      - $ref: '#/components/parameters/selectParam'
+      responses:
+        '200':
+          description: List of customWebStyles
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - response
+                - page
+                - size
+                properties:
+                  response:
+                    type: array
+                    minItems: 0
+                    items:
+                      $ref: '#/components/schemas/CustomWebStyleResponse'
+                  page:
+                    type: integer
+                    format: int32
+                    minimum: 1
+                  size:
+                    type: integer
+                    format: int32
+                    minimum: 0
+                additionalProperties: false
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+    post:
+      summary: Create a customWebStyle
+      operationId: customWebStyleCreate
+      tags:
+      - customWebStyles
+      requestBody:
+        description: CustomWebStyle to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomWebStylePost'
+      responses:
+        '201':
+          description: Successful creation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomWebStyleResponse'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /customWebStyles/{customWebStyleId}:
+    get:
+      summary: Get customWebStyle by id
+      operationId: customWebStyleGet
+      tags:
+      - customWebStyles
+      parameters:
+      - name: customWebStyleId
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      responses:
+        '200':
+          description: CustomWebStyle
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomWebStyleResponse'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+    put:
+      summary: Publish a customWebStyle
+      operationId: customWebStyleUpdate
+      tags:
+      - customWebStyles
+      parameters:
+      - name: customWebStyleId
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      requestBody:
+        description: A customWebStyle (full or partial) to be published
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomWebStylePut'
+      responses:
+        '200':
+          description: CustomWebStyle updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomWebStyleResponse'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+    delete:
+      summary: Delete a customWebStyle
+      operationId: customWebStyleDelete
+      tags:
+      - customWebStyles
+      parameters:
+      - name: customWebStyleId
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      responses:
+        '200':
+          description: Deleted customWebStyle
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomWebStyleResponse'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+components:
+  parameters:
+    pageParam:
+      in: query
+      name: page
+      required: false
+      type: integer
+      format: int32
+      default: 1
+      minimum: 1
+      schema:
+        type: integer
+        format: int32
+        default: 1
+        minimum: 1
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
+    updatedByParam:
+      in: query
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+    populateParam:
+      name: _populate
+      in: query
+      description: Response properties which will be replaced by the referenced objects, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    selectParam:
+      name: _select
+      in: query
+      description: Response properties that should be returned, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+    limitParam:
+      name: limit
+      in: query
+      description: How many items to fetch per page
+      required: false
+      type: integer
+      format: int32
+      default: 500
+      minimum: 1
+      maximum: 1000
+      schema:
+        type: integer
+        format: int32
+        default: 500
+        minimum: 1
+        maximum: 1000
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+  schemas:
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    idParam:
+      in: query
+      name: _id
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      required: false
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: Luma's internal ID of an object.
+    CustomWebStylePost:
+      type: object
+      required:
+      - scope
+      properties:
+        uploads:
+          description: Binary artifacts. Each item of the array must EITHER have the properties uploadName+fileName+extensin+fileBase64 OR uploadName+fileUpload+url. The first case requires the file data in Base64 to be uploaded. The second case requires you to only pass the fileUpload ID, a descriptive uploadName and the URL to access the fileUpload.
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required:
+            - uploadName
+            properties:
+              uploadName:
+                type: string
+              fileName:
+                type: string
+                pattern: ^[0-9a-zA-Z_.-]+$
+                minLength: 5
+                maxLength: 256
+              extension:
+                type: string
+                enum:
+                - jpg
+                - jpeg
+                - png
+                - gif
+                - svg
+                - heic
+              fileBase64:
+                type: string
+              url:
+                type: string
+        scope:
+          description: scope
+          type: array
+        styles:
+          description: styles
+          type: object
+          required:
+          - theme
+          properties:
+            theme:
+              type: object
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
+    updatedByParam:
+      in: query
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+    CustomWebStyleResponse:
+      type: object
+      description: Represents the custom branding and visual theme a healthcare organization applies to its patient-facing web experience, including uploaded logo files and theme settings such as color palette and text styles. It lets a practice visually customize its scheduling and patient portal pages to match its brand.
+      properties:
+        _id:
+          $ref: '#/components/schemas/idParam'
+        user:
+          $ref: '#/components/schemas/userParam'
+        deleted:
+          $ref: '#/components/schemas/deletedParam'
+        createdBy:
+          $ref: '#/components/schemas/createdByParam'
+        updatedBy:
+          $ref: '#/components/schemas/updatedByParam'
+        createdAt:
+          $ref: '#/components/schemas/createdAtParam'
+        updatedAt:
+          $ref: '#/components/schemas/updatedAtParam'
+        description:
+          description: customWebStyle
+          type: string
+        url:
+          description: DEPRECATED. Use uploads[i].url instead. The URL of the uploaded logo file.
+          type: string
+        uploads:
+          description: uploads
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required:
+            - uploadName
+            properties:
+              uploadName:
+                description: A friendly description of the uploaded file
+                type: string
+              fileName:
+                description: The file name in case the uploaded file gets downloaded.
+                type: string
+                pattern: ^[0-9a-zA-Z_.-]+$
+                minLength: 5
+                maxLength: 256
+              extension:
+                description: the file extension related to its format
+                type: string
+                enum:
+                - jpg
+                - jpeg
+                - png
+                - gif
+                - svg
+                - heic
+              fileBase64:
+                description: the binary data of the file being uploaded in Base64 format.
+                type: string
+              url:
+                description: the URL of the uploaded file.
+                type: string
+        scope:
+          description: scope
+          type: array
+        styles:
+          description: styles
+          type: object
+          required:
+          - theme
+          properties:
+            theme:
+              type: object
+        published:
+          description: published
+          type: boolean
+        publishedAt:
+          description: publishedAt
+          type: string
+          format: date-time
+        publishedBy:
+          description: ID of User
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+    CustomWebStylePut:
+      type: object
+      required:
+      - published
+      properties:
+        published:
+          description: published
+          type: boolean
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+  securitySchemes:
+    Bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

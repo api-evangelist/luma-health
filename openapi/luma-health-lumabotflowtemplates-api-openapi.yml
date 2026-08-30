@@ -1,0 +1,1029 @@
+openapi: 3.2.0
+info:
+  version: 2.0.0
+  title: Rest-Service Lumabot Flow Templates API
+  x-logo:
+    url: https://lumahealth-assets.s3.us-west-2.amazonaws.com/new_luma_logo_black.png
+    backgroundColor: '#FFFFFF'
+    altText: Luma Health
+  description: OpenAPI [Basic Structure](https://swagger.io/docs/specification/basic-structure/)
+servers:
+- url: https://api.lumahealth.io/api/v2
+security:
+- Bearer: []
+tags:
+- name: lumabotFlowTemplates
+  description: Templates for LumaBot flows
+paths:
+  /lumabotFlowTemplates:
+    get:
+      summary: Show a list of lumabotFlowTemplates
+      operationId: listLumabotFlowTemplates
+      tags:
+      - lumabotFlowTemplates
+      parameters:
+      - name: source
+        in: query
+        description: of the lumabot flow template
+        schema:
+          type: string
+          enum:
+          - system
+          - user
+      - name: externalId
+        in: query
+        description: The ID of externalId
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: description
+        in: query
+        description: description of the lumabot flow template
+        schema:
+          type: string
+      - name: flowType
+        in: query
+        description: type of the lumabot flow template
+        schema:
+          type: string
+          enum:
+          - pre-qualification
+          - welcome
+          - authenticate-patient
+          - speak-with-staff
+          - session-timeout
+          - knock-knock
+          - cul-de-sac
+          - feedback
+          - error
+          - regular
+      - name: active
+        in: query
+        description: active
+        schema:
+          type: boolean
+      - name: url
+        in: query
+        description: url of the lumabot flow template
+        schema:
+          type: string
+      - name: tag
+        in: query
+        description: tag of the lumabot flow template
+        schema:
+          type: string
+      - name: schedulerRequestInterceptor
+        in: query
+        description: schedulerRequestInterceptor
+        schema:
+          type: string
+      - name: schedulerResponseInterceptor
+        in: query
+        description: schedulerResponseInterceptor
+        schema:
+          type: string
+      - name: facilities
+        in: query
+        description: The IDs of the facilities associated with this form template
+        schema:
+          type: array
+          items:
+            type: string
+            pattern: '[0-9a-f]'
+            minLength: 24
+            maxLength: 24
+      - $ref: '#/components/parameters/userParam'
+      - $ref: '#/components/parameters/deletedParam'
+      - $ref: '#/components/parameters/createdByParam'
+      - $ref: '#/components/parameters/updatedByParam'
+      - $ref: '#/components/parameters/createdAtParam'
+      - $ref: '#/components/parameters/updatedAtParam'
+      - $ref: '#/components/parameters/pageParam'
+      - $ref: '#/components/parameters/limitParam'
+      - $ref: '#/components/parameters/populateParam'
+      - $ref: '#/components/parameters/selectParam'
+      responses:
+        '200':
+          description: Returns a list of lumabotFlowTemplates
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - response
+                - page
+                - size
+                properties:
+                  response:
+                    type: array
+                    minItems: 0
+                    items:
+                      $ref: '#/components/schemas/LumabotFlowTemplateResponse'
+                  page:
+                    type: integer
+                    format: int32
+                    minimum: 1
+                  size:
+                    type: integer
+                    format: int32
+                    minimum: 0
+                additionalProperties: false
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      summary: Create a lumabotFlowTemplate
+      operationId: lumabotFlowTemplateCreate
+      tags:
+      - lumabotFlowTemplates
+      requestBody:
+        description: Create a lumabotFlowTemplate
+        required: true
+        content:
+          application:json:
+            schema:
+              $ref: '#/components/schemas/LumabotFlowTemplateRequestCreate'
+      responses:
+        '201':
+          description: Successful creation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LumabotFlowTemplateResponse'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+  /lumabotFlowTemplates/{lumabotFlowTemplateId}:
+    get:
+      summary: Get lumabotFlowTemplate by id
+      operationId: lumabotFlowTemplateGet
+      tags:
+      - lumabotFlowTemplates
+      parameters:
+      - name: lumabotFlowTemplateId
+        in: path
+        required: true
+        description: LumabotFlowTemplates' unique identifier in Luma's database.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      responses:
+        '200':
+          description: LumabotFlowTemplate
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LumabotFlowTemplateResponse'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+    put:
+      summary: Update a lumabotFlowTemplate
+      operationId: lumabotFlowTemplateUpdate
+      tags:
+      - lumabotFlowTemplates
+      parameters:
+      - name: lumabotFlowTemplateId
+        in: path
+        required: true
+        description: LumabotFlowTemplates' unique identifier in Luma's database.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      requestBody:
+        description: A lumabotFlowTemplate (full or partial) to be updated
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LumabotFlowTemplateRequestUpdate'
+      responses:
+        '200':
+          description: LumabotFlowTemplate
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LumabotFlowTemplateResponse'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+    delete:
+      summary: Delete a lumabotFlowTemplate
+      operationId: lumabotFlowTemplateDelete
+      tags:
+      - lumabotFlowTemplates
+      parameters:
+      - name: lumabotFlowTemplateId
+        in: path
+        required: true
+        description: LumabotFlowTemplates' unique identifier in Luma's database.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      responses:
+        '200':
+          description: Deleted lumabotFlowTemplate
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LumabotFlowTemplateResponse'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+components:
+  parameters:
+    pageParam:
+      in: query
+      name: page
+      required: false
+      type: integer
+      format: int32
+      default: 1
+      minimum: 1
+      schema:
+        type: integer
+        format: int32
+        default: 1
+        minimum: 1
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
+    updatedByParam:
+      in: query
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+    populateParam:
+      name: _populate
+      in: query
+      description: Response properties which will be replaced by the referenced objects, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    selectParam:
+      name: _select
+      in: query
+      description: Response properties that should be returned, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+    limitParam:
+      name: limit
+      in: query
+      description: How many items to fetch per page
+      required: false
+      type: integer
+      format: int32
+      default: 500
+      minimum: 1
+      maximum: 1000
+      schema:
+        type: integer
+        format: int32
+        default: 500
+        minimum: 1
+        maximum: 1000
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+  schemas:
+    LumabotFlowTemplateRequestUpdate:
+      type: object
+      properties:
+        source:
+          description: source of the lumabot flow template
+          type: string
+          enum:
+          - system
+          - user
+        title:
+          description: title of the lumabot flow template
+          type: string
+        description:
+          description: description of the lumabot flow template
+          type: string
+        active:
+          description: describes if the lumabot flow template is active
+          type: boolean
+        url:
+          description: url of the lumabot flow template
+          type: string
+        tag:
+          description: tag of the lumabot flow template which is used to build the squiggly
+          type: string
+        template:
+          description: template of the lumabot flow template
+          type: object
+          properties:
+            items:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  type:
+                    type: string
+                    enum:
+                    - 2FA
+                    - address
+                    - availability_details
+                    - date
+                    - dropdown
+                    - email
+                    - jump
+                    - manage_appointment
+                    - medication_search
+                    - multiple_choice
+                    - pharmacy_search
+                    - phone_number
+                    - scheduler
+                    - ssn
+                    - template_welcome
+                    - template
+                    - text
+                    - yes_no
+                    - zipcode
+                  squiggly:
+                    type: string
+                  title:
+                    type: string
+                  redirectType:
+                    type: string
+                    enum:
+                    - none
+                    - goTo
+                    - goToFlow
+                    - goToPrevious
+                    - isFinal
+                    - externalUrl
+                    - scheduler
+                  redirectValue:
+                    type: string
+                  validations:
+                    type: object
+                    properties:
+                      required:
+                        type: boolean
+                  properties:
+                    type: object
+                    properties:
+                      template:
+                        type: string
+                      visibility:
+                        type: string
+                      notifyStaff:
+                        description: notify staff when a question is answered
+                        type: boolean
+                      sendToHub:
+                        description: send the answers to hub when a question is answered
+                        type: boolean
+                      scoringEnabled:
+                        type: boolean
+                      params:
+                        type: object
+                      answers:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                          redirectType:
+                            type: string
+                            enum:
+                            - none
+                            - goTo
+                            - goToFlow
+                            - goToPrevious
+                            - isFinal
+                            - externalUrl
+                            - scheduler
+                          redirectValue:
+                            type: string
+                          label:
+                            type: string
+                          score:
+                            type: number
+                          locales:
+                            description: A map-object whose keys may be any of these language codes `es` or `pt`
+                            type: object
+                            properties:
+                              es:
+                                type: object
+                                properties:
+                                  description:
+                                    description: the translation of the description of the question into spanish
+                                    type: string
+                                  title:
+                                    description: the translation of the title of the question into spanish
+                                    type: string
+                                  properties:
+                                    type: object
+                              pt:
+                                type: object
+                                properties:
+                                  description:
+                                    description: the translation of the description of the question into portuguese
+                                    type: string
+                                  title:
+                                    description: the translation of the title of the question into portuguese
+                                    type: string
+                                  properties:
+                                    type: object
+                          disable:
+                            type: boolean
+                          properties:
+                            type: object
+                            properties:
+                              params:
+                                type: object
+        schedulerRequestInterceptor:
+          description: schedulerRequestInterceptor of the lumabot flow template
+          type: string
+        schedulerResponseInterceptor:
+          description: schedulerResponseInterceptor of the lumabot flow template
+          type: string
+        flowType:
+          description: type of the lumabot flow template
+          type: string
+          enum:
+          - welcome
+          - authenticate-patient
+          - speak-with-staff
+          - session-timeout
+          - knock-knock
+          - cul-de-sac
+          - feedback
+          - error
+          - no-availabilities
+          - regular
+        facilities:
+          description: list of facility ids the flow template is associated with
+          type: array
+          items:
+            type: string
+            pattern: '[0-9a-f]'
+            minLength: 24
+            maxLength: 24
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    LumabotFlowTemplateResponse:
+      type: object
+      description: A Lumabot flow template is a reusable definition for a conversational chatbot flow made up of ordered question and answer items such as text, dropdown, scheduler, or medication search steps. Templates can be system provided or created by a user and are cloned or referenced to build actual Lumabot flows shown to patients, supporting features like scoring, staff notifications, scheduler request and response interception, and mapping collected answers into a format that EHR or scheduling integrators can consume. This response schema returns the stored template record including its ownership, audit fields such as createdBy and updatedBy, and its active status, in addition to the template body itself.
+      properties:
+        _id:
+          $ref: '#/components/schemas/idParam'
+        user:
+          $ref: '#/components/schemas/userParam'
+        deleted:
+          $ref: '#/components/schemas/deletedParam'
+        createdBy:
+          $ref: '#/components/schemas/createdByParam'
+        updatedBy:
+          $ref: '#/components/schemas/updatedByParam'
+        createdAt:
+          $ref: '#/components/schemas/createdAtParam'
+        updatedAt:
+          $ref: '#/components/schemas/updatedAtParam'
+        source:
+          description: source of the lumabot flow template
+          type: string
+          enum:
+          - system
+          - user
+        title:
+          description: title of the lumabot flow template
+          type: string
+        description:
+          description: description of the lumabot flow template
+          type: string
+        active:
+          description: describes if the lumabot flow template is active
+          type: boolean
+        url:
+          description: url of the lumabot flow template
+          type: string
+        tag:
+          description: tag of the lumabot flow template which is used to build the squiggly
+          type: string
+        template:
+          description: template of the lumabot flow template
+          type: object
+          properties:
+            items:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  type:
+                    type: string
+                    enum:
+                    - 2FA
+                    - address
+                    - availability_details
+                    - date
+                    - dropdown
+                    - email
+                    - jump
+                    - manage_appointment
+                    - medication_search
+                    - multiple_choice
+                    - pharmacy_search
+                    - phone_number
+                    - scheduler
+                    - ssn
+                    - template_welcome
+                    - template
+                    - text
+                    - yes_no
+                    - zipcode
+                  squiggly:
+                    type: string
+                  title:
+                    type: string
+                  redirectType:
+                    type: string
+                    enum:
+                    - none
+                    - goTo
+                    - goToFlow
+                    - goToPrevious
+                    - isFinal
+                    - externalUrl
+                    - scheduler
+                  redirectValue:
+                    type: string
+                  validations:
+                    type: object
+                    properties:
+                      required:
+                        type: boolean
+                  properties:
+                    type: object
+                    properties:
+                      template:
+                        type: string
+                      visibility:
+                        type: string
+                      notifyStaff:
+                        description: notify staff when a question is answered
+                        type: boolean
+                      sendToHub:
+                        description: send the answers to hub when a question is answered
+                        type: boolean
+                      scoringEnabled:
+                        type: boolean
+                      params:
+                        type: object
+                      answers:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                          redirectType:
+                            type: string
+                            enum:
+                            - none
+                            - goTo
+                            - goToFlow
+                            - goToPrevious
+                            - isFinal
+                            - externalUrl
+                            - scheduler
+                          redirectValue:
+                            type: string
+                          label:
+                            type: string
+                          score:
+                            type: number
+                          locales:
+                            description: A map-object whose keys may be any of these language codes `es` or `pt`
+                            type: object
+                            properties:
+                              es:
+                                type: object
+                                properties:
+                                  description:
+                                    description: the translation of the description of the question into spanish
+                                    type: string
+                                  title:
+                                    description: the translation of the title of the question into spanish
+                                    type: string
+                                  properties:
+                                    type: object
+                              pt:
+                                type: object
+                                properties:
+                                  description:
+                                    description: the translation of the description of the question into portuguese
+                                    type: string
+                                  title:
+                                    description: the translation of the title of the question into portuguese
+                                    type: string
+                                  properties:
+                                    type: object
+                          disable:
+                            type: boolean
+                          properties:
+                            type: object
+                            properties:
+                              params:
+                                type: object
+        schedulerRequestInterceptor:
+          description: schedulerRequestInterceptor of the lumabot flow template
+          type: string
+        schedulerResponseInterceptor:
+          description: schedulerResponseInterceptor of the lumabot flow template
+          type: string
+        flowType:
+          description: type of the lumabot flow template
+          type: string
+          enum:
+          - welcome
+          - authenticate-patient
+          - speak-with-staff
+          - session-timeout
+          - knock-knock
+          - cul-de-sac
+          - feedback
+          - error
+          - no-availabilities
+          - regular
+        facilities:
+          description: list of facility ids the flow template is associated with
+          type: array
+          items:
+            type: string
+            pattern: '[0-9a-f]'
+            minLength: 24
+            maxLength: 24
+    idParam:
+      in: query
+      name: _id
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      required: false
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: Luma's internal ID of an object.
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
+    updatedByParam:
+      in: query
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
+    LumabotFlowTemplateRequestCreate:
+      type: object
+      required:
+      - source
+      properties:
+        source:
+          description: source of the lumabot flow template
+          type: string
+          enum:
+          - system
+          - user
+        title:
+          description: title of the lumabot flow template
+          type: string
+        description:
+          description: description of the lumabot flow template
+          type: string
+        active:
+          description: describes if the lumabot flow template is active
+          type: boolean
+        url:
+          description: url of the lumabot flow template
+          type: string
+        tag:
+          description: tag of the lumabot flow template which is used to build the squiggly
+          type: string
+        template:
+          description: template of the lumabot flow template
+          type: object
+          properties:
+            items:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  type:
+                    type: string
+                    enum:
+                    - 2FA
+                    - address
+                    - availability_details
+                    - date
+                    - dropdown
+                    - email
+                    - jump
+                    - manage_appointment
+                    - medication_search
+                    - multiple_choice
+                    - pharmacy_search
+                    - phone_number
+                    - scheduler
+                    - ssn
+                    - template_welcome
+                    - template
+                    - text
+                    - yes_no
+                    - zipcode
+                  squiggly:
+                    type: string
+                  title:
+                    type: string
+                  redirectType:
+                    type: string
+                    enum:
+                    - none
+                    - goTo
+                    - goToFlow
+                    - goToPrevious
+                    - isFinal
+                    - externalUrl
+                    - scheduler
+                  redirectValue:
+                    type: string
+                  validations:
+                    type: object
+                    properties:
+                      required:
+                        type: boolean
+                  properties:
+                    type: object
+                    properties:
+                      template:
+                        type: string
+                      visibility:
+                        type: string
+                      notifyStaff:
+                        description: notify staff when a question is answered
+                        type: boolean
+                      sendToHub:
+                        description: send the answers to hub when a question is answered
+                        type: boolean
+                      scoringEnabled:
+                        type: boolean
+                      params:
+                        type: object
+                      answers:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                          redirectType:
+                            type: string
+                            enum:
+                            - none
+                            - goTo
+                            - goToFlow
+                            - goToPrevious
+                            - isFinal
+                            - externalUrl
+                            - scheduler
+                          redirectValue:
+                            type: string
+                          label:
+                            type: string
+                          score:
+                            type: number
+                          locales:
+                            description: A map-object whose keys may be any of these language codes `es` or `pt`
+                            type: object
+                            properties:
+                              es:
+                                type: object
+                                properties:
+                                  description:
+                                    description: the translation of the description of the question into spanish
+                                    type: string
+                                  title:
+                                    description: the translation of the title of the question into spanish
+                                    type: string
+                                  properties:
+                                    type: object
+                              pt:
+                                type: object
+                                properties:
+                                  description:
+                                    description: the translation of the description of the question into portuguese
+                                    type: string
+                                  title:
+                                    description: the translation of the title of the question into portuguese
+                                    type: string
+                                  properties:
+                                    type: object
+                          disable:
+                            type: boolean
+                          properties:
+                            type: object
+                            properties:
+                              params:
+                                type: object
+        schedulerRequestInterceptor:
+          description: schedulerRequestInterceptor of the lumabot flow template
+          type: string
+        schedulerResponseInterceptor:
+          description: schedulerResponseInterceptor of the lumabot flow template
+          type: string
+        flowType:
+          description: type of the lumabot flow template
+          type: string
+          enum:
+          - welcome
+          - authenticate-patient
+          - speak-with-staff
+          - session-timeout
+          - knock-knock
+          - cul-de-sac
+          - feedback
+          - error
+          - no-availabilities
+          - regular
+        facilities:
+          description: list of facility ids the flow template is associated with
+          type: array
+          items:
+            type: string
+            pattern: '[0-9a-f]'
+            minLength: 24
+            maxLength: 24
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+  securitySchemes:
+    Bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

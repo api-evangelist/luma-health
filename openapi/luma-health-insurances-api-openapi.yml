@@ -1,0 +1,526 @@
+openapi: 3.2.0
+info:
+  version: 2.0.0
+  title: Rest-Service Insurances API
+  x-logo:
+    url: https://lumahealth-assets.s3.us-west-2.amazonaws.com/new_luma_logo_black.png
+    backgroundColor: '#FFFFFF'
+    altText: Luma Health
+  description: OpenAPI [Basic Structure](https://swagger.io/docs/specification/basic-structure/)
+servers:
+- url: https://api.lumahealth.io/api/v2
+security:
+- Bearer: []
+tags:
+- name: insurances
+  description: Patient insurance coverage records
+paths:
+  /insurances/eligibility/verification/{insuranceId}:
+    post:
+      summary: Check eligibility for a single insurance
+      description: Runs a real-time eligibility verification check for one insurance against the account's configured eligibility integrator.
+      operationId: insuranceCheckEligibility
+      tags:
+      - insurances
+      parameters:
+      - name: insuranceId
+        in: path
+        required: true
+        description: Insurance's unique identifier in Luma's database.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      requestBody:
+        description: Additional data to pass to the eligibility check
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: The eligibility check result
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+  /insurances/eligibility/verification:
+    post:
+      summary: Check eligibility for multiple insurances
+      description: Runs eligibility verification checks for multiple insurances in a single call.
+      operationId: insuranceCheckEligibilityBulk
+      tags:
+      - insurances
+      requestBody:
+        description: The insurances to check
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: The eligibility check results
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+  /insurances/writeback/{insuranceId}:
+    post:
+      summary: Mark a single insurance as staff-reviewed and queue it for writeback
+      description: Marks the insurance as staff-approved, sets it up to be written back to the EHR integrator, and stamps who reviewed it and when.
+      operationId: insuranceWriteback
+      tags:
+      - insurances
+      parameters:
+      - name: insuranceId
+        in: path
+        required: true
+        description: Insurance's unique identifier in Luma's database.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      requestBody:
+        description: Who reviewed this insurance. Defaults to the authenticated user.
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reviewedBy:
+                  type: string
+                  description: ID of the user who reviewed this insurance.
+                  pattern: '[0-9a-f]'
+                  minLength: 24
+                  maxLength: 24
+      responses:
+        '200':
+          description: The updated insurance
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InsuranceResponse'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+  /insurances/writeback:
+    post:
+      summary: Review and queue multiple insurances for writeback
+      description: Bulk sets the staff review status across multiple insurances. The new review status is only applied to insurances whose current review status is `pending` or unset.
+      operationId: insuranceWritebackBulk
+      tags:
+      - insurances
+      requestBody:
+        description: The insurances to review
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - insuranceIds
+              properties:
+                insuranceIds:
+                  type: array
+                  description: IDs of the insurances to review.
+                  minItems: 1
+                  items:
+                    type: string
+                    pattern: '[0-9a-f]'
+                    minLength: 24
+                    maxLength: 24
+                staffReview:
+                  type: boolean
+                  description: When true, the new review status is `pending`; when false, `ignored`.
+      responses:
+        '200':
+          description: The updated insurances
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/InsuranceResponse'
+        '400':
+          description: Invalid insuranceIds
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+  /insurances/archive:
+    put:
+      summary: Archive a list of insurances
+      description: Bulk-archives the given insurances, marking each as inactive and no longer primary.
+      operationId: insuranceArchiveBulk
+      tags:
+      - insurances
+      requestBody:
+        description: The insurances to archive
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - insurances
+              properties:
+                insurances:
+                  type: array
+                  description: IDs of the insurances to archive.
+                  minItems: 1
+                  items:
+                    type: string
+                    pattern: '[0-9a-f]'
+                    minLength: 24
+                    maxLength: 24
+                appointment:
+                  type: string
+                  description: ID of an appointment to stamp onto each archived insurance.
+                  pattern: '[0-9a-f]'
+                  minLength: 24
+                  maxLength: 24
+      responses:
+        '200':
+          description: The updated insurances
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/InsuranceResponse'
+        '400':
+          description: Invalid insurances
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+components:
+  schemas:
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
+    updatedByParam:
+      in: query
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+    InsuranceResponse:
+      type: object
+      description: Represents a patient's insurance coverage record, including subscriber and member details, the insurance card images, plan and payor information, and the current verification, integrator-sync, and staff-review status. An Insurance is always linked to a Patient and may optionally reference a known InsurancePayor for writeback validation.
+      properties:
+        _id:
+          $ref: '#/components/schemas/idParam'
+        user:
+          $ref: '#/components/schemas/userParam'
+        deleted:
+          $ref: '#/components/schemas/deletedParam'
+        createdBy:
+          $ref: '#/components/schemas/createdByParam'
+        updatedBy:
+          $ref: '#/components/schemas/updatedByParam'
+        createdAt:
+          $ref: '#/components/schemas/createdAtParam'
+        updatedAt:
+          $ref: '#/components/schemas/updatedAtParam'
+        planName:
+          type: string
+          description: Name of the insurance plan.
+        memberName:
+          type: string
+          description: The person's name as printed on the insurance card.
+        memberNumber:
+          type: string
+          description: The subscriber's ID number on the insurance card.
+        subscriber:
+          type: object
+          description: The subscriber of the insurance plan, if different from the patient.
+          properties:
+            firstname:
+              type: string
+            lastname:
+              type: string
+            dateOfBirth:
+              type: object
+              properties:
+                year:
+                  type: integer
+                month:
+                  type: integer
+                day:
+                  type: integer
+        insuranceGroupName:
+          type: string
+          description: Group name or code printed on the insurance card.
+        url:
+          type: string
+          description: URL of the front-of-card image.
+        urlBack:
+          type: string
+          description: URL of the back-of-card image.
+        fileUpload:
+          type: string
+          description: ID of the FileUpload for the front-of-card image.
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        fileUploadBack:
+          type: string
+          description: ID of the FileUpload for the back-of-card image.
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        active:
+          type: boolean
+          description: Whether this insurance is currently active for the patient.
+          default: true
+        status:
+          type: string
+          description: Lifecycle status of the insurance record, aligned with the HL7 FHIR fm-status value set.
+          default: draft
+          enum:
+          - archived
+          - active
+          - cancelled
+          - draft
+          - entered-in-error
+        patient:
+          type: string
+          description: ID of the patient this insurance belongs to.
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        relationshipToSubscriber:
+          type: object
+          description: The patient's relationship to the subscriber, per the HL7 subscriber relationship code set.
+          properties:
+            code:
+              type: string
+            label:
+              type: string
+        externalId:
+          type: object
+          description: External identifier for this insurance in an integrated EHR.
+          properties:
+            source:
+              type: string
+            value:
+              type: string
+        payerId:
+          type: string
+          description: The payer identifier, as required by third-party eligibility/verification APIs.
+        payerName:
+          type: string
+          description: The payer's display name.
+        payor:
+          type: string
+          description: ID of the InsurancePayor this insurance's payer is matched to.
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        dependentId:
+          type: string
+          description: The patient's dependent identification string, if the patient is a dependent of the subscriber.
+        startDate:
+          type: string
+          format: date-time
+        endDate:
+          type: string
+          format: date-time
+        primary:
+          type: boolean
+          description: Whether this is the patient's primary insurance. Only one insurance per patient can be primary.
+          default: false
+        integratorStatus:
+          type: string
+          description: Status of writing this insurance back to the EHR integrator.
+          enum:
+          - success
+          - pending
+          - failed
+          - skipped
+        integratorResults:
+          type: object
+          description: The results of the last writeback attempt to the integrator.
+          properties:
+            message:
+              type: string
+            lastAttemptedAt:
+              type: string
+              format: date-time
+            lastSuccess:
+              type: string
+              format: date-time
+        source:
+          type: string
+          description: How this insurance was created.
+          enum:
+          - sync
+          - patient
+          - staff
+        staffReview:
+          type: object
+          description: Staff review status for this insurance, used before writing it back to the integrator.
+          properties:
+            reviewedBy:
+              type: string
+            reviewedAt:
+              type: string
+              format: date-time
+            reviewStatus:
+              type: string
+              enum:
+              - ignored
+              - pending
+              - approved
+        lastSyncedAt:
+          type: string
+          format: date-time
+          description: When this insurance was last synced from the integrator.
+        verification:
+          type: object
+          description: The most recent eligibility verification result for this insurance.
+          properties:
+            status:
+              type: string
+              default: unknown
+              enum:
+              - unknown
+              - active
+              - inactive
+              - failed
+            updatedAt:
+              type: string
+              format: date-time
+            requestedBy:
+              type: string
+              pattern: '[0-9a-f]'
+              minLength: 24
+              maxLength: 24
+            refId:
+              type: string
+              description: ID of the related InsuranceVerification record.
+              pattern: '[0-9a-f]'
+              minLength: 24
+              maxLength: 24
+            errorReason:
+              type: string
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    idParam:
+      in: query
+      name: _id
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      required: false
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: Luma's internal ID of an object.
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
+  securitySchemes:
+    Bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

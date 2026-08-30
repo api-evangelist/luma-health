@@ -1,0 +1,328 @@
+openapi: 3.2.0
+info:
+  version: 2.0.0
+  title: Rest-Service Feedback Responses API
+  x-logo:
+    url: https://lumahealth-assets.s3.us-west-2.amazonaws.com/new_luma_logo_black.png
+    backgroundColor: '#FFFFFF'
+    altText: Luma Health
+  description: OpenAPI [Basic Structure](https://swagger.io/docs/specification/basic-structure/)
+servers:
+- url: https://api.lumahealth.io/api/v2
+security:
+- Bearer: []
+tags:
+- name: feedbackResponses
+  description: Patient responses to NPS feedback surveys and clicks on feedback links
+paths:
+  /feedbackResponses:
+    get:
+      summary: List feedback responses
+      description: "Returns patient responses to NPS feedback surveys, along with clicks on the\npositive/negative feedback links sent after an appointment.\n\nRead-only: feedback responses are recorded by the NPS survey / feedback-link flow,\nnot created or edited through the API.\n\n`response.type` is one of:\n  - `npsscore`: the patient submitted a numeric NPS score (`response.value` is the score,\n    also copied to `npsscore` for convenience).\n  - `positive-click` / `negative-click`: the patient clicked the positive or negative link\n    sent in the feedback message, before any score was collected.\n"
+      operationId: feedbackResponsesList
+      tags:
+      - feedbackResponses
+      parameters:
+      - name: patient
+        in: query
+        required: false
+        description: The ID of patient
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: provider
+        in: query
+        required: false
+        description: The ID of provider
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: facility
+        in: query
+        required: false
+        description: The ID of facility
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: appointment
+        in: query
+        required: false
+        description: The ID of appointment
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: response.type
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - npsscore
+          - positive-click
+          - negative-click
+      - $ref: '#/components/parameters/userParam'
+      - $ref: '#/components/parameters/deletedParam'
+      - $ref: '#/components/parameters/createdByParam'
+      - $ref: '#/components/parameters/updatedByParam'
+      - $ref: '#/components/parameters/createdAtParam'
+      - $ref: '#/components/parameters/updatedAtParam'
+      - $ref: '#/components/parameters/pageParam'
+      - $ref: '#/components/parameters/limitParam'
+      - $ref: '#/components/parameters/populateParam'
+      - $ref: '#/components/parameters/selectParam'
+      responses:
+        '200':
+          description: A list of feedback responses
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  response:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        _id:
+                          type: string
+                        patient:
+                          type: string
+                          description: Patient ID
+                        provider:
+                          type: string
+                          description: Provider ID
+                        facility:
+                          type: string
+                          description: Facility ID
+                        appointment:
+                          type: string
+                          description: Appointment ID
+                        npsscore:
+                          type: number
+                          description: Copy of response.value when response.type is npsscore
+                        response:
+                          type: object
+                          properties:
+                            type:
+                              type: string
+                              enum:
+                              - npsscore
+                              - positive-click
+                              - negative-click
+                            value:
+                              description: The NPS score (number) when type is npsscore, otherwise empty
+                        scoreSource:
+                          type: string
+                          enum:
+                          - patient
+                          - sentiment
+                          description: Only set when response.type is npsscore
+                  page:
+                    type: integer
+                  size:
+                    type: integer
+        '401':
+          description: Not authenticated
+        '403':
+          description: Not authorized
+        '500':
+          description: Internal server error
+  /feedbackResponses/{id}:
+    get:
+      summary: Get feedback response by id
+      description: 'Read-only: feedback responses are recorded by the NPS survey / feedback-link flow,
+
+        not created or edited through the API.
+
+        '
+      operationId: feedbackResponseGet
+      tags:
+      - feedbackResponses
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      responses:
+        '200':
+          description: A feedback response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  _id:
+                    type: string
+                  patient:
+                    type: string
+                  provider:
+                    type: string
+                  facility:
+                    type: string
+                  appointment:
+                    type: string
+                  npsscore:
+                    type: number
+                  response:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                        enum:
+                        - npsscore
+                        - positive-click
+                        - negative-click
+                      value: {}
+                  scoreSource:
+                    type: string
+                    enum:
+                    - patient
+                    - sentiment
+        '401':
+          description: Not authenticated
+        '403':
+          description: Not authorized
+        '404':
+          description: Not found
+        '500':
+          description: Internal server error
+components:
+  parameters:
+    populateParam:
+      name: _populate
+      in: query
+      description: Response properties which will be replaced by the referenced objects, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    selectParam:
+      name: _select
+      in: query
+      description: Response properties that should be returned, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    pageParam:
+      in: query
+      name: page
+      required: false
+      type: integer
+      format: int32
+      default: 1
+      minimum: 1
+      schema:
+        type: integer
+        format: int32
+        default: 1
+        minimum: 1
+    updatedByParam:
+      in: query
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
+    limitParam:
+      name: limit
+      in: query
+      description: How many items to fetch per page
+      required: false
+      type: integer
+      format: int32
+      default: 500
+      minimum: 1
+      maximum: 1000
+      schema:
+        type: integer
+        format: int32
+        default: 500
+        minimum: 1
+        maximum: 1000
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+  securitySchemes:
+    Bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

@@ -1,0 +1,887 @@
+openapi: 3.2.0
+info:
+  version: 2.0.0
+  title: Rest-Service Checklist Templates API
+  x-logo:
+    url: https://lumahealth-assets.s3.us-west-2.amazonaws.com/new_luma_logo_black.png
+    backgroundColor: '#FFFFFF'
+    altText: Luma Health
+  description: OpenAPI [Basic Structure](https://swagger.io/docs/specification/basic-structure/)
+servers:
+- url: https://api.lumahealth.io/api/v2
+security:
+- Bearer: []
+tags:
+- name: checklistTemplates
+  description: Reusable definitions of required pre-visit tasks used to build checklists
+paths:
+  /checklistTemplates:
+    get:
+      summary: List checklist templates
+      operationId: checklistTemplatesList
+      tags:
+      - checklistTemplates
+      parameters:
+      - name: enabled
+        in: query
+        schema:
+          type: boolean
+      - name: type
+        in: query
+        schema:
+          type: string
+          enum:
+          - appointment
+      - name: includeFiltersCount
+        in: query
+        description: When true, includes a computed `filtersCount` breakdown on each returned template.
+        schema:
+          type: boolean
+      - $ref: '#/components/parameters/userParam'
+      - $ref: '#/components/parameters/deletedParam'
+      - $ref: '#/components/parameters/createdByParam'
+      - $ref: '#/components/parameters/updatedByParam'
+      - $ref: '#/components/parameters/createdAtParam'
+      - $ref: '#/components/parameters/updatedAtParam'
+      - $ref: '#/components/parameters/pageParam'
+      - $ref: '#/components/parameters/limitParam'
+      - $ref: '#/components/parameters/populateParam'
+      - $ref: '#/components/parameters/selectParam'
+      responses:
+        '200':
+          description: List of checklist templates
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - response
+                - page
+                - size
+                properties:
+                  response:
+                    type: array
+                    minItems: 0
+                    items:
+                      $ref: '#/components/schemas/ChecklistTemplateResponse'
+                  page:
+                    type: integer
+                    format: int32
+                    minimum: 1
+                  size:
+                    type: integer
+                    format: int32
+                    minimum: 0
+                additionalProperties: false
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+    post:
+      summary: Create a checklist template
+      operationId: checklistTemplateCreate
+      tags:
+      - checklistTemplates
+      requestBody:
+        description: Create a checklist template
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChecklistTemplateRequestCreate'
+      responses:
+        '201':
+          description: Successful creation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChecklistTemplateResponse'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+  /checklistTemplates/{checklistTemplateId}:
+    get:
+      summary: Get checklist template by id
+      operationId: checklistTemplateGet
+      tags:
+      - checklistTemplates
+      parameters:
+      - name: checklistTemplateId
+        in: path
+        required: true
+        description: ChecklistTemplate's unique identifier in Luma's database.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      responses:
+        '200':
+          description: ChecklistTemplate
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChecklistTemplateResponse'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+    put:
+      summary: Update a checklist template
+      description: Updates a checklist template. If `enabled` is toggled, or `recreate` is passed, a background job is dispatched to resync already-created checklists derived from this template. `recreate` is accepted in the request but is not itself persisted on the template.
+      operationId: checklistTemplateUpdate
+      tags:
+      - checklistTemplates
+      parameters:
+      - name: checklistTemplateId
+        in: path
+        required: true
+        description: ChecklistTemplate's unique identifier in Luma's database.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      requestBody:
+        description: A checklist template (full or partial) to be updated
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+              - $ref: '#/components/schemas/ChecklistTemplateRequestUpdate'
+              - type: object
+                properties:
+                  recreate:
+                    type: boolean
+                    description: When true, forces existing checklists built from this template to be recreated.
+      responses:
+        '200':
+          description: ChecklistTemplate
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChecklistTemplateResponse'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+    delete:
+      summary: Delete a checklist template
+      operationId: checklistTemplateDelete
+      tags:
+      - checklistTemplates
+      parameters:
+      - name: checklistTemplateId
+        in: path
+        required: true
+        description: ChecklistTemplate's unique identifier in Luma's database.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      responses:
+        '200':
+          description: Deleted checklist template
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChecklistTemplateResponse'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+  /checklistTemplates/{checklistTemplateId}/duplicate:
+    post:
+      summary: Duplicate a checklist template
+      description: 'Creates a copy of the given checklist template, named "{original} - (Copy)". The duplicate is always created with `enabled: false`.'
+      operationId: checklistTemplateDuplicate
+      tags:
+      - checklistTemplates
+      parameters:
+      - name: checklistTemplateId
+        in: path
+        required: true
+        description: ChecklistTemplate's unique identifier in Luma's database.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      responses:
+        '201':
+          description: The duplicated checklist template
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChecklistTemplateResponse'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+  /checklistTemplates/system:
+    get:
+      summary: Get the default system checklist template
+      operationId: checklistTemplateGetSystem
+      tags:
+      - checklistTemplates
+      responses:
+        '200':
+          description: The default system checklist template
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChecklistTemplateResponse'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+        '404':
+          description: No default system template exists
+    post:
+      summary: Create the default system checklist templates
+      description: Idempotently creates the account's default system checklist templates if they do not already exist.
+      operationId: checklistTemplateCreateSystem
+      tags:
+      - checklistTemplates
+      responses:
+        '200':
+          description: The default system checklist template(s)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ChecklistTemplateResponse'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+components:
+  parameters:
+    pageParam:
+      in: query
+      name: page
+      required: false
+      type: integer
+      format: int32
+      default: 1
+      minimum: 1
+      schema:
+        type: integer
+        format: int32
+        default: 1
+        minimum: 1
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
+    updatedByParam:
+      in: query
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+    populateParam:
+      name: _populate
+      in: query
+      description: Response properties which will be replaced by the referenced objects, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    selectParam:
+      name: _select
+      in: query
+      description: Response properties that should be returned, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+    limitParam:
+      name: limit
+      in: query
+      description: How many items to fetch per page
+      required: false
+      type: integer
+      format: int32
+      default: 500
+      minimum: 1
+      maximum: 1000
+      schema:
+        type: integer
+        format: int32
+        default: 500
+        minimum: 1
+        maximum: 1000
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+  schemas:
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+    ChecklistTemplateResponse:
+      type: object
+      description: A ChecklistTemplate is the reusable, staff-configured blueprint defining required pre-visit tasks, their category and expiration rules, and the conditions under which they apply (such as a specific appointment type, facility, or provider). Checklists are built from a template, but the resulting checklist is a snapshot copy; changes to the template require an explicit recreation job to resync already-created checklists.
+      properties:
+        _id:
+          $ref: '#/components/schemas/idParam'
+        user:
+          $ref: '#/components/schemas/userParam'
+        deleted:
+          $ref: '#/components/schemas/deletedParam'
+        createdBy:
+          $ref: '#/components/schemas/createdByParam'
+        updatedBy:
+          $ref: '#/components/schemas/updatedByParam'
+        createdAt:
+          $ref: '#/components/schemas/createdAtParam'
+        updatedAt:
+          $ref: '#/components/schemas/updatedAtParam'
+        name:
+          type: string
+          description: Name of the checklist template.
+        enabled:
+          type: boolean
+          description: Whether this template is active and usable to build new checklists.
+          default: true
+        type:
+          type: string
+          description: The kind of template.
+          default: appointment
+          enum:
+          - appointment
+        tag:
+          type: string
+          description: Merge-tag identifier for this template, auto-generated if not provided.
+        items:
+          type: array
+          description: The tasks generated checklists will include.
+          items:
+            type: object
+            properties:
+              name:
+                type: object
+                description: Localized name of this item, keyed by language code.
+                additionalProperties:
+                  type: string
+              ref:
+                type: string
+                description: Type of resource this item's `refId` points to.
+                default: patient-form-template
+                enum:
+                - patient-form-template
+              refId:
+                type: string
+                description: ID of the PatientFormTemplate that fulfills this item.
+                pattern: '[0-9a-f]'
+                minLength: 24
+                maxLength: 24
+              category:
+                type: string
+                description: The category this item belongs to. Kept in sync with the linked PatientFormTemplate's category.
+                default: intake
+                enum:
+                - intake
+                - demographics
+                - consent
+                - insurance
+                - payment
+              expiration:
+                type: object
+                description: When items generated from this template item expire. Either `value`+`unit`, or `cron`, but not both.
+                properties:
+                  value:
+                    type: integer
+                  unit:
+                    type: string
+                    enum:
+                    - days
+                    - weeks
+                    - months
+                    - years
+                  cron:
+                    type: string
+              filters:
+                type: array
+                description: Item-level conditions controlling when this item is included.
+                items:
+                  $ref: '#/components/schemas/checklistTemplateFilter'
+              defaultStatus:
+                type: string
+                description: Default status assigned to items generated from this template item.
+                default: pending
+                enum:
+                - not-ready
+                - pending
+                - in-progress
+                - skipped
+                - completed
+        filters:
+          type: array
+          description: Template-level conditions controlling when this template applies, such as specific appointment types, facilities, or providers.
+          items:
+            $ref: '#/components/schemas/checklistTemplateFilter'
+        checklistTemplateFilter:
+          type: object
+          properties:
+            path:
+              type: string
+              description: The field path being compared, for example a facility, provider, or appointment type identifier.
+            value:
+              type: string
+              description: The value to compare the field at `path` against.
+            comparision:
+              type: string
+              description: How `path` and `value` are compared.
+              default: eq
+              enum:
+              - eq
+              - gt
+              - gte
+              - lt
+              - lte
+              - ne
+              - regex
+              - js
+            options:
+              type: string
+              description: Additional options for the comparison, such as regex flags.
+    idParam:
+      in: query
+      name: _id
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      required: false
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: Luma's internal ID of an object.
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
+    updatedByParam:
+      in: query
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
+    checklistTemplateFilter:
+      type: object
+      properties:
+        path:
+          type: string
+          description: The field path being compared, for example a facility, provider, or appointment type identifier.
+        value:
+          type: string
+          description: The value to compare the field at `path` against.
+        comparision:
+          type: string
+          description: How `path` and `value` are compared.
+          default: eq
+          enum:
+          - eq
+          - gt
+          - gte
+          - lt
+          - lte
+          - ne
+          - regex
+          - js
+        options:
+          type: string
+          description: Additional options for the comparison, such as regex flags.
+    ChecklistTemplateRequestUpdate:
+      type: object
+      properties:
+        _id:
+          $ref: '#/components/schemas/idParam'
+        user:
+          $ref: '#/components/schemas/userParam'
+        deleted:
+          $ref: '#/components/schemas/deletedParam'
+        createdBy:
+          $ref: '#/components/schemas/createdByParam'
+        updatedBy:
+          $ref: '#/components/schemas/updatedByParam'
+        createdAt:
+          $ref: '#/components/schemas/createdAtParam'
+        updatedAt:
+          $ref: '#/components/schemas/updatedAtParam'
+        name:
+          type: string
+          description: Name of the checklist template.
+        enabled:
+          type: boolean
+          description: Whether this template is active and usable to build new checklists.
+          default: true
+        type:
+          type: string
+          description: The kind of template.
+          default: appointment
+          enum:
+          - appointment
+        tag:
+          type: string
+          description: Merge-tag identifier for this template, auto-generated if not provided.
+        items:
+          type: array
+          description: The tasks generated checklists will include.
+          items:
+            type: object
+            properties:
+              name:
+                type: object
+                description: Localized name of this item, keyed by language code.
+                additionalProperties:
+                  type: string
+              ref:
+                type: string
+                description: Type of resource this item's `refId` points to.
+                default: patient-form-template
+                enum:
+                - patient-form-template
+              refId:
+                type: string
+                description: ID of the PatientFormTemplate that fulfills this item.
+                pattern: '[0-9a-f]'
+                minLength: 24
+                maxLength: 24
+              category:
+                type: string
+                description: The category this item belongs to. Kept in sync with the linked PatientFormTemplate's category.
+                default: intake
+                enum:
+                - intake
+                - demographics
+                - consent
+                - insurance
+                - payment
+              expiration:
+                type: object
+                description: When items generated from this template item expire. Either `value`+`unit`, or `cron`, but not both.
+                properties:
+                  value:
+                    type: integer
+                  unit:
+                    type: string
+                    enum:
+                    - days
+                    - weeks
+                    - months
+                    - years
+                  cron:
+                    type: string
+              filters:
+                type: array
+                description: Item-level conditions controlling when this item is included.
+                items:
+                  $ref: '#/components/schemas/checklistTemplateFilter'
+              defaultStatus:
+                type: string
+                description: Default status assigned to items generated from this template item.
+                default: pending
+                enum:
+                - not-ready
+                - pending
+                - in-progress
+                - skipped
+                - completed
+        filters:
+          type: array
+          description: Template-level conditions controlling when this template applies, such as specific appointment types, facilities, or providers.
+          items:
+            $ref: '#/components/schemas/checklistTemplateFilter'
+        checklistTemplateFilter:
+          type: object
+          properties:
+            path:
+              type: string
+              description: The field path being compared, for example a facility, provider, or appointment type identifier.
+            value:
+              type: string
+              description: The value to compare the field at `path` against.
+            comparision:
+              type: string
+              description: How `path` and `value` are compared.
+              default: eq
+              enum:
+              - eq
+              - gt
+              - gte
+              - lt
+              - lte
+              - ne
+              - regex
+              - js
+            options:
+              type: string
+              description: Additional options for the comparison, such as regex flags.
+    ChecklistTemplateRequestCreate:
+      type: object
+      required:
+      - name
+      - items
+      properties:
+        _id:
+          $ref: '#/components/schemas/idParam'
+        user:
+          $ref: '#/components/schemas/userParam'
+        deleted:
+          $ref: '#/components/schemas/deletedParam'
+        createdBy:
+          $ref: '#/components/schemas/createdByParam'
+        updatedBy:
+          $ref: '#/components/schemas/updatedByParam'
+        createdAt:
+          $ref: '#/components/schemas/createdAtParam'
+        updatedAt:
+          $ref: '#/components/schemas/updatedAtParam'
+        name:
+          type: string
+          description: Name of the checklist template.
+        enabled:
+          type: boolean
+          description: Whether this template is active and usable to build new checklists.
+          default: true
+        type:
+          type: string
+          description: The kind of template.
+          default: appointment
+          enum:
+          - appointment
+        tag:
+          type: string
+          description: Merge-tag identifier for this template, auto-generated if not provided.
+        items:
+          type: array
+          description: The tasks generated checklists will include.
+          items:
+            type: object
+            properties:
+              name:
+                type: object
+                description: Localized name of this item, keyed by language code.
+                additionalProperties:
+                  type: string
+              ref:
+                type: string
+                description: Type of resource this item's `refId` points to.
+                default: patient-form-template
+                enum:
+                - patient-form-template
+              refId:
+                type: string
+                description: ID of the PatientFormTemplate that fulfills this item.
+                pattern: '[0-9a-f]'
+                minLength: 24
+                maxLength: 24
+              category:
+                type: string
+                description: The category this item belongs to. Kept in sync with the linked PatientFormTemplate's category.
+                default: intake
+                enum:
+                - intake
+                - demographics
+                - consent
+                - insurance
+                - payment
+              expiration:
+                type: object
+                description: When items generated from this template item expire. Either `value`+`unit`, or `cron`, but not both.
+                properties:
+                  value:
+                    type: integer
+                  unit:
+                    type: string
+                    enum:
+                    - days
+                    - weeks
+                    - months
+                    - years
+                  cron:
+                    type: string
+              filters:
+                type: array
+                description: Item-level conditions controlling when this item is included.
+                items:
+                  $ref: '#/components/schemas/checklistTemplateFilter'
+              defaultStatus:
+                type: string
+                description: Default status assigned to items generated from this template item.
+                default: pending
+                enum:
+                - not-ready
+                - pending
+                - in-progress
+                - skipped
+                - completed
+        filters:
+          type: array
+          description: Template-level conditions controlling when this template applies, such as specific appointment types, facilities, or providers.
+          items:
+            $ref: '#/components/schemas/checklistTemplateFilter'
+        checklistTemplateFilter:
+          type: object
+          properties:
+            path:
+              type: string
+              description: The field path being compared, for example a facility, provider, or appointment type identifier.
+            value:
+              type: string
+              description: The value to compare the field at `path` against.
+            comparision:
+              type: string
+              description: How `path` and `value` are compared.
+              default: eq
+              enum:
+              - eq
+              - gt
+              - gte
+              - lt
+              - lte
+              - ne
+              - regex
+              - js
+            options:
+              type: string
+              description: Additional options for the comparison, such as regex flags.
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+  securitySchemes:
+    Bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

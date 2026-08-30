@@ -1,0 +1,179 @@
+openapi: 3.2.0
+info:
+  version: 2.0.0
+  title: Rest-Service Queue Manager Instances API
+  x-logo:
+    url: https://lumahealth-assets.s3.us-west-2.amazonaws.com/new_luma_logo_black.png
+    backgroundColor: '#FFFFFF'
+    altText: Luma Health
+  description: OpenAPI [Basic Structure](https://swagger.io/docs/specification/basic-structure/)
+servers:
+- url: https://api.lumahealth.io/api/v2
+security:
+- Bearer: []
+tags:
+- name: queueManagerInstances
+  description: Instances of queue manager templates representing items in a queue
+paths:
+  /queueManagerInstances/{id}/transfer:
+    post:
+      summary: Transfer a queue manager instance to a different queue
+      description: 'Creates a new QueueManagerInstance in the target queue (identified by
+
+        `template`) and marks the source instance as transferred. The new instance
+
+        inherits patient/appointment/order associations from the source.
+
+
+        The source instance must exist and not already be in a terminal state.
+
+        The target `template` must exist and belong to the same account.
+
+
+        If `status` is omitted, the new instance is placed in the Initial-type
+
+        status configured on the target template.
+
+        '
+      operationId: transferQueueManagerInstance
+      tags:
+      - queueManagerInstances
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ObjectId of the source queue manager instance to transfer
+        schema:
+          type: string
+          pattern: ^[0-9a-f]{24}$
+          minLength: 24
+          maxLength: 24
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - template
+              properties:
+                template:
+                  description: Target queue template ID (ObjectId of the destination QueueManagerTemplate)
+                  type: string
+                  pattern: ^[0-9a-f]{24}$
+                  minLength: 24
+                  maxLength: 24
+                status:
+                  description: 'Initial status for the new instance in the target queue.
+
+                    Defaults to the target template''s Initial-type status if omitted.
+
+                    '
+                  type: string
+                customFields:
+                  description: Custom field values to set on the new instance
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      name:
+                        description: Custom field name
+                        type: string
+                      value:
+                        description: Custom field value (any type)
+                      type:
+                        description: Custom field type
+                        type: string
+                staffNotes:
+                  description: Staff notes to attach to the new instance
+                  type: object
+                  required:
+                  - value
+                  properties:
+                    value:
+                      type: string
+                  additionalProperties: false
+              additionalProperties: false
+      responses:
+        '200':
+          description: The newly created QueueManagerInstance in the target queue
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  _id:
+                    type: string
+                    description: ObjectId of the newly created instance
+                  template:
+                    type: string
+                    description: ObjectId of the target queue template
+                  source:
+                    type: string
+                    enum:
+                    - transfer
+                  createdFrom:
+                    type: string
+                    description: ObjectId of the original (now soft-deleted) instance
+                  status:
+                    type: string
+                    description: Current status in the target queue
+                  deleted:
+                    type: integer
+                    enum:
+                    - 0
+                    description: Always 0 for newly created instances
+        '400':
+          description: "Validation error. Common causes:\n  - `template` field is missing from the request body.\n  - Request body does not conform to the schema (e.g. unknown properties).\n"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+        '404':
+          description: 'Source instance or target template not found.
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: 'Status requirements not met on the target template (e.g. the provided
+
+            `status` value does not exist on the target template, or the target
+
+            template has no Initial-type status configured).
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+  securitySchemes:
+    Bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

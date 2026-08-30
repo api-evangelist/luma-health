@@ -1,0 +1,636 @@
+openapi: 3.2.0
+info:
+  version: 2.0.0
+  title: Rest-Service Chat Activities API
+  x-logo:
+    url: https://lumahealth-assets.s3.us-west-2.amazonaws.com/new_luma_logo_black.png
+    backgroundColor: '#FFFFFF'
+    altText: Luma Health
+  description: OpenAPI [Basic Structure](https://swagger.io/docs/specification/basic-structure/)
+servers:
+- url: https://api.lumahealth.io/api/v2
+security:
+- Bearer: []
+tags:
+- name: chatActivities
+  description: conversations with a patient
+paths:
+  /chatActivities:
+    get:
+      summary: List chatActivities
+      operationId: chatActivitiesList
+      tags:
+      - chatActivities
+      parameters:
+      - name: status
+        in: query
+        schema:
+          type: string
+          enum:
+          - closed
+          - assigned
+          - unassigned
+      - name: assignee
+        description: The ID of a single user
+        in: query
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: groupAssignee
+        description: The ID of group
+        in: query
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: statusReason
+        description: The id of a ChatActivityStatusReason to detail why a chat was closed (status=closed)
+        in: query
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: description
+        description: The partial text of the complementary description of the statusReason why a chat was closed
+        in: query
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: patient
+        description: The id of the patient
+        in: query
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          required: true
+          minLength: 24
+          maxLength: 24
+      - name: lastMessage
+        description: The ID of the most recent message of this conversation.
+        in: query
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          required: true
+          minLength: 24
+          maxLength: 24
+      - name: previousAssignee
+        description: The ID of the previous user to whom this chat was assigned.
+        in: query
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - $ref: '#/components/parameters/patientGlobalSearch'
+      - $ref: '#/components/parameters/userParam'
+      - $ref: '#/components/parameters/deletedParam'
+      - $ref: '#/components/parameters/createdByParam'
+      - $ref: '#/components/parameters/updatedByParam'
+      - $ref: '#/components/parameters/createdAtParam'
+      - $ref: '#/components/parameters/updatedAtParam'
+      - $ref: '#/components/parameters/pageParam'
+      - $ref: '#/components/parameters/limitParam'
+      - $ref: '#/components/parameters/populateParam'
+      - $ref: '#/components/parameters/selectParam'
+      responses:
+        '200':
+          description: List of chatActivities
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - response
+                - page
+                - size
+                properties:
+                  response:
+                    type: array
+                    minItems: 0
+                    items:
+                      $ref: '#/components/schemas/ChatActivityResponse'
+                  page:
+                    type: integer
+                    format: int32
+                    minimum: 1
+                  size:
+                    type: integer
+                    format: int32
+                    minimum: 0
+                additionalProperties: false
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+  /chatActivities/unread:
+    get:
+      summary: Get unread chats count per user
+      operationId: chatActivityUnread
+      tags:
+      - chatActivities
+      parameters:
+      - name: assignee
+        in: query
+        required: false
+        description: If not provided, the authenticated user will be considered.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: limit
+        in: query
+        required: false
+        description: Default is 100.
+        schema:
+          type: number
+      responses:
+        '200':
+          description: ChatActivityUnreadCount
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatActivityUnreadResponse'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+  /chatActivities/{chatActivityId}:
+    get:
+      summary: Get chatActivity by id
+      operationId: chatActivityGet
+      tags:
+      - chatActivities
+      parameters:
+      - name: chatActivityId
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      responses:
+        '200':
+          description: ChatActivity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatActivityResponse'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+    put:
+      summary: Assign or Close
+      operationId: chatActivityUpdate
+      tags:
+      - chatActivities
+      parameters:
+      - name: chatActivityId
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      requestBody:
+        description: A chatActivity (full or partial) to be published
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChatActivityPut'
+            examples:
+              assign to user:
+                value:
+                  status: assigned
+                  assignee: 6278231511da71004284870c
+                  groupAssignee: null
+              assign to group:
+                value:
+                  status: assigned
+                  groupAssignee: 6278231511da71004284870d
+                  assignee: null
+              close chat:
+                value:
+                  status: closed
+                  statusReason: 6278231511da71004284870e
+                  description: closed as requested by patient
+      responses:
+        '200':
+          description: ChatActivity updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatActivityResponse'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+components:
+  parameters:
+    pageParam:
+      in: query
+      name: page
+      required: false
+      type: integer
+      format: int32
+      default: 1
+      minimum: 1
+      schema:
+        type: integer
+        format: int32
+        default: 1
+        minimum: 1
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
+    patientGlobalSearch:
+      in: query
+      name: patientGlobalSearch
+      type: string
+      required: false
+      schema:
+        type: string
+      description: 'Search for a patient within the resource using the current parameters
+
+        Luma Patient ID (patient._id),
+
+        MRN (patient.medicalRecordNumber),
+
+        Name combos(patient.firstname, patient.lastname) OR (patient.lastname,patient.firstname),
+
+        All contact method (phone number and email - active OR not),
+
+        ExternalID (patient.externalId.value),
+
+        Date of Birth.
+
+        '
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
+    updatedByParam:
+      in: query
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+    populateParam:
+      name: _populate
+      in: query
+      description: Response properties which will be replaced by the referenced objects, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    selectParam:
+      name: _select
+      in: query
+      description: Response properties that should be returned, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+    limitParam:
+      name: limit
+      in: query
+      description: How many items to fetch per page
+      required: false
+      type: integer
+      format: int32
+      default: 500
+      minimum: 1
+      maximum: 1000
+      schema:
+        type: integer
+        format: int32
+        default: 500
+        minimum: 1
+        maximum: 1000
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+  schemas:
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+    idParam:
+      in: query
+      name: _id
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      required: false
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: Luma's internal ID of an object.
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
+    updatedByParam:
+      in: query
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
+    ChatActivityUnreadResponse:
+      type: object
+      description: Represents a summary count of unread chat activities for a user, rather than a full chat activity record. It is used to power unread message badges or indicators showing how many chat conversations still need attention.
+      properties:
+        count:
+          description: Count of unread chat activities
+          type: number
+    ChatActivityPut:
+      type: object
+      required:
+      - status
+      properties:
+        status:
+          description: status
+          type: array
+          items:
+            type: string
+            enum:
+            - assigned
+            - closed
+        assignee:
+          description: ID of a Staff user or provider to whom the chat will be assigned. If status is "assigned", there must be either an "assignee" or a "groupAssignee"
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        groupAssignee:
+          description: ID of a Group to whom the chat will be assigned. If status is "assigned", there must be either an "assignee" or a "groupAssignee"
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        statusReason:
+          description: ID of a ChatActivityStatusReason to specify why a chat was closed. When status is closed, this field is mandatory, and sometimes the "description" is also mandatory.
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        description:
+          description: Description associated with a ChatActivityStatusReason to specify why a chat was closed. Some ChatActivitiesStatusReasons require a description.
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+    ChatActivityResponse:
+      type: object
+      description: A ChatActivity represents an active conversation thread between a patient and staff in Luma Health's messaging hub, tracking assignment to an individual user or a group, its status such as unassigned, assigned, or closed, and details like the last message sent and any linked facilities. It records why a conversation was closed and flags whether the latest activity resulted from an automated message such as an appointment reminder or from a genuine unexpected reply needing attention. This resource underlies how staff triage, prioritize, and manage incoming patient messages across the organization.
+      properties:
+        _id:
+          $ref: '#/components/schemas/idParam'
+        user:
+          $ref: '#/components/schemas/userParam'
+        deleted:
+          $ref: '#/components/schemas/deletedParam'
+        createdBy:
+          $ref: '#/components/schemas/createdByParam'
+        updatedBy:
+          $ref: '#/components/schemas/updatedByParam'
+        createdAt:
+          $ref: '#/components/schemas/createdAtParam'
+        updatedAt:
+          $ref: '#/components/schemas/updatedAtParam'
+        patient:
+          description: Patient
+          type: object
+          additionalProperties: false
+          properties:
+            _id:
+              description: The ID of patient.
+              type: string
+              pattern: '[0-9a-f]'
+              minLength: 24
+              maxLength: 24
+            isOnline:
+              description: Patient is online or not.
+              type: boolean
+            isOnTelehealthSession:
+              description: Patient is on telehealth session or not.
+              type: boolean
+        lastMessage:
+          description: ID of Message
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        status:
+          description: status
+          type: string
+          default: unassigned
+          enum:
+          - closed
+          - assigned
+          - unassigned
+        assignee:
+          description: Assignee
+          type: object
+          additionalProperties: false
+          properties:
+            _id:
+              description: The ID of user.
+              type: string
+              pattern: '[0-9a-f]'
+              minLength: 24
+              maxLength: 24
+            isOnline:
+              description: User is online or not.
+              type: boolean
+            isOnTelehealthSession:
+              description: User is on telehealth session or not.
+              type: boolean
+        groupAssignee:
+          description: ID of Group
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        previousAssignee:
+          description: ID of User
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        previousGroupAssignee:
+          description: ID of Group
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        statusReason:
+          description: ID of a ChatActivityStatusReason, only used when status is "closed"
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        description:
+          description: Additional description of the statusReason. Some ChatActivityStatusReasons require a description.
+          type: string
+        facilities:
+          description: List of facilities where the patient linked to this chatActivity has appointments.
+          type: array
+          items:
+            description: ID of a facility
+            type: string
+            pattern: '[0-9a-f]'
+            minLength: 24
+            maxLength: 24
+        priorityUpdatedAt:
+          description: This date/time changes only when the chat is assigned or the patient gets a messsage. It can be used to sort the chatActivities on screen.
+          type: string
+          format: date-time
+        lastIrregularAt:
+          description: Indicates the last time an unexpected message was sent in the chat. An example is when patient gets an automated appointment reminder requesting to answer YES to confirm or NO to cancel, and patient replies with a completely different message.
+          type: string
+          format: date-time
+        automated:
+          description: Indicates if this chatActivity was created as a consequence of an automated message being sent out, such as an appointment reminder.
+          type: boolean
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+  securitySchemes:
+    Bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

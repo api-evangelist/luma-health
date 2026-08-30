@@ -1,0 +1,271 @@
+openapi: 3.2.0
+info:
+  version: 2.0.0
+  title: Rest-Service Feedback Responses External Review Replies API
+  x-logo:
+    url: https://lumahealth-assets.s3.us-west-2.amazonaws.com/new_luma_logo_black.png
+    backgroundColor: '#FFFFFF'
+    altText: Luma Health
+  description: OpenAPI [Basic Structure](https://swagger.io/docs/specification/basic-structure/)
+servers:
+- url: https://api.lumahealth.io/api/v2
+security:
+- Bearer: []
+tags:
+- name: feedbackResponsesExternalReviewReplies
+  description: AI-generated reply drafts for external reviews, with approve/reject workflow
+paths:
+  /feedbackResponsesExternalReviewReplies:
+    get:
+      summary: List external review replies
+      description: 'Returns AI-generated reply drafts for external reviews. Replies move through a lifecycle:
+
+        `pending-approval` → `approved` → `published` (or `rejected` / `failed`).
+
+
+        When `autoPublish.reviewTimeout = 0` is configured, replies skip the approval queue and
+
+        go directly to `published` at generation time.
+
+        '
+      operationId: feedbackResponsesExternalReviewRepliesList
+      tags:
+      - feedbackResponsesExternalReviewReplies
+      parameters:
+      - $ref: '#/components/parameters/userParam'
+      - $ref: '#/components/parameters/deletedParam'
+      - $ref: '#/components/parameters/pageParam'
+      - $ref: '#/components/parameters/limitParam'
+      - $ref: '#/components/parameters/selectParam'
+      - name: status
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - pending-approval
+          - approved
+          - published
+          - rejected
+          - failed
+        description: Filter by reply status
+      responses:
+        '200':
+          description: A list of external review replies
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  response:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        _id:
+                          type: string
+                        externalReview:
+                          type: string
+                          description: ID of the parent FeedbackResponsesExternalReview
+                        generatedText:
+                          type: string
+                          description: Original AI-generated draft
+                        finalText:
+                          type: string
+                          description: Text actually published (may differ if staff edited)
+                        modelId:
+                          type: string
+                          description: OpenAI model used to generate the reply
+                        status:
+                          type: string
+                          enum:
+                          - pending-approval
+                          - approved
+                          - published
+                          - rejected
+                          - failed
+                        approvedBy:
+                          type: string
+                          description: User ID of the approver (null if auto-published)
+                        approvedAt:
+                          type: string
+                          format: date-time
+                        rejectedBy:
+                          type: string
+                        rejectedAt:
+                          type: string
+                          format: date-time
+                        rejectionReason:
+                          type: string
+                        publishedAt:
+                          type: string
+                          format: date-time
+                        publishError:
+                          type: string
+                        pendingApprovalSince:
+                          type: string
+                          format: date-time
+                        facility:
+                          type: string
+                  page:
+                    type: integer
+                  size:
+                    type: integer
+        '401':
+          description: Not authenticated
+        '403':
+          description: Not authorized
+        '500':
+          description: Internal server error
+  /feedbackResponsesExternalReviewReplies/{id}/approval:
+    patch:
+      summary: Approve or reject a review reply
+      description: 'Updates the approval status of an AI-generated review reply. On approval, the reply
+
+        is queued for publishing by the next `PublishApprovedReviewReplies` job run (every 15 min).
+
+        On rejection, the reply is permanently dismissed.
+
+
+        Also updates the associated action queue item status (`accepted` or `rejected`).
+
+        '
+      operationId: feedbackResponsesExternalReviewRepliesUpdateApproval
+      tags:
+      - feedbackResponsesExternalReviewReplies
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: The ID of the review reply
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - status
+              properties:
+                status:
+                  type: string
+                  enum:
+                  - approved
+                  - rejected
+                rejectionReason:
+                  type: string
+                  description: Optional reason for rejection (used when status is rejected)
+                finalText:
+                  type: string
+                  description: Optional edited reply text to publish instead of the AI-generated text (used when status is approved)
+      responses:
+        '200':
+          description: Reply status updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum:
+                    - approved
+                    - rejected
+                  approvedBy:
+                    type: string
+                  approvedAt:
+                    type: string
+                    format: date-time
+                  rejectedBy:
+                    type: string
+                  rejectedAt:
+                    type: string
+                    format: date-time
+                  rejectionReason:
+                    type: string
+                  finalText:
+                    type: string
+        '400':
+          description: Invalid status value
+        '401':
+          description: Not authenticated
+        '403':
+          description: Not authorized
+        '404':
+          description: Reply not found
+        '500':
+          description: Internal server error
+components:
+  parameters:
+    pageParam:
+      in: query
+      name: page
+      required: false
+      type: integer
+      format: int32
+      default: 1
+      minimum: 1
+      schema:
+        type: integer
+        format: int32
+        default: 1
+        minimum: 1
+    selectParam:
+      name: _select
+      in: query
+      description: Response properties that should be returned, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+    limitParam:
+      name: limit
+      in: query
+      description: How many items to fetch per page
+      required: false
+      type: integer
+      format: int32
+      default: 500
+      minimum: 1
+      maximum: 1000
+      schema:
+        type: integer
+        format: int32
+        default: 500
+        minimum: 1
+        maximum: 1000
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+  securitySchemes:
+    Bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

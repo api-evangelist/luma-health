@@ -1,0 +1,220 @@
+openapi: 3.2.0
+info:
+  version: 2.0.0
+  title: Rest-Service Feedback Responses Promoter Histories API
+  x-logo:
+    url: https://lumahealth-assets.s3.us-west-2.amazonaws.com/new_luma_logo_black.png
+    backgroundColor: '#FFFFFF'
+    altText: Luma Health
+  description: OpenAPI [Basic Structure](https://swagger.io/docs/specification/basic-structure/)
+servers:
+- url: https://api.lumahealth.io/api/v2
+security:
+- Bearer: []
+tags:
+- name: feedbackResponsesPromoterHistories
+  description: Per-patient platform rotation history for NPS promoter review requests
+paths:
+  /feedbackResponsesPromoterHistories:
+    get:
+      summary: List promoter platform histories
+      description: 'Returns per-patient records tracking which review platforms a promoter (NPS ≥ 9) has
+
+        been directed to. Used internally to rotate patients across configured platforms so no
+
+        single platform receives all reviews.
+
+
+        One document per patient per account. `platformsAsked` grows with each feedback send;
+
+        once all configured platforms are exhausted the history is cleared and rotation restarts.
+
+        '
+      operationId: feedbackResponsesPromoterHistoriesList
+      tags:
+      - feedbackResponsesPromoterHistories
+      parameters:
+      - $ref: '#/components/parameters/userParam'
+      - $ref: '#/components/parameters/deletedParam'
+      - $ref: '#/components/parameters/pageParam'
+      - $ref: '#/components/parameters/limitParam'
+      - $ref: '#/components/parameters/selectParam'
+      - name: patient
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Filter by patient ID
+      responses:
+        '200':
+          description: A list of promoter history records
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  response:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        _id:
+                          type: string
+                        patient:
+                          type: string
+                          description: Patient ID
+                        platformsAsked:
+                          type: array
+                          items:
+                            type: string
+                            enum:
+                            - google
+                            - yelp
+                          description: Ordered list of platforms this patient has been directed to
+                        lastPlatformAsked:
+                          type: string
+                          enum:
+                          - google
+                          - yelp
+                        lastAskedAt:
+                          type: string
+                          format: date-time
+                  page:
+                    type: integer
+                  size:
+                    type: integer
+        '401':
+          description: Not authenticated
+        '403':
+          description: Not authorized
+        '500':
+          description: Internal server error
+  /feedbackResponsesPromoterHistories/{id}:
+    get:
+      summary: Get promoter platform history by id
+      description: 'Returns a single per-patient record tracking which review platforms a promoter
+
+        (NPS >= 9) has been directed to.
+
+        '
+      operationId: feedbackResponsesPromoterHistoryGet
+      tags:
+      - feedbackResponsesPromoterHistories
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      responses:
+        '200':
+          description: A promoter history record
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  _id:
+                    type: string
+                  patient:
+                    type: string
+                    description: Patient ID
+                  platformsAsked:
+                    type: array
+                    items:
+                      type: string
+                      enum:
+                      - google
+                      - yelp
+                    description: Ordered list of platforms this patient has been directed to
+                  lastPlatformAsked:
+                    type: string
+                    enum:
+                    - google
+                    - yelp
+                  lastAskedAt:
+                    type: string
+                    format: date-time
+        '401':
+          description: Not authenticated
+        '403':
+          description: Not authorized
+        '404':
+          description: Not found
+        '500':
+          description: Internal server error
+components:
+  parameters:
+    pageParam:
+      in: query
+      name: page
+      required: false
+      type: integer
+      format: int32
+      default: 1
+      minimum: 1
+      schema:
+        type: integer
+        format: int32
+        default: 1
+        minimum: 1
+    selectParam:
+      name: _select
+      in: query
+      description: Response properties that should be returned, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+    limitParam:
+      name: limit
+      in: query
+      description: How many items to fetch per page
+      required: false
+      type: integer
+      format: int32
+      default: 500
+      minimum: 1
+      maximum: 1000
+      schema:
+        type: integer
+        format: int32
+        default: 500
+        minimum: 1
+        maximum: 1000
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+  securitySchemes:
+    Bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

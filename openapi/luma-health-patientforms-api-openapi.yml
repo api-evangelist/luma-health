@@ -1,0 +1,2159 @@
+openapi: 3.2.0
+info:
+  version: 2.0.0
+  title: Rest-Service Patient Forms API
+  x-logo:
+    url: https://lumahealth-assets.s3.us-west-2.amazonaws.com/new_luma_logo_black.png
+    backgroundColor: '#FFFFFF'
+    altText: Luma Health
+  description: OpenAPI [Basic Structure](https://swagger.io/docs/specification/basic-structure/)
+servers:
+- url: https://api.lumahealth.io/api/v2
+security:
+- Bearer: []
+tags:
+- name: patientForms
+  description: Patient forms answered by patients
+paths:
+  /patientForms:
+    get:
+      summary: Show a list of patientForms
+      operationId: listPatientForms
+      tags:
+      - patientForms
+      parameters:
+      - name: patient
+        in: query
+        description: the ID of the patient who filled out the answers for this form.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: status
+        in: query
+        description: 'The completion status of the patient form under the patient''s perspective, knowingly:
+
+          - `pending`: the initial status, not seen by the patient, created when a message is sent out with the form link;
+
+          - `unstarted`: set when the patient clicked on the link to open the form but only saw the welcome screen, without actually answering any questions;
+
+          - `started`: when the patient started answering at least one question, but hasn''t finished the form yet;
+
+          - `completed`: the patient has finished answering all the questions and cannot edit the form anymore.
+
+          '
+        schema:
+          type: string
+          enum:
+          - pending
+          - unstarted
+          - started
+          - completed
+      - name: completedAt
+        in: query
+        description: the date/time when the patient finished all the responses of this form.
+        schema:
+          type: string
+          format: date-time
+      - name: processingStatus
+        in: query
+        description: 'The internal staff''s management status for a completed form, serving the purpose of organizing which answers were analysed by a staff member or not.
+
+          - `open`: the form was completed by a patient but not seen by any staff member yet;
+
+          - `in-progress`: a staff user is analysing the answers;
+
+          - `closed`: the form has been completely analysed by a member of the staff team.
+
+          '
+        schema:
+          type: string
+          enum:
+          - open
+          - in-progress
+          - closed
+      - name: processingStatusUpdatedBy
+        in: query
+        description: the ID of a staff `user` who analysed the responses of this completed patient form and changed its `processingStatus`.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: processingStatusUpdatedAt
+        in: query
+        description: the date/time when a staff `user` analysed the responses of this completed patient form and changed its `processingStatus`.
+        schema:
+          type: string
+          format: date-time
+      - name: lumabot
+        in: query
+        description: flag to signal whether a form was filled out in the shape of a patient chat with a bot.
+        schema:
+          type: boolean
+      - name: appointment
+        in: query
+        description: the ID of an appointment related to this form.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: fileUpload
+        in: query
+        description: the ID of a fileUpload related to this form.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: duration
+        in: query
+        description: the time it took (in minutes) for the patient to complete this form.
+        schema:
+          type: number
+      - name: url
+        in: query
+        description: 'deprecated: custom patient form url, basically to identify any patient in survey monkey,
+
+          an external forms service that''s not being used anymore by Luma.
+
+          '
+        schema:
+          type: string
+      - name: currentItemId
+        in: query
+        description: 'The code of the current question the patient was last shown, before answering it.
+
+          Such a code must be the content of any `responses.page[0].questions[x].id`, or `success`.
+
+          Usually this will contain each id, in sequence, but patients can go back and forth.
+
+          Also, forms can have jump logic, and some questions might not be displayed to the patient.
+
+          When the form is completed, this is updated to `success`.
+
+          '
+        schema:
+          type: string
+      - name: patientFormTemplate
+        in: query
+        description: the ID of the template of questions that was displayed for the patient.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: patientFormTemplateName
+        in: query
+        description: the name of the template of questions used as a basis for these form answers. See `patientFormTemplates`.
+        schema:
+          type: string
+      - name: patientFormTemplateType
+        in: query
+        description: "A flag to help filter forms by their originally desired purpose.\nThe form structure and behavior is identical, but depending on the settings screen,\nsome forms may be displayed as a selectable option or not. \n- `intake`: a regular form, intended to be sent to patients manually, or in reminders, or even custom actions.\n- `pre-qualification`: a form to be displayed before the scheduler is shown to patients. In the scheduler settings page, you can only select a `pre-qualification` form to be displayed before the patient actually schedules an appointment.\n- `feedback`: a form to be sent to patients after their visits, to rate the service they've received. On the feedback settings page, you can only select a form with this flag.\n- `ccda`: a form containing special questions that conform to the standard format which can be read by EHR Systems.\n"
+        schema:
+          type: string
+          enum:
+          - intake
+          - pre-qualification
+          - feedback
+          - ccda
+      - $ref: '#/components/parameters/refParam'
+      - name: refId
+        in: query
+        description: The ID of the Object refereced by the `ref` field.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: offer
+        in: query
+        description: The ID of an appointment `Offer` related to these form answers.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: language
+        in: query
+        description: The language in which the form was answered by the patient.
+        schema:
+          type: string
+          enum:
+          - en
+          - es
+          - pt
+      - name: accessedFrom
+        in: query
+        description: IP address of the patient who filled out the form.
+        schema:
+          type: string
+      - name: previousPatientForm
+        in: query
+        description: 'PreviousPatientForm and nextPatientForm will be used to make it possible for forms
+
+          to be able to jump to another form with another template so we can reduce the number of
+
+          unecessary questions in a single form, which should help with organization and performance.
+
+          One form must call the jump template, at which time we create a new patientForm and set
+
+          the previous form ID on its `previousPatientForm` property.
+
+          '
+      - name: nextPatientForm
+        in: query
+        description: 'PreviousPatientForm and nextPatientForm will be used to make it possible for forms
+
+          to be able to jump to another form with another template so we can reduce the number of
+
+          unecessary questions in a single form, which should help with organization and performance.
+
+          One form must call the jump template, at which time we create a new patientForm and set
+
+          the new form ID on the first form''s `nextPatientForm` property.
+
+          '
+        schema:
+          type: string
+      - $ref: '#/components/parameters/userParam'
+      - $ref: '#/components/parameters/deletedParam'
+      - $ref: '#/components/parameters/createdByParam'
+      - $ref: '#/components/parameters/updatedByParam'
+      - $ref: '#/components/parameters/createdAtParam'
+      - $ref: '#/components/parameters/updatedAtParam'
+      - $ref: '#/components/parameters/pageParam'
+      - $ref: '#/components/parameters/limitParam'
+      - $ref: '#/components/parameters/populateParam'
+      - $ref: '#/components/parameters/selectParam'
+      responses:
+        '200':
+          description: Returns a list of patientForms
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - response
+                - page
+                - size
+                properties:
+                  response:
+                    type: array
+                    minItems: 0
+                    items:
+                      $ref: '#/components/schemas/PatientFormResponse'
+                  page:
+                    type: integer
+                    format: int32
+                    minimum: 1
+                  size:
+                    type: integer
+                    format: int32
+                    minimum: 0
+                additionalProperties: false
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /patientForms/{patientFormId}:
+    get:
+      summary: Get patientForm by id
+      operationId: patientFormGet
+      tags:
+      - patientForms
+      parameters:
+      - name: patientFormId
+        in: path
+        required: true
+        description: PatientForms' unique identifier in Luma's database.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      responses:
+        '200':
+          description: PatientForm
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatientFormResponse'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+    put:
+      summary: Update a patientForm
+      operationId: patientFormUpdate
+      tags:
+      - patientForms
+      parameters:
+      - name: patientFormId
+        in: path
+        required: true
+        description: PatientForms' unique identifier in Luma's database.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      requestBody:
+        description: A patientForm (full or partial) to be updated
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatientFormRequest'
+      responses:
+        '200':
+          description: PatientForm
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatientFormResponse'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+    delete:
+      summary: Delete a patientForm
+      operationId: patientFormDelete
+      tags:
+      - patientForms
+      parameters:
+      - name: patientFormId
+        in: path
+        required: true
+        description: PatientForms' unique identifier in Luma's database.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      responses:
+        '200':
+          description: Deleted patientForm
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatientFormResponse'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+components:
+  parameters:
+    populateParam:
+      name: _populate
+      in: query
+      description: Response properties which will be replaced by the referenced objects, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    selectParam:
+      name: _select
+      in: query
+      description: Response properties that should be returned, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    pageParam:
+      in: query
+      name: page
+      required: false
+      type: integer
+      format: int32
+      default: 1
+      minimum: 1
+      schema:
+        type: integer
+        format: int32
+        default: 1
+        minimum: 1
+    updatedByParam:
+      in: query
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
+    limitParam:
+      name: limit
+      in: query
+      description: How many items to fetch per page
+      required: false
+      type: integer
+      format: int32
+      default: 500
+      minimum: 1
+      maximum: 1000
+      schema:
+        type: integer
+        format: int32
+        default: 500
+        minimum: 1
+        maximum: 1000
+    refParam:
+      in: query
+      name: ref
+      description: Indicates what this is about. Depending on this value, you also know what the parameter `refId` refers to.
+      schema:
+        $ref: '#/components/schemas/Ref'
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+  schemas:
+    PatientFormRequest:
+      type: object
+      required:
+      - status
+      - processingStatus
+      properties:
+        status:
+          type: string
+          enum:
+          - pending
+          - unstarted
+          - started
+          - completed
+        processingStatus:
+          description: processingStatus
+          type: string
+          default: open
+          enum:
+          - open
+          - in-progress
+          - closed
+    SalesforceData:
+      type: object
+      description: Salesforce internal meta data for this account.
+      required:
+      - respectProvisioning
+      properties:
+        customerSuccessManager:
+          type: object
+          properties:
+            name:
+              type: string
+            email:
+              type: string
+            phone:
+              type: string
+        provisioning:
+          type: array
+          items:
+            type: string
+            enum:
+            - reminder
+            - waitlist
+            - feedback
+            - followup
+            - referral
+            - outbound-referral
+            - chat
+            - scheduler
+            - recall
+            - insurance
+            - broadcast
+            - form
+            - intake-form
+            - prequal-form
+            - branding
+            - upload
+            - telehealth
+            - waiting-room
+            - luma-pay
+            - insurance-verification
+        respectProvisioning:
+          type: boolean
+          default: true
+        lifeline:
+          type: string
+          enum:
+          - trial
+          - converted
+          - active
+          - churn
+        mrr:
+          type: number
+        arr:
+          type: number
+        renewalDate:
+          type: string
+          format: date-time
+        providers:
+          type: number
+        specialty:
+          type: string
+        referralTrialLimit:
+          type: number
+        recordType:
+          type: string
+        domesticAccessRequired:
+          type: boolean
+        goLiveAt:
+          type: string
+          format: date-time
+        fullyImplementedAt:
+          type: string
+          format: date-time
+        contractSignedAt:
+          type: string
+          format: date-time
+        contractLength:
+          type: number
+        healthStatus:
+          type: string
+          default: green
+          enum:
+          - green
+          - yellow
+          - red
+          - poor fit
+          - Healthy
+          - Neutral
+          - Churn Risk
+          - Advocate
+        boardSegment:
+          type: string
+          default: Unknown
+          enum:
+          - Reseller
+          - Strategic
+          - Majors
+          - Core
+          - Sub 20
+          - Unknown
+        onboardingState:
+          type: string
+          default: Customer Success Introduction
+          enum:
+          - Customer Success Introduction
+          - Kickoff
+          - Integration
+          - Discovery Call
+          - Customization
+          - Testing
+          - Staff Training
+          - Ready To Launch
+          - Go-Live
+          - Fully Implemented
+        accountLifeline:
+          type: string
+          default: Active
+          enum:
+          - Unassigned
+          - Assigned
+          - Sales Accepted
+          - Working
+          - Sales Qualified
+          - Open Opportunity
+          - Nurture
+          - Disqualified
+          - Trial
+          - Converted
+          - Active
+          - Churned
+          - Partnered
+          - Trial Ended (No Conversion)
+    ExternalId:
+      type: object
+      properties:
+        source:
+          description: externalId.source
+          type: string
+          enum:
+          - gcalendar
+          - successehs
+          - drchrono
+          - dentrix
+          - webpt
+          - theraoffice
+          - mi7
+          - practicefusion
+          - advancedmd
+          - acomrapidpm
+          - kareo
+          - nextech
+          - mwtherapy
+          - clinicient
+          - carecloud
+          - eclinicalmobile
+          - duxware
+          - labretriever
+          - optimispt
+          - referral
+          - recall
+          - allscriptspm
+          - lytec
+          - brightree
+          - fullslate
+          - nuemd
+          - centricityps
+          - officeally
+          - greenwayintergy
+          - compulink
+          - adspm
+          - dsnpm
+          - lumamock
+          - medicalmastermind
+          - meditouch
+          - healthnautica
+          - ezemrx
+          - hl7
+          - amazingcharts
+          - greenwayprimesuite
+          - raintree
+          - athenahealth
+          - revflow
+          - eclinicalworks10e
+          - hl7pickup
+          - mindbody
+          - eclinicalworkssql
+          - nextgen
+          - practiceperfect
+          - avimark
+          - clinix
+          - keymedical
+          - mdoffice
+          - webedoctor
+          - emapm
+          - medinformatix
+          - imsgo
+          - emds
+          - allscriptsunity
+          - medevolve
+          - caretracker
+          - clearpractice
+          - valant
+          - micromd
+          - systemedx
+          - medicalmaster
+          - athenamdp
+          - gmed
+          - roche
+          - onetouch
+          - somnoware
+          - managementplus
+          - lumacare
+          - nextechfhir
+          - curemd
+          - epic
+          - phoenixortho
+          - ezderm
+          - ggastromobile
+          - epicconfirmationpickup
+          - cerner
+          - allmeds
+          - oncoemrfilepickup
+          - imedicware
+          - modmedfhir
+          - clinux
+          - acuityscheduling
+          - medstreaming
+          - isalus
+          - meditechexpanse
+          - openemr
+          - genericfhir
+          - nextechpracticeplus
+          - sms
+          - voice
+          - email
+          - none
+        value:
+          description: externalId.value
+          type: string
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    Ref:
+      description: 'Indicates what this is about. Depending on this value, you also know what the parameter `refId` refers to.<br/>
+
+        - reminder (`refId` will be the ID of a `Reminder`)<br/>
+
+        - referral-reminder (`refId` will be the ID of a `Reminder`)<br/>
+
+        - feedback-reminder (`refId` will be the ID of a `Reminder`)<br/>
+
+        - followup (`refId` will be the ID of a `Reminder`)<br/>
+
+        - outbound-referral-reminder (`refId` will be the ID of a `Reminder`)<br/>
+
+        - form-reminder (`refId` will be the ID of a `Reminder`)<br/>
+
+        - reschedule (`refId` will be the ID of a `Reminder`)<br/>
+
+        - waitlist (`refId` will be the ID of a `Waitlist`)<br/>
+
+        - appointment-offer (`refId` will be the ID of a `Offer`)<br/>
+
+        - chat-notification (`refId` will be the ID of a `Message`)<br/>
+
+        - pin-verification (`refId` will be the ID of a `Message`)<br/>
+
+        - chat (`refId` will be the ID of a `ChatActivity`)<br/>
+
+        - chat-audit (`refId` will be the ID of a `ChatActivity`)<br/>
+
+        - chat-audit-tz (`refId` will be the ID of a `ChatActivity`)<br/>
+
+        - feedback (`refId` will be the ID of a `Feedback` request)<br/>
+
+        - waitlist-offer (`refId` will be the ID of an `Appointment`)<br/>
+
+        - referral-followup (`refId` will be the ID of a `Referral`)<br/>
+
+        - outbound-referral-outreach (`refId` will be the ID of a `Referral`)<br/>
+
+        - referral-redirect (`refId` will be the ID of a `Referral`)<br/>
+
+        - broadcast (`refId` will be the ID of a `Broadcast`)<br/>
+
+        - generic (`refId` will refer to the same object of the previous message to this same patient)<br/>
+
+        - stop (`refId` will refer to the same object of the previous message to this same patient)<br/>
+
+        - bot:followup (`refId` will be the ID of a `Patient`)<br/>
+
+        - telehealth (`refId` will be the ID of a `Telehealth` object)<br/>
+
+        - waiting-room-patient (`refId` will be the ID of a `WaitingRoomPatient` object)<br/>
+
+        '
+      type: string
+      enum:
+      - reminder
+      - referral-reminder
+      - feedback-reminder
+      - followup
+      - outbound-referral-reminder
+      - form-reminder
+      - reschedule
+      - waitlist
+      - appointment-offer
+      - chat-notification
+      - pin-verification
+      - chat
+      - chat-audit
+      - chat-audit-tz
+      - feedback
+      - waitlist-offer
+      - referral-followup
+      - outbound-referral-outreach
+      - referral-redirect
+      - broadcast
+      - generic
+      - stop
+      - bot:followup
+      - telehealth
+      - waiting-room-patient
+    PatientFormResponse:
+      type: object
+      description: A patient form is a specific instance of a form template that has been sent to or filled out by a patient, such as an intake form, consent form, or feedback survey. It tracks the patient's answers, completion status, and processing state, and can be linked to an appointment, a file upload, or a resulting scheduling offer. It also supports advanced workflows like jump logic between form sections, EHR writeback of answers or PDFs, and staff review of submitted answers.
+      properties:
+        patient:
+          description: the ID of the patient who filled out the answers for this form.
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        status:
+          description: 'The completion status of the patient form under the patient''s perspective, knowingly:
+
+            - `pending`: the initial status, not seen by the patient, created when a message is sent out with the form link;
+
+            - `unstarted`: set when the patient clicked on the link to open the form but only saw the welcome screen, without actually answering any questions;
+
+            - `started`: when the patient started answering at least one question, but hasn''t finished the form yet;
+
+            - `completed`: the patient has finished answering all the questions and cannot edit the form anymore.
+
+            '
+          type: string
+          default: started
+          enum:
+          - pending
+          - unstarted
+          - started
+          - completed
+        completedAt:
+          description: the date/time when the patient finished all the responses of this form.
+          type: string
+          format: date-time
+        processingStatus:
+          description: 'The internal staff''s management status for a completed form, serving the purpose of organizing which answers were analysed by a staff member or not.
+
+            - `open`: the form was completed by a patient but not seen by any staff member yet;
+
+            - `in-progress`: a staff user is analysing the answers;
+
+            - `closed`: the form has been completely analysed by a member of the staff team.
+
+            '
+          type: string
+          default: open
+          enum:
+          - open
+          - in-progress
+          - closed
+        processingStatusUpdatedBy:
+          description: the ID of a staff `user` who analysed the responses of this completed patient form and changed its `processingStatus`.
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        processingStatusUpdatedAt:
+          description: the date/time when a staff `user` analysed the responses of this completed patient form and changed its `processingStatus`.
+          type: string
+          format: date-time
+        lumabot:
+          description: flag to signal whether a form was filled out in the shape of a patient chat with a bot.
+          type: boolean
+        appointment:
+          description: the ID of an appointment related to this form.
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        fileUpload:
+          description: the ID of a fileUpload related to this form.
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        duration:
+          description: the time it took (in minutes) for the patient to complete this form.
+          type: number
+        url:
+          description: 'deprecated: custom patient form url, basically to identify any patient in survey monkey,
+
+            an external forms service that''s not being used anymore by Luma.
+
+            '
+          type: string
+        currentItemId:
+          description: 'The code of the current question the patient was last shown, before answering it.
+
+            Such a code must be the content of any `responses.pages[0].questions[x].id`, or `success`.
+
+            Usually this will contain each id, in sequence, but patients can go back and forth.
+
+            Also, forms can have jump logic, and some questions might not be displayed to the patient.
+
+            When the form is completed, this is updated to `success`.
+
+            '
+          type: string
+        patientFormTemplate:
+          description: the ID of the template of questions that was displayed for the patient.
+          type: string
+          pattern: '[0-9a-f]'
+          required: true
+          minLength: 24
+          maxLength: 24
+        patientFormTemplateName:
+          description: the name of the template of questions used as a basis for these form answers. See `patientFormTemplates`.
+          type: string
+        patientFormTemplateType:
+          description: 'A flag to help filter forms by their originally desired purpose.
+
+            The form structure and behavior is identical, but depending on the settings screen,
+
+            some forms may be displayed as a selectable option or not. Also, CCDA forms enable
+
+            some more form components/questions that are compatible with EHR systems nation wide.
+
+            - `intake`: a regular form, intended to be sent to patients manually, or in reminders, or even custom actions.
+
+            - `pre-qualification`: a form to be displayed before the scheduler is shown to patients. In the scheduler settings page, you can only select a `pre-qualification` form to be displayed before the patient actually schedules an appointment.
+
+            - `feedback`: a form to be sent to patients after their visits, to rate the service they''ve received. On the feedback settings page, you can only select a form with this flag.
+
+            - `ccda`: a form containing special questions that conform to the standard format which can be read by EHR Systems.
+
+            '
+          type: string
+          enum:
+          - intake
+          - pre-qualification
+          - feedback
+          - ccda
+        ref:
+          $ref: '#/components/schemas/Ref'
+        refId:
+          description: The ID of the Object refereced by the `ref` field.
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        offer:
+          description: The ID of an appointment `Offer` related to these form answers.
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        language:
+          description: The language in which the form was answered by the patient.
+          type: string
+          enum:
+          - en
+          - es
+          - pt
+        accessedFrom:
+          description: IP address of the patient who filled out the form.
+          type: string
+        previousPatientForm:
+          description: 'PreviousPatientForm and nextPatientForm will be used to make it possible for forms
+
+            to be able to jump to another form with another template so we can reduce the number of
+
+            unecessary questions in a single form, which should help with organization and performance.
+
+            One form must call the jump template, at which time we create a new patientForm and set
+
+            the previous form ID on its `previousPatientForm` property.
+
+            '
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        nextPatientForm:
+          description: 'PreviousPatientForm and nextPatientForm will be used to make it possible for forms
+
+            to be able to jump to another form with another template so we can reduce the number of
+
+            unecessary questions in a single form, which should help with organization and performance.
+
+            One form must call the jump template, at which time we create a new patientForm and set
+
+            the new form ID on the first form''s `nextPatientForm` property.
+
+            '
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        responses:
+          description: Contains information about the responses given by the patient.
+          type: object
+          properties:
+            currentItemId:
+              type: string
+              description: 'The code of the current question the patient was last shown, before answering it.
+
+                Such a code must be the content of any `responses.pages[0].questions[x].id`, or `success`.
+
+                Usually this will contain each id, in sequence, but patients can go back and forth.
+
+                Also, forms can have jump logic, and some questions might not be displayed to the patient.
+
+                When the form is completed, this is updated to `success`.
+
+                '
+            path:
+              description: The sequence in each questions were seen by the patient.
+              type: array
+              items:
+                type: string
+            finalDisposition:
+              description: 'The last question or template answered/seen by the patient on form completion.
+
+                Same structure as a question in `responses.pages[0].questions[i]`.
+
+                '
+              type: object
+            pages:
+              description: The pages of the form. Luma forms always only have one page, whose index is zero.
+              type: array
+              items:
+                type: object
+                properties:
+                  questions:
+                    description: 'An array of metadata about the questions and their answers. The information about the
+
+                      questions is kept here because the template might be updated at any time, so the version
+
+                      of these question might be out-of-date when compared to the actual patientFormTemplate.
+
+                      '
+                    type: array
+                    items:
+                      type: object
+                      description: each item contains metadata about the question and the answer given by the patient.
+                      properties:
+                        id:
+                          type: string
+                          description: the reference code for this question, also used in `currentItemId` and `path`.
+                        type:
+                          type: string
+                          description: 'The `PatientFormTemplateItemTypeKeys`, representing the type of question.
+
+                            - `group`: at this root level, a special `type: group` may be used, and in that case, `responses.pages[0].questions[x].properties.items[]` will contain objects with a structure similar to one of `responses.pages[0].questions[i]` (recursively), with the exception that the inner question cannot be of type `group`.
+
+                            - `jump`: a special type of question, containing a property called `script`in `responses.pages[0].questions[x].properties.script` which resolves to one of the values in `responses.pages[0].question[x].properties.answers[k].label`. Each `responses.pages[0].question[x].properties.answers[k].properties` will determine if the jump is to the next question (nothing inside properties), or another specific question (properties object containing a `goTo` with another question squiggly), or redirect (properties object containing a final `url` for redirection).
+
+                            '
+                          enum:
+                          - 2FA
+                          - address
+                          - date
+                          - dropdown
+                          - e_signature
+                          - email
+                          - group
+                          - information_capture
+                          - insurance_card
+                          - jump
+                          - long_text
+                          - medication_search
+                          - multiple_choice
+                          - patient_information
+                          - pharmacy_search
+                          - phone_number
+                          - scheduler
+                          - short_text
+                          - ssn
+                          - template_welcome
+                          - template
+                          - yes_no
+                          - zipcode
+                          - copay
+                          - docusign_templates
+                          - insurance_verification
+                          - insurance_capture
+                          - medication_list
+                          - immunization_history
+                          - allergy
+                          - surgical_history
+                          - family_history
+                          - problems
+                          - social_history
+                          - scheduler_component
+                          - book_status_component
+                          - demographics
+                        title:
+                          type: string
+                        description:
+                          description: the description of the question
+                          type: string
+                        locales:
+                          description: A map-object whose keys may be any of these language codes `es` or `pt`
+                          type: object
+                          properties:
+                            es:
+                              type: object
+                              properties:
+                                description:
+                                  description: the translation of the description of the question into spanish
+                                  type: string
+                                title:
+                                  description: the translation of the title of the question into spanish
+                                  type: string
+                                properties:
+                                  description: same structure as `responses.pages[0].questions[i].properties`.
+                                  type: object
+                            pt:
+                              type: object
+                              properties:
+                                description:
+                                  description: the translation of the description of the question into portuguese
+                                  type: string
+                                title:
+                                  description: the translation of the title of the question into portuguese
+                                  type: string
+                                properties:
+                                  description: same structure as `responses.pages[0].properties`.
+                                  type: object
+                        text:
+                          description: the text of the question
+                          type: string
+                        squiggly:
+                          description: 'The code to be used in message templates, in the format `custom-form-xyz`,
+
+                            which becomes `{{custom-form-xyz}}` in message templates, and turns into
+
+                            the URL for the patient to click and answer the form.
+
+                            '
+                          type: string
+                        redirectType:
+                          type: string
+                          enum:
+                          - externalUrl
+                          - goTo
+                          - goToForm
+                          - goToPrevious
+                          - isFinal
+                          - none
+                          - reschedule
+                          - scheduler
+                        validations:
+                          type: object
+                          properties:
+                            required:
+                              type: boolean
+                        answers:
+                          description: 'This is the `responses.pages[0].questions[i].answers` array.
+
+                            Contains the answer (or possible answers) for the question in `responses.pages[0].questions[i]`.
+
+                            When a drop down menu is displayed, then all the possible answers are listed here.
+
+                            But only the one selected is marked as `selected: true`.
+
+                            '
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: string
+                                description: id of a question
+                              redirectType:
+                                description: PatientFormTemplateItemRedirectType
+                                type: string
+                                enum:
+                                - externalUrl
+                                - goTo
+                                - goToForm
+                                - goToPrevious
+                                - isFinal
+                                - none
+                                - reschedule
+                                - scheduler
+                              text:
+                                type: string
+                              label:
+                                type: string
+                              score:
+                                type: string
+                              code:
+                                type: string
+                              disabled:
+                                type: boolean
+                              locales:
+                                description: A map-object whose keys may be any of these language codes `es` or `pt`
+                                type: object
+                                properties:
+                                  es:
+                                    type: object
+                                    properties:
+                                      description:
+                                        description: the translation of the description of the question into spanish
+                                        type: string
+                                      title:
+                                        description: the translation of the title of the question into spanish
+                                        type: string
+                                      properties:
+                                        description: same structure as `responses.pages[0].questions[i].properties`.
+                                        type: object
+                                  pt:
+                                    type: object
+                                    properties:
+                                      description:
+                                        description: the translation of the description of the question into portuguese
+                                        type: string
+                                      title:
+                                        description: the translation of the title of the question into portuguese
+                                        type: string
+                                      properties:
+                                        description: same structure as `responses.pages[0].properties`.
+                                        type: object
+                              properties:
+                                type: object
+                                description: 'This is `responses.pages[0].questions[i].answers[j].properties`.
+
+                                  Has the same structure as `responses.pages[0].questions[i].properties`.
+
+                                  '
+                        insurances:
+                          type: array
+                          items:
+                            description: Insurance
+                            type: object
+                            properties:
+                              payerName:
+                                type: string
+                              _id:
+                                type: string
+                              planName:
+                                type: string
+                              memberName:
+                                type: string
+                              firstname:
+                                type: string
+                              lastname:
+                                type: string
+                              memberNumber:
+                                type: string
+                              insuranceGroupName:
+                                type: string
+                              url:
+                                type: string
+                                description: URL of the front picture of the insurance card
+                              urlBack:
+                                type: string
+                                description: URL of the back picture of the insurance card
+                              fileUpload:
+                                description: the ID of a fileUpload for the picture of the insurance card (front)
+                                type: string
+                              fileUploadBack:
+                                description: the ID of a fileUpload for the picture of the insurance card (back)
+                                type: string
+                              active:
+                                type: boolean
+                              status:
+                                type: string
+                                enum:
+                                - archived
+                                - active
+                              externalId:
+                                type: object
+                                properties:
+                                  source:
+                                    type: string
+                                  value:
+                                    type: string
+                              payerId:
+                                type: string
+                              verification:
+                                type: object
+                                properties:
+                                  status:
+                                    type: string
+                                    enum:
+                                    - unknown
+                                    - active
+                                    - inactive
+                                    - failed
+                                  updatedAt:
+                                    type: number
+                                    description: timestamp
+                                  requestedBy:
+                                    type: object
+                                    description: User details
+                                    properties:
+                                      safeId:
+                                        description: safeId
+                                        type: string
+                                      name:
+                                        type: string
+                                        description: Full name
+                                      firstname:
+                                        type: string
+                                        description: First name
+                                      lastname:
+                                        type: string
+                                        description: Last name
+                                      middlename:
+                                        type: string
+                                        description: Middle name
+                                      alternativeName:
+                                        type: string
+                                        description: Alternative name
+                                      displayPhone:
+                                        type: string
+                                        description: Phone number displayed in staff profile. Not used for communication purposes.
+                                      displayStatus:
+                                        type: string
+                                        description: Account status. Informative field only, not used for access control.
+                                        enum:
+                                        - active
+                                        - pending
+                                        - suspended
+                                      email:
+                                        type: string
+                                        description: User's e-mail address in lowercase.
+                                      roles:
+                                        type: array
+                                        description: User's roles, used for access control.
+                                        items:
+                                          type: string
+                                          enum:
+                                          - staff
+                                          - doctor
+                                          - widget
+                                          - manager
+                                          - admin
+                                          - referringProvider
+                                          - renderingProvider
+                                          - subaccount
+                                          - readFileUpload
+                                      rolesByUser:
+                                        $ref: '#/components/schemas/RolesByUser'
+                                      organization:
+                                        type: string
+                                        description: The ID of the organization controling this root user account.
+                                        pattern: '[0-9a-f]'
+                                        minLength: 24
+                                        maxLength: 24
+                                      contact:
+                                        type: array
+                                        description: List of contact infos of this user.
+                                        items:
+                                          type: object
+                                          required: []
+                                          properties:
+                                            type:
+                                              type: string
+                                              description: The channel of communication for the current contact info.
+                                              enum:
+                                              - inapp
+                                              - sms
+                                              - voice
+                                              - email
+                                              - fax
+                                              - whatsapp
+                                            value:
+                                              type: string
+                                              description: The value (number, email, login, etc) of the current contact info.
+                                              default: ''
+                                            active:
+                                              type: boolean
+                                              description: Indicates if the current contact is active for use or not.
+                                              default: false
+                                            archived:
+                                              type: boolean
+                                              description: Indicates if the current contact has been archived by the system due to deliverability issues.
+                                              default: false
+                                            archivedReason:
+                                              type: string
+                                              description: Reason why the number was archived by the system.
+                                              enum:
+                                              - none
+                                              - unreachable
+                                              - do-not-contact
+                                            archivedMessage:
+                                              type: string
+                                              description: The ID of the message that triggered the system to archive this contact.
+                                              pattern: '[0-9a-f]'
+                                              minLength: 24
+                                              maxLength: 24
+                                      doNotContact:
+                                        type: boolean
+                                        description: Indicates if the user has requested not to be contacted anymore.
+                                        default: false
+                                      doNotContactMessage:
+                                        type: string
+                                        description: The ID of the message where the user requested not to be contacted anymore.
+                                        pattern: '[0-9a-f]'
+                                        minLength: 24
+                                        maxLength: 24
+                                      groups:
+                                        type: array
+                                        description: List of group IDs to which this user belongs.
+                                        uniqueItems: true
+                                        items:
+                                          type: string
+                                          pattern: '[0-9a-f]'
+                                          minLength: 24
+                                          maxLength: 24
+                                      stripeCustomerId:
+                                        type: string
+                                        description: Customer ID from stripe for this account
+                                      stripeSubscriptionId:
+                                        type: string
+                                        description: Stripe subscription ID
+                                      salesforceId:
+                                        type: string
+                                        description: Salesforce Account ID for this account
+                                      salesforceData:
+                                        $ref: '#/components/schemas/SalesforceData'
+                                      active:
+                                        type: number
+                                        description: Indicates if a user is active and able to log into the system or not.
+                                        default: 0
+                                      language:
+                                        type: string
+                                        description: User's preferred language.
+                                        default: en
+                                        pattern: ^([a-z]{2}$|zh-t)$
+                                      externalId:
+                                        $ref: '#/components/schemas/ExternalId'
+                                      secondaryExternalId:
+                                        $ref: '#/components/schemas/ExternalId'
+                                      dateOfBirth:
+                                        type: object
+                                        description: Date of birth
+                                        required:
+                                        - year
+                                        - month
+                                        - day
+                                        properties:
+                                          year:
+                                            type: number
+                                          month:
+                                            type: number
+                                          day:
+                                            type: number
+                                      address:
+                                        type: string
+                                        description: User's address.
+                                      city:
+                                        type: string
+                                        description: User's city.
+                                      state:
+                                        type: string
+                                        description: User's state.
+                                      country:
+                                        type: string
+                                        default: US
+                                        description: User's country
+                                      postcode:
+                                        type: string
+                                        description: User's postal code.
+                                      gender:
+                                        type: string
+                                        description: User's gender.
+                                        default: unknown
+                                        enum:
+                                        - male
+                                        - female
+                                        - unknown
+                                        - nonbinary
+                                      avatar:
+                                        type: string
+                                        description: The ID of a FileUpload containing the profile picture of the user.
+                                        pattern: '[0-9a-f]'
+                                        minLength: 24
+                                        maxLength: 24
+                                      directMessagingEmail:
+                                        type: string
+                                        description: E-mail for direct communication with the user.
+                                      website:
+                                        description: User's website.
+                                        type: string
+                                      demoConfiguration:
+                                        type: object
+                                        properties:
+                                          type:
+                                            type: string
+                                            enum:
+                                            - default
+                                      type:
+                                        description: type
+                                        type: string
+                                        enum:
+                                        - staff
+                                        - doctor
+                                        - guest
+                                      allowedIps:
+                                        description: allowedIps
+                                        type: array
+                                        items:
+                                          type: string
+                                  lookupResults:
+                                    type: object
+                                    description: ReplaceAny
+                              patient:
+                                type: object
+                                description: Patient
+                                properties:
+                                  safeId:
+                                    description: safeId
+                                    type: string
+                                  name:
+                                    type: string
+                                    description: Full name
+                                  firstname:
+                                    type: string
+                                    description: First name
+                                  lastname:
+                                    type: string
+                                    description: Last name
+                                  middlename:
+                                    type: string
+                                    description: Middle name
+                                  alternativeName:
+                                    type: string
+                                    description: Alternative name
+                                  displayPhone:
+                                    type: string
+                                    description: Phone number displayed in staff profile. Not used for communication purposes.
+                                  displayStatus:
+                                    type: string
+                                    description: Account status. Informative field only, not used for access control.
+                                    enum:
+                                    - active
+                                    - pending
+                                    - suspended
+                                  email:
+                                    type: string
+                                    description: User's e-mail address in lowercase.
+                                  roles:
+                                    type: array
+                                    description: User's roles, used for access control.
+                                    items:
+                                      type: string
+                                      enum:
+                                      - staff
+                                      - doctor
+                                      - widget
+                                      - manager
+                                      - admin
+                                      - referringProvider
+                                      - renderingProvider
+                                      - subaccount
+                                      - readFileUpload
+                                  rolesByUser:
+                                    $ref: '#/components/schemas/RolesByUser'
+                                  organization:
+                                    type: string
+                                    description: The ID of the organization controling this root user account.
+                                    pattern: '[0-9a-f]'
+                                    minLength: 24
+                                    maxLength: 24
+                                  contact:
+                                    type: array
+                                    description: List of contact infos of this user.
+                                    items:
+                                      type: object
+                                      required: []
+                                      properties:
+                                        type:
+                                          type: string
+                                          description: The channel of communication for the current contact info.
+                                          enum:
+                                          - inapp
+                                          - sms
+                                          - voice
+                                          - email
+                                          - fax
+                                          - whatsapp
+                                        value:
+                                          type: string
+                                          description: The value (number, email, login, etc) of the current contact info.
+                                          default: ''
+                                        active:
+                                          type: boolean
+                                          description: Indicates if the current contact is active for use or not.
+                                          default: false
+                                        archived:
+                                          type: boolean
+                                          description: Indicates if the current contact has been archived by the system due to deliverability issues.
+                                          default: false
+                                        archivedReason:
+                                          type: string
+                                          description: Reason why the number was archived by the system.
+                                          enum:
+                                          - none
+                                          - unreachable
+                                          - do-not-contact
+                                        archivedMessage:
+                                          type: string
+                                          description: The ID of the message that triggered the system to archive this contact.
+                                          pattern: '[0-9a-f]'
+                                          minLength: 24
+                                          maxLength: 24
+                                  doNotContact:
+                                    type: boolean
+                                    description: Indicates if the user has requested not to be contacted anymore.
+                                    default: false
+                                  doNotContactMessage:
+                                    type: string
+                                    description: The ID of the message where the user requested not to be contacted anymore.
+                                    pattern: '[0-9a-f]'
+                                    minLength: 24
+                                    maxLength: 24
+                                  groups:
+                                    type: array
+                                    description: List of group IDs to which this user belongs.
+                                    uniqueItems: true
+                                    items:
+                                      type: string
+                                      pattern: '[0-9a-f]'
+                                      minLength: 24
+                                      maxLength: 24
+                                  stripeCustomerId:
+                                    type: string
+                                    description: Customer ID from stripe for this account
+                                  stripeSubscriptionId:
+                                    type: string
+                                    description: Stripe subscription ID
+                                  salesforceId:
+                                    type: string
+                                    description: Salesforce Account ID for this account
+                                  salesforceData:
+                                    $ref: '#/components/schemas/SalesforceData'
+                                  active:
+                                    type: number
+                                    description: Indicates if a user is active and able to log into the system or not.
+                                    default: 0
+                                  language:
+                                    type: string
+                                    description: User's preferred language.
+                                    default: en
+                                    pattern: ^([a-z]{2}$|zh-t)$
+                                  externalId:
+                                    $ref: '#/components/schemas/ExternalId'
+                                  secondaryExternalId:
+                                    $ref: '#/components/schemas/ExternalId'
+                                  dateOfBirth:
+                                    type: object
+                                    description: Date of birth
+                                    required:
+                                    - year
+                                    - month
+                                    - day
+                                    properties:
+                                      year:
+                                        type: number
+                                      month:
+                                        type: number
+                                      day:
+                                        type: number
+                                  address:
+                                    type: string
+                                    description: User's address.
+                                  city:
+                                    type: string
+                                    description: User's city.
+                                  state:
+                                    type: string
+                                    description: User's state.
+                                  country:
+                                    type: string
+                                    default: US
+                                    description: User's country
+                                  postcode:
+                                    type: string
+                                    description: User's postal code.
+                                  gender:
+                                    type: string
+                                    description: User's gender.
+                                    default: unknown
+                                    enum:
+                                    - male
+                                    - female
+                                    - unknown
+                                    - nonbinary
+                                  avatar:
+                                    type: string
+                                    description: The ID of a FileUpload containing the profile picture of the user.
+                                    pattern: '[0-9a-f]'
+                                    minLength: 24
+                                    maxLength: 24
+                                  directMessagingEmail:
+                                    type: string
+                                    description: E-mail for direct communication with the user.
+                                  website:
+                                    description: User's website.
+                                    type: string
+                                  demoConfiguration:
+                                    type: object
+                                    properties:
+                                      type:
+                                        type: string
+                                        enum:
+                                        - default
+                                  type:
+                                    description: type
+                                    type: string
+                                    enum:
+                                    - staff
+                                    - doctor
+                                    - guest
+                                  allowedIps:
+                                    description: allowedIps
+                                    type: array
+                                    items:
+                                      type: string
+                              dependent:
+                                type: object
+                                description: Dependent
+                                properties:
+                                  firstname:
+                                    type: string
+                                  lastname:
+                                    type: string
+                                  dateOfBirth:
+                                    type: object
+                                    properties:
+                                      year:
+                                        type: number
+                                      month:
+                                        type: number
+                                      day:
+                                        type: number
+                                  relationshipToSubscriber:
+                                    type: string
+                                    description: PatientRelationship
+                                    enum:
+                                    - spouse
+                                    - grandfather-or-grandmother
+                                    - grandson-or-grandaughter
+                                    - nephew-or-niece
+                                    - foster-child
+                                    - ward-of-the-court
+                                    - stepson-or-stepdaughter
+                                    - self
+                                    - child
+                                    - employee
+                                    - unknown
+                                    - handicapped-dependent
+                                    - sponsored-dependent
+                                    - dependent-of-minor-dependent
+                                    - significant-other
+                                    - mother
+                                    - emancipated-minor
+                                    - organ-donor
+                                    - cadaver-donor
+                                    - injured-plaintiff
+                                    - child-where-insured-has-no-financial-responsibility
+                                    - life-partner
+                                    - other-relationship
+                                  address:
+                                    type: string
+                              primary:
+                                type: boolean
+                        properties:
+                          description: 'This is `responses.pages[0].questions[i].properties`.
+
+                            These are the properties of the current question.
+
+                            If type is `group`, then `responses.pages[0].questions[i].properties.items`
+
+                            will contain sub-questions inside the group.
+
+                            '
+                          type: object
+                          properties:
+                            answers:
+                              type: array
+                              items:
+                                description: 'This is `responses.pages[0].questions[i].properties.answers`.
+
+                                  Same structure as `responses.pages[0].questions[i].answers`.
+
+                                  '
+                                type: object
+                            showDescription:
+                              type: boolean
+                            visibility:
+                              type: string
+                            showCustomAction:
+                              type: boolean
+                            scoringEnabled:
+                              type: boolean
+                            allowMultipleSelection:
+                              type: boolean
+                            allowOtherChoice:
+                              type: boolean
+                            includeNoneOfAboveChoice:
+                              type: boolean
+                            includeInsuranceCard:
+                              type: string
+                              enum:
+                              - DEFAULT
+                              - REQUIRED
+                              - OPTIONAL
+                            addToAppointment:
+                              type: boolean
+                            persistAnswer:
+                              type: boolean
+                            mustExist:
+                              type: boolean
+                            params:
+                              type: array
+                              items:
+                                type: object
+                                description: ReplaceAny
+                            goTo:
+                              description: The id of a question where the patient will be taken after this question
+                              type: string
+                            url:
+                              description: URL to redirect the patient.
+                              type: string
+                            template:
+                              type: string
+                            actionLabel:
+                              type: string
+                            actionHref:
+                              type: string
+                            script:
+                              type: string
+                            items:
+                              description: 'This is `responses.pages[0].questions[i].properties.items`.
+
+                                Same structure as `responses.pages[0].questions`.
+
+                                Used if `responses.pages[0].questions[i].type` is `group`.
+
+                                These items will be sub-questions inside the group, but they
+
+                                themselves cannot be of type `group` again (no groups inside groups).
+
+                                '
+                              type: array
+                              items:
+                                type: object
+                            copay:
+                              type: string
+                            immunizationHistory:
+                              description: 'Immunization History.
+
+                                Additional info on `reponses.pages[0].questions[i].answers`,
+
+                                such as `reponses.pages[0].questions[i].answers[j].answer: 2022`.
+
+                                with the same ids as the items in the history here.
+
+                                Only used when form is CCDA.
+
+                                '
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  id:
+                                    type: string
+                                    description: UUID of the immunization history entry
+                                  code:
+                                    type: string
+                                  codeSystem:
+                                    type: string
+                                    description: Luma's internal ID referring a `CCDACodeSystem` on the database.
+                                  description:
+                                    type: string
+                                    description: Description of the immunization item according to the chosen code system.
+                                  friendlyName:
+                                    type: string
+                                    description: Friendly description of the immunization item.
+                            surgicalHistory:
+                              description: 'Surgical History.Additional info on `reponses.pages[0].questions[i].answers`,
+
+                                such as `reponses.pages[0].questions[i].answers[j].answer: 2022`.
+
+                                with the same ids as the items in the history here.
+
+                                Only used when form is CCDA.
+
+                                '
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  id:
+                                    type: string
+                                    description: UUID of the surgical history entry
+                                  code:
+                                    type: string
+                                  codeSystem:
+                                    type: string
+                                    description: Luma's internal ID referring a `CCDACodeSystem` on the database.
+                                  description:
+                                    type: string
+                                    description: Description of the surgical procedure item according to the chosen code system.
+                                  friendlyName:
+                                    type: string
+                                    description: Friendly description of the surgical procedure item.
+                            familyHistory:
+                              description: 'Family History.
+
+                                Additional info on `reponses.pages[0].questions[i].answers`,
+
+                                such as `reponses.pages[0].questions[i].answers[j].familyMembers: [ ''Mother'' ]`.
+
+                                with the same ids as the items in the history here.
+
+                                Only used when form is CCDA.
+
+                                '
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  id:
+                                    type: string
+                                    description: UUID of the family history entry
+                                  code:
+                                    type: string
+                                  codeSystem:
+                                    type: string
+                                    description: Luma's internal ID referring a `CCDACodeSystem` on the database.
+                                  description:
+                                    type: string
+                                    description: Description of the family history item according to the chosen code system.
+                                  friendlyName:
+                                    type: string
+                                    description: Friendly description of the family history item.
+                            locales:
+                              description: A map-object whose keys may be any of these language codes `es` or `pt`
+                              type: object
+                              properties:
+                                es:
+                                  type: object
+                                  properties:
+                                    description:
+                                      description: the translation of the description of the question into spanish
+                                      type: string
+                                    title:
+                                      description: the translation of the title of the question into spanish
+                                      type: string
+                                    properties:
+                                      description: same structure as `responses.pages[0].questions[i].properties`.
+                                      type: object
+                                pt:
+                                  type: object
+                                  properties:
+                                    description:
+                                      description: the translation of the description of the question into portuguese
+                                      type: string
+                                    title:
+                                      description: the translation of the title of the question into portuguese
+                                      type: string
+                                    properties:
+                                      description: same structure as `responses.pages[0].questions[i].properties`.
+                                      type: object
+                            canSkip:
+                              type: boolean
+                            notifyStaff:
+                              type: boolean
+                            mappingField:
+                              type: string
+                              description: "The name of any Patient model fields.\nWhen this property is set, then the question will have its answer pre-populated using \nthe value from the Patient model.\nAs an example, if the mappingField for the question is `firstname`, when creating the \nform, the system will try to get this information from the patient data, and if \nthere's a value on this field, it will be set as the default answer for the question.\n"
+        answers:
+          description: A simplified representation of the answers contained in `responses.pages[0].questions[i]`.
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                description: 'The id of the question to which this answer refers.
+
+                  The content of any `responses.pages[0].questions[x].id`.
+
+                  '
+              answerId:
+                type: string
+                description: The id of the answer chosen or entered by the user for the given question.
+              question:
+                type: string
+                description: the label of the question being answered by the patient.
+              answer:
+                type: string
+                description: the answer given by the patient, either by typing of by picking an option.
+              questionType:
+                type: string
+                description: the type of question.
+                enum:
+                - 2FA
+                - address
+                - date
+                - dropdown
+                - e_signature
+                - email
+                - group
+                - information_capture
+                - insurance_card
+                - jump
+                - long_text
+                - medication_search
+                - multiple_choice
+                - patient_information
+                - pharmacy_search
+                - phone_number
+                - scheduler
+                - short_text
+                - ssn
+                - template_welcome
+                - template
+                - yes_no
+                - zipcode
+                - copay
+                - docusign_templates
+                - insurance_verification
+                - insurance_capture
+                - medication_list
+                - immunization_history
+                - allergy
+                - surgical_history
+                - family_history
+                - problems
+                - social_history
+                - scheduler_component
+                - book_status_component
+                - demographics
+        path:
+          description: path
+          type: array
+          items:
+            type: string
+        finalDisposition:
+          description: 'Not used, and always filled with an empty string.
+
+            Rather, see `reponses.finalDisposition`
+
+            '
+          type: string
+        integratorUpdateResults:
+          description: integratorUpdateResults
+          type: object
+          properties:
+            status:
+              description: PatientFormIntegratorUpdateResultsStatus
+              type: string
+              enum:
+              - success
+              - failure
+              - pending
+            error:
+              type: string
+        directMessageCcdaUpdateResults:
+          description: directMessageCcdaUpdateResults
+          type: object
+          properties:
+            status:
+              type: string
+              enum:
+              - success
+              - failure
+              - pending
+            error:
+              type: string
+            requestAt:
+              type: string
+              format: date-time
+            responseAt:
+              type: string
+              format: date-time
+        calculationResult:
+          description: 'If the `patientFormTemplate` has a `calculation` field,
+
+            which is a javascript code, then the result will be stored here.
+
+            '
+          type: object
+        availabilities:
+          description: availabilities
+          type: array
+          items:
+            type: string
+            pattern: '[0-9a-f]'
+            minLength: 24
+            maxLength: 24
+        facilities:
+          description: facilities
+          type: array
+          items:
+            type: string
+            pattern: '[0-9a-f]'
+            minLength: 24
+            maxLength: 24
+        querystring:
+          description: querystring ReplaceAny
+          type: object
+    RolesByUser:
+      type: object
+      description: Object containing 2 keys, referringProvider and renderingProvider. The value for each key is an array. The content of the array should be the root account ids under the same organization, where this user has the role with the same name of the key.
+      required: []
+      properties:
+        referringProvider:
+          type: array
+          description: List of root account IDs under an organization where the user has the role referringProvider
+          items:
+            type: string
+            pattern: '[0-9a-f]'
+            minLength: 24
+            maxLength: 24
+        renderingProvider:
+          type: array
+          description: List of root account IDs under an organization where the user has the role renderingProvider
+          items:
+            type: string
+            pattern: '[0-9a-f]'
+            minLength: 24
+            maxLength: 24
+  securitySchemes:
+    Bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

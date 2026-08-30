@@ -1,0 +1,727 @@
+openapi: 3.2.0
+info:
+  version: 2.0.0
+  title: Rest-Service Patient Message Templates API
+  x-logo:
+    url: https://lumahealth-assets.s3.us-west-2.amazonaws.com/new_luma_logo_black.png
+    backgroundColor: '#FFFFFF'
+    altText: Luma Health
+  description: OpenAPI [Basic Structure](https://swagger.io/docs/specification/basic-structure/)
+servers:
+- url: https://api.lumahealth.io/api/v2
+security:
+- Bearer: []
+tags:
+- name: patientMessageTemplates
+  description: Message templates used to compose patient communications
+paths:
+  /patientMessageTemplates:
+    get:
+      summary: List PatientMessageTemplates
+      operationId: patientMessageTemplatesList
+      tags:
+      - patientMessageTemplates
+      parameters:
+      - $ref: '#/components/parameters/idParam'
+      - $ref: '#/components/parameters/userParam'
+      - name: name
+        in: query
+        description: Name of the patient message template
+        schema:
+          type: string
+      - name: language
+        in: query
+        description: Language the override applies to
+        schema:
+          type: string
+          enum:
+          - ar
+          - bn
+          - cn
+          - de
+          - en
+          - es
+          - fa
+          - fl
+          - fr
+          - gr
+          - gu
+          - hi
+          - ht
+          - hy
+          - it
+          - ja
+          - km
+          - ko
+          - mr
+          - my
+          - pa
+          - pl
+          - pt
+          - ru
+          - so
+          - th
+          - ti
+          - ur
+          - vi
+          - zh-t
+          - zh
+      - name: type
+        in: query
+        description: Type of the patient message template
+        schema:
+          type: string
+          enum:
+          - chat
+          - broadcast
+      - name: channel
+        in: query
+        description: Channel the patient message template applies to
+        schema:
+          type: string
+          enum:
+          - sms
+          - email
+          - voice
+          - whatsapp
+      - $ref: '#/components/parameters/deletedParam'
+      - $ref: '#/components/parameters/createdByParam'
+      - $ref: '#/components/parameters/updatedByParam'
+      - $ref: '#/components/parameters/deletedByParam'
+      - $ref: '#/components/parameters/createdAtParam'
+      - $ref: '#/components/parameters/updatedAtParam'
+      - $ref: '#/components/parameters/deletedAtParam'
+      - $ref: '#/components/parameters/pageParam'
+      - $ref: '#/components/parameters/limitParam'
+      - $ref: '#/components/parameters/populateParam'
+      - $ref: '#/components/parameters/selectParam'
+      responses:
+        '200':
+          description: List of patient message templates
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - response
+                - page
+                - size
+                properties:
+                  response:
+                    type: array
+                    minItems: 0
+                    items:
+                      $ref: '#/components/schemas/PatientMessageTemplatesResponse'
+                  page:
+                    type: integer
+                    format: int32
+                    minimum: 1
+                  size:
+                    type: integer
+                    format: int32
+                    minimum: 0
+                additionalProperties: false
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+    post:
+      summary: Create PatientMessageTemplate
+      operationId: patientMessageTemplateCreate
+      tags:
+      - patientMessageTemplates
+      requestBody:
+        description: Create a patient message template
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatientMessageTemplatesCreate'
+      responses:
+        '200':
+          description: Successful creation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatientMessageTemplatesResponse'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /patientMessageTemplates/{patientMessageTemplateId}:
+    get:
+      summary: Get a PatientMessageTemplate by id
+      operationId: patientMessageTemplateById
+      tags:
+      - patientMessageTemplates
+      parameters:
+      - name: patientMessageTemplateId
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: ^[0-9a-f]{24}$
+          minLength: 24
+          maxLength: 24
+      responses:
+        '200':
+          description: PatientMessageTemplate
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatientMessageTemplatesResponse'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+    put:
+      summary: Update a PatientMessageTemplate
+      operationId: patientMessageTemplateUpdate
+      tags:
+      - patientMessageTemplates
+      parameters:
+      - name: patientMessageTemplateId
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: ^[0-9a-f]{24}$
+          minLength: 24
+          maxLength: 24
+      requestBody:
+        description: A patientMessageTemplate (full or partial) to be updated
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatientMessageTemplatesUpdate'
+      responses:
+        '200':
+          description: PatientMessageTemplate
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatientMessageTemplatesResponse'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+    delete:
+      summary: Delete a PatientMessageTemplate
+      operationId: patientMessageTemplateDelete
+      tags:
+      - patientMessageTemplates
+      parameters:
+      - name: patientMessageTemplateId
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: ^[0-9a-f]{24}$
+          minLength: 24
+          maxLength: 24
+      responses:
+        '200':
+          description: Deleted patientMessageTemplate
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatientMessageTemplatesResponse'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+components:
+  parameters:
+    pageParam:
+      in: query
+      name: page
+      required: false
+      type: integer
+      format: int32
+      default: 1
+      minimum: 1
+      schema:
+        type: integer
+        format: int32
+        default: 1
+        minimum: 1
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
+    idParam:
+      in: query
+      name: _id
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      required: false
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: Luma's internal ID of an object.
+    updatedByParam:
+      in: query
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+    deletedByParam:
+      in: query
+      name: deletedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who deleted this object.
+    populateParam:
+      name: _populate
+      in: query
+      description: Response properties which will be replaced by the referenced objects, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    selectParam:
+      name: _select
+      in: query
+      description: Response properties that should be returned, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+    deletedAtParam:
+      in: query
+      name: deletedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was deleted.
+    limitParam:
+      name: limit
+      in: query
+      description: How many items to fetch per page
+      required: false
+      type: integer
+      format: int32
+      default: 500
+      minimum: 1
+      maximum: 1000
+      schema:
+        type: integer
+        format: int32
+        default: 500
+        minimum: 1
+        maximum: 1000
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+  schemas:
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    deletedByParam:
+      in: query
+      name: deletedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who deleted this object.
+    idParam:
+      in: query
+      name: _id
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      required: false
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: Luma's internal ID of an object.
+    deletedAtParam:
+      in: query
+      name: deletedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was deleted.
+    PatientMessageTemplatesResponse:
+      type: object
+      properties:
+        deleted:
+          $ref: '#/components/schemas/deletedParam'
+        createdBy:
+          $ref: '#/components/schemas/createdByParam'
+        updatedBy:
+          $ref: '#/components/schemas/updatedByParam'
+        deletedBy:
+          $ref: '#/components/schemas/deletedByParam'
+        createdAt:
+          $ref: '#/components/schemas/createdAtParam'
+        updatedAt:
+          $ref: '#/components/schemas/updatedAtParam'
+        deletedAt:
+          $ref: '#/components/schemas/deletedAtParam'
+        _id:
+          $ref: '#/components/schemas/idParam'
+        user:
+          $ref: '#/components/schemas/userParam'
+        name:
+          type: string
+        message:
+          type: string
+        language:
+          type: string
+          enum:
+          - ar
+          - bn
+          - cn
+          - de
+          - en
+          - es
+          - fa
+          - fl
+          - fr
+          - gr
+          - gu
+          - hi
+          - ht
+          - hy
+          - it
+          - ja
+          - km
+          - ko
+          - mr
+          - my
+          - pa
+          - pl
+          - pt
+          - ru
+          - so
+          - th
+          - ti
+          - ur
+          - vi
+          - zh-t
+          - zh
+        type:
+          type: string
+          enum:
+          - chat
+          - broadcast
+        channel:
+          type: string
+          enum:
+          - sms
+          - email
+          - voice
+          - whatsapp
+        autoCloseChat:
+          type: boolean
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
+    updatedByParam:
+      in: query
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
+    PatientMessageTemplatesCreate:
+      type: object
+      required:
+      - message
+      - name
+      - type
+      - language
+      properties:
+        _id:
+          $ref: '#/components/schemas/idParam'
+        user:
+          $ref: '#/components/schemas/userParam'
+        name:
+          type: string
+        message:
+          type: string
+        language:
+          type: string
+          enum:
+          - ar
+          - bn
+          - cn
+          - de
+          - en
+          - es
+          - fa
+          - fl
+          - fr
+          - gr
+          - gu
+          - hi
+          - ht
+          - hy
+          - it
+          - ja
+          - km
+          - ko
+          - mr
+          - my
+          - pa
+          - pl
+          - pt
+          - ru
+          - so
+          - th
+          - ti
+          - ur
+          - vi
+          - zh-t
+          - zh
+        type:
+          type: string
+          enum:
+          - chat
+          - broadcast
+        channel:
+          type: string
+          enum:
+          - sms
+          - email
+          - voice
+          - whatsapp
+        autoCloseChat:
+          type: boolean
+    PatientMessageTemplatesUpdate:
+      type: object
+      properties:
+        _id:
+          $ref: '#/components/schemas/idParam'
+        user:
+          $ref: '#/components/schemas/userParam'
+        name:
+          type: string
+        message:
+          type: string
+        language:
+          type: string
+          enum:
+          - ar
+          - bn
+          - cn
+          - de
+          - en
+          - es
+          - fa
+          - fl
+          - fr
+          - gr
+          - gu
+          - hi
+          - ht
+          - hy
+          - it
+          - ja
+          - km
+          - ko
+          - mr
+          - my
+          - pa
+          - pl
+          - pt
+          - ru
+          - so
+          - th
+          - ti
+          - ur
+          - vi
+          - zh-t
+          - zh
+        type:
+          type: string
+          enum:
+          - chat
+          - broadcast
+        channel:
+          type: string
+          enum:
+          - sms
+          - email
+          - voice
+          - whatsapp
+        autoCloseChat:
+          type: boolean
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+  securitySchemes:
+    Bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

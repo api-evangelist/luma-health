@@ -1,0 +1,1724 @@
+openapi: 3.2.0
+info:
+  version: 2.0.0
+  title: Rest-Service Messages API
+  x-logo:
+    url: https://lumahealth-assets.s3.us-west-2.amazonaws.com/new_luma_logo_black.png
+    backgroundColor: '#FFFFFF'
+    altText: Luma Health
+  description: OpenAPI [Basic Structure](https://swagger.io/docs/specification/basic-structure/)
+servers:
+- url: https://api.lumahealth.io/api/v2
+security:
+- Bearer: []
+tags:
+- name: messages
+  description: Messages (chat, sms, voice, email, whatsapp, fax, in-app)
+paths:
+  /messages:
+    get:
+      summary: List messages
+      operationId: messagesList
+      tags:
+      - messages
+      parameters:
+      - name: patient
+        in: query
+        description: The ID of the patient linked to this message.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: key
+        in: query
+        description: 'The MessageTemplate name. There are only 2 templates available through the RESTful API.
+
+          The secure template means that the patient only gets a generic message with a link to open the patient web app
+
+          and then read the real message. In that case, there are 2 messages, one with that generic message,
+
+          and one with the real message. This parameter is set automatically on the message,
+
+          depending on the `secure` parameter which was chosen when the message was created.
+
+          '
+        schema:
+          type: string
+          enum:
+          - chatRequest
+          - chatRequestInsecure
+      - name: from
+        in: query
+        description: the phone number or e-mail address from whom this message was received. It depends on the value of the parameter `channel`.
+        schema:
+          type: string
+      - name: to
+        in: query
+        description: the phone number or e-mail address to whom this message was sent. It depends on the value of the parameter `channel`.
+        schema:
+          type: string
+      - name: type
+        in: query
+        description: Indicates if a message was sent from Luma to an external person, or the other way around.
+        schema:
+          type: string
+          enum:
+          - inbound
+          - outbound
+      - name: voiceAnsweredBy
+        in: query
+        description: voiceAnsweredBy
+        schema:
+          type: string
+          enum:
+          - human
+          - fax
+          - unknown
+          - machine-start
+          - machine-end-beep
+          - machine-end-silence
+          - machine-end-other
+      - name: ref
+        description: 'Indicates what this message is about. Depending on this value, you also know what the parameter `refId` refers to.<br/>
+
+          - reminder (`refId` will be the ID of a `Reminder`)<br/>
+
+          - referral-reminder (`refId` will be the ID of a `Reminder`)<br/>
+
+          - feedback-reminder (`refId` will be the ID of a `Reminder`)<br/>
+
+          - followup (`refId` will be the ID of a `Reminder`)<br/>
+
+          - outbound-referral-reminder (`refId` will be the ID of a `Reminder`)<br/>
+
+          - form-reminder (`refId` will be the ID of a `Reminder`)<br/>
+
+          - reschedule (`refId` will be the ID of a `Reminder`)<br/>
+
+          - waitlist (`refId` will be the ID of a `Waitlist`)<br/>
+
+          - appointment-offer (`refId` will be the ID of a `Offer`)<br/>
+
+          - chat-notification (`refId` will be the ID of a `Message`)<br/>
+
+          - pin-verification (`refId` will be the ID of a `Message`)<br/>
+
+          - chat (`refId` will be the ID of a `Message`)<br/>
+
+          - chat-audit (`refId` will be the ID of a `ChatActivity`)<br/>
+
+          - chat-audit-tz (`refId` will be the ID of a `ChatActivity`)<br/>
+
+          - feedback (`refId` will be the ID of a `Feedback` request)<br/>
+
+          - waitlist-offer (`refId` will be the ID of an `Appointment`)<br/>
+
+          - referral-followup (`refId` will be the ID of a `Referral`)<br/>
+
+          - outbound-referral-outreach (`refId` will be the ID of a `Referral`)<br/>
+
+          - referral-redirect (`refId` will be the ID of a `Referral`)<br/>
+
+          - broadcast (`refId` will be the ID of a `Broadcast`)<br/>
+
+          - generic (`refId` will refer to the same object of the previous message to this same patient)<br/>
+
+          - stop (`refId` will refer to the same object of the previous message to this same patient)<br/>
+
+          - bot:followup (`refId` will be the ID of a `Patient`)<br/>
+
+          - telehealth (`refId` will be the ID of a `Telehealth` object)<br/>
+
+          - waiting-room-patient (`refId` will be the ID of a `WaitingRoomPatient` object)<br/>
+
+          '
+        in: query
+        schema:
+          type: string
+          enum:
+          - reminder
+          - referral-reminder
+          - feedback-reminder
+          - followup
+          - outbound-referral-reminder
+          - form-reminder
+          - reschedule
+          - waitlist
+          - appointment-offer
+          - chat-notification
+          - pin-verification
+          - chat
+          - chat-audit
+          - chat-audit-tz
+          - feedback
+          - waitlist-offer
+          - referral-followup
+          - outbound-referral-outreach
+          - referral-redirect
+          - broadcast
+          - generic
+          - stop
+          - bot:followup
+          - telehealth
+          - waiting-room-patient
+      - name: refId
+        in: query
+        description: The ID of the object referenced by the `ref` parameter.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: patientMessageTemplate
+        in: query
+        description: The ID of a Hub Message Template (or `PatientMessageTemplate`). These are custom messages, created by users, to make their typing experience easier.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: outboundMessage
+        in: query
+        description: 'This field is only present on a patient''s reply (aka `messages` whose `type` are `inbound`)
+
+          so as to link it to the original outbound `message` that was sent to them.
+
+          '
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: status
+        in: query
+        description: 'The deliverability status, provided by Luma''s external vendors.<br/>
+
+          Messages are initially created as `sent`, and later updated to some other status.<br/>
+
+          - Sent = vendor has acknowledged receipt of request<br/>
+
+          - Pending = vendor has sent non-terminating status update<br/>
+
+          - Delivered = vendor has confirmed a delivered message<br/>
+
+          - Undelivered = vendor has confirmed an undelivered message<br/>
+
+          - Opened = vendor has confirmed an opened message<br/>
+
+          - Skipped = system skipped sending the message<br/>
+
+          '
+        schema:
+          type: string
+          enum:
+          - sent
+          - pending
+          - delivered
+          - undelivered
+          - opened
+          - skipped
+      - name: externalStatus
+        in: query
+        description: 'Delivery status codes and messages provided by external vendors. <br/>
+
+          `code` : Status code provided by vendor <br/>
+
+          `reason` : Status message provided by vendor
+
+          '
+        schema:
+          type: array
+          items:
+            type: string
+            enum:
+            - code
+            - reason
+      - name: skippedStatusReason
+        in: query
+        description: 'This field is only present on messages whose `status` is `skipped`.
+
+          It contains the reason why Luma decided to skip sending the message out.
+
+          '
+        schema:
+          type: string
+      - name: channel
+        in: query
+        description: 'The channel used to send this message.<br/>
+
+          On our RESTful API, you may search for multiple channels, but only POST `chat` messages.<br/>
+
+          Two of them deserve an explanation:<br/>
+
+          - `chat` will check the recipient''s contact and pick the channel automatically.<br/>
+
+          - `inapp` are meant for internal messages, when a staff user `@mentions` another staff user on Hub.
+
+          The mentioned person only gets a notification on their browser window,
+
+          by fetching from the `notifications` API.
+
+          '
+        schema:
+          type: string
+          enum:
+          - sms
+          - email
+          - voice
+          - inapp
+          - chat
+          - fax
+          - whatsapp
+      - name: text
+        in: query
+        description: 'The content of the message.
+
+          If the channel was `chat`, then the text was manually provided when the message was created.
+
+          For all other channels, the `key` was used to fetch a `messageTemplate` and determine the `text`
+
+          based on that template.
+
+          '
+        schema:
+          type: string
+      - name: classification
+        in: query
+        description: 'The classification of patient replies (inbound messages) interpreted by our
+
+          NLP (Natural Language Processing) service.<br/>
+
+          - `positive` indicates a yes-type answer (e.g. "sounds good", "yes", or "ok")<br/>
+
+          - `negative` indicates a no-type answer (e.g. "no way", "negative", "no good")<br/>
+
+          - `irregular` indicates classification attempt was not able to classify the text as positive or negative<br/>
+
+          - `recognized-keywords` indicates that an expected keyword was identified (e.g. "waitlist")<br/>
+
+          - `unclassified` indicates no classification attempted - yet<br/>
+
+          '
+        schema:
+          type: string
+          default: unclassified
+          enum:
+          - positive
+          - negative
+          - irregular
+          - recognized-keywords
+          - unclassified
+      - name: secure
+        in: query
+        description: 'Indicates how a message with channel `chat` will be delivered.<br/>
+
+          Secure messages are created on the database but not really sent to patients. Instead, we create another unsecure message whose content is the messageTemplate `chatRequestInsecure`, which basically instructs the patient to click on a link to open patient-web-app to log in and then read the secure message.
+
+          Insecure messages are sent directly to patients. Their text should not contain any PHI or sensitive information.
+
+          '
+        schema:
+          type: boolean
+      - name: automated
+        in: query
+        description: Indicates if a message was created by users (chat) or by the system (reminders, recalls, etc).
+        schema:
+          type: boolean
+      - name: visibility
+        in: query
+        description: 'Helps determine where a certain message should be displayed.
+
+          - `public` = manual and automated messages sent to patients, visible to patients logged into our patient web app;<br/>
+
+          - `private` = automated messages sent to staff, only visible to one recipient staff user;<br/>
+
+          - `internal` = manual messages sent from staff to staff, visible to both staff users involved in a conversation, whenever one @mentined the other, both logged into our internal web app, and usually on Hub rather than any notification areas.<br/>
+
+          '
+        schema:
+          type: string
+          default: public
+          enum:
+          - public
+          - private
+          - internal
+      - name: file
+        in: query
+        description: 'The ID of a `FileUpload`, in case this message has any attachment,
+
+          sent via the `FileUpload` RESTful API.
+
+          '
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: recipient
+        in: query
+        description: The ID of the User receiving the message. Usually, for messages `type outbound`, the recipient is the ID of a patient.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: recipientType
+        in: query
+        description: The type of the user in the field `recipient`
+        schema:
+          type: string
+          enum:
+          - doctor
+          - staff
+          - patient
+      - name: shouldForceContactWithNotifyTo
+        in: query
+        description: 'When the patient has the patient web app open, we detect that and only send messages through the web interface.
+
+          This is to avoid having the patient receive the same message both on the web and also by SMS.
+
+          But if this flag is set to TRUE, then we will send to the contact specified in the `notifyTo` field, regardless of the patient''s online presence.
+
+          '
+        schema:
+          type: boolean
+      - name: appointment
+        in: query
+        description: ID of Appointment
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: provider
+        in: query
+        description: ID of Provider
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: appointmentType
+        in: query
+        description: ID of AppointmentType
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: followup
+        in: query
+        description: ID of Followup, or Custom Action.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: recall
+        in: query
+        description: ID of Recall
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: referral
+        in: query
+        description: ID of Referral
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: messageFailure
+        in: query
+        description: ID of MessageFailure
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: groups
+        in: query
+        description: An _id or array of _ids separated by comma. Filters by message.facility within the facilities from the specified groups
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - $ref: '#/components/parameters/languageParam'
+      - $ref: '#/components/parameters/createdByParam'
+      - $ref: '#/components/parameters/updatedByParam'
+      - $ref: '#/components/parameters/createdAtParam'
+      - $ref: '#/components/parameters/updatedAtParam'
+      - $ref: '#/components/parameters/pageParam'
+      - $ref: '#/components/parameters/limitParam'
+      - $ref: '#/components/parameters/populateParam'
+      - $ref: '#/components/parameters/selectParam'
+      responses:
+        '200':
+          description: List of messages
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - response
+                - page
+                - size
+                properties:
+                  response:
+                    type: array
+                    minItems: 0
+                    items:
+                      $ref: '#/components/schemas/MessageResponse'
+                  page:
+                    type: integer
+                    format: int32
+                    minimum: 1
+                  size:
+                    type: integer
+                    format: int32
+                    minimum: 0
+                additionalProperties: false
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+    post:
+      summary: Create message
+      operationId: messageCreate
+      tags:
+      - messages
+      requestBody:
+        description: Optional description in *Markdown*
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MessageRequest'
+      responses:
+        '201':
+          description: Successful creation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /messages/{messageId}:
+    get:
+      summary: Get message by id
+      operationId: messageGet
+      tags:
+      - messages
+      parameters:
+      - name: messageId
+        in: path
+        required: true
+        description: Messages' unique identifier in Luma's database.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      responses:
+        '200':
+          description: Message
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+    put:
+      summary: Update message visibility
+      operationId: messageUpdateVisibility
+      tags:
+      - messages
+      parameters:
+      - name: messageId
+        in: path
+        required: true
+        description: Messages' unique identifier in Luma's database.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: markMessageAs
+        in: query
+        description: 'Helps determine where a certain message should be displayed.
+
+          - `public` = manual and automated messages sent to patients, visible to patients logged into our patient web app;<br/>
+
+          - `private` = automated messages sent to staff, only visible to one recipient staff user;<br/>
+
+          - `internal` = manual messages sent from staff to staff, visible to both staff users involved in a conversation, whenever one @mentined the other, both logged into our internal web app, and usually on Hub rather than any notification areas.<br/>
+
+          '
+        schema:
+          type: string
+          default: public
+          enum:
+          - public
+          - private
+          - internal
+      requestBody:
+        description: The message visibility status
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MessagesUpdateVisibilityRequest'
+      responses:
+        '200':
+          description: Success updating message visibility
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - message
+                properties:
+                  body:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                additionalProperties: false
+        '400':
+          description: Bad params or the address are invalid
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - message
+                properties:
+                  error:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                additionalProperties: false
+        '500':
+          description: An unexpected error occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - message
+                properties:
+                  error:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                additionalProperties: false
+components:
+  parameters:
+    pageParam:
+      in: query
+      name: page
+      required: false
+      type: integer
+      format: int32
+      default: 1
+      minimum: 1
+      schema:
+        type: integer
+        format: int32
+        default: 1
+        minimum: 1
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
+    updatedByParam:
+      in: query
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
+    languageParam:
+      in: query
+      name: language
+      type: string
+      schema:
+        type: string
+        enum:
+        - ar
+        - bn
+        - cn
+        - de
+        - en
+        - es
+        - fa
+        - fl
+        - fr
+        - gr
+        - gu
+        - hi
+        - ht
+        - hy
+        - it
+        - ja
+        - km
+        - ko
+        - mr
+        - my
+        - pa
+        - pl
+        - pt
+        - ru
+        - so
+        - th
+        - ti
+        - ur
+        - vi
+        - zh-t
+        - zh
+      description: Language code.
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+    populateParam:
+      name: _populate
+      in: query
+      description: Response properties which will be replaced by the referenced objects, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    selectParam:
+      name: _select
+      in: query
+      description: Response properties that should be returned, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    limitParam:
+      name: limit
+      in: query
+      description: How many items to fetch per page
+      required: false
+      type: integer
+      format: int32
+      default: 500
+      minimum: 1
+      maximum: 1000
+      schema:
+        type: integer
+        format: int32
+        default: 500
+        minimum: 1
+        maximum: 1000
+  schemas:
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    idParam:
+      in: query
+      name: _id
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      required: false
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: Luma's internal ID of an object.
+    MessageRequest:
+      type: object
+      required:
+      - patient
+      - type
+      - ref
+      - channel
+      - text
+      - secure
+      properties:
+        patient:
+          description: The ID of the patient linked to this message.
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        key:
+          description: 'The MessageTemplate name. There are only 2 templates available through the RESTful API.
+
+            The secure template means that the patient only gets a generic message with a link to open the patient web app
+
+            and then read the real message. In that case, there are 2 messages, one with that generic message,
+
+            and one with the real message. This parameter is set automatically on the message,
+
+            depending on the `secure` parameter which was chosen when the message was created.
+
+            '
+          type: string
+          enum:
+          - chatRequest
+          - chatRequestInsecure
+        type:
+          description: Indicates if a message was sent from Luma to an external person, or the other way around.
+          type: string
+          enum:
+          - inbound
+          - outbound
+        voiceAnsweredBy:
+          description: voiceAnsweredBy
+          type: string
+          enum:
+          - human
+          - fax
+          - unknown
+          - machine-start
+          - machine-end-beep
+          - machine-end-silence
+          - machine-end-other
+        ref:
+          description: 'On our RESTful API, you can only create messages with ref `chat`, but you may see these other refs when fetching messages.
+
+            Indicates what this message is about. Depending on this value, you also know what the parameter `refId` refers to.<br/>
+
+            - chat (`refId` will be the ID of a `ChatActivity`)<br/>
+
+            '
+          type: string
+          enum:
+          - chat
+        refId:
+          description: The ID of the object referenced by the `ref` parameter.
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        patientMessageTemplate:
+          description: The ID of a Hub Message Template (or `PatientMessageTemplate`). These are custom messages, created by users, to make their typing experience easier.
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        language:
+          $ref: '#/components/schemas/Language'
+        channel:
+          description: "description: |\nThe channel used to send this message.<br/>\nOn our RESTful API, you may search for multiple channels, but only POST `chat` messages.<br/>\nCheck the response format to see other possible channels.<br/>\nTwo of them deserve an explanation:<br/>\n- `chat` will check the recipient's contact and pick the channel automatically.<br/>\n- `inapp` are meant for internal messages, when a staff user `@mentions` another staff user on Hub.\nThe mentioned person only gets a notification on their browser window, \nby fetching from the `notifications` API.\n"
+          type: string
+          enum:
+          - chat
+        notifyTo:
+          description: Messages with channel=chat may specify in this field where the message notification must be sent.
+          type: array
+          items:
+            type: object
+            required:
+            - channel
+            properties:
+              channel:
+                description: channel
+                type: string
+                enum:
+                - sms
+                - email
+                - voice
+                - inapp
+                - chat
+                - fax
+                - whatsapp
+              to:
+                description: to
+                type: string
+        shouldForceContactWithNotifyTo:
+          description: 'When the patient has the patient web app open, we detect that and only send messages through the web interface.
+
+            This is to avoid having the patient receive the same message both on the web and also by SMS.
+
+            But if this flag is set to TRUE, then we will send to the contact specified in the `notifyTo` field, regardless of the patient''s online presence.
+
+            '
+          type: boolean
+        text:
+          description: 'The content of the message.<br/>
+
+            On our RESTful API, you can only POST messages with channel `chat`,
+
+            and you must provide a `text`.<br/>
+
+            Just as an information for when fetching messages (not creating them),
+
+            all the other channels determine the `text` automatically, based on the `key`.
+
+            The key is the name of a messageTemplate, which is fetched then parsed (for squigglies)
+
+            to generate the final `text` automatically.
+
+            '
+          type: string
+        externalId:
+          $ref: '#/components/schemas/ExternalId'
+        secure:
+          description: 'Indicates how a message with channel `chat` will be delivered.<br/>
+
+            Secure messages are created on the database but not really sent to patients. Instead, we create another unsecure message whose content is the messageTemplate `chatRequestInsecure`, which basically instructs the patient to click on a link to open patient-web-app to log in and then read the secure message.
+
+            Insecure messages are sent directly to patients. Their text should not contain any PHI or sensitive information.
+
+            '
+          type: boolean
+        automated:
+          description: Indicates if a message was created by users (chat) or by the system (reminders, recalls, etc).
+          type: boolean
+          default: true
+        visibility:
+          description: 'Helps determine where a certain message should be displayed.
+
+            - `public` = manual and automated messages sent to patients, visible to patients logged into our patient web app;<br/>
+
+            - `private` = automated messages sent to staff, only visible to one recipient staff user;<br/>
+
+            - `internal` = manual messages sent from staff to staff, visible to both staff users involved in a conversation, whenever one @mentined the other, both logged into our internal web app, and usually on Hub rather than any notification areas.<br/>
+
+            '
+          type: string
+          default: public
+          enum:
+          - public
+          - private
+          - internal
+        file:
+          description: 'The ID of a `FileUpload`, in case this message has any attachment,
+
+            sent via the `FileUpload` RESTful API.
+
+            '
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        media:
+          description: Any recorded media (voice recording, fax image, etc) that represents this message. URL should be the location from which to retreive it
+          type: object
+          properties:
+            url:
+              type: string
+            contentType:
+              type: string
+        mentions:
+          description: Array of IDs of either users or groups that have been `@mentioned` inside messages, usually messages with visibility `internal`.
+          type: array
+          items:
+            type: object
+            properties:
+              ref:
+                description: Describes if the `@mention` refers to a `User` ID or a `Group` ID. Determines the meaning of the `refId` field.
+                type: string
+                enum:
+                - user
+                - group
+              refId:
+                description: The ID of either a user or a group that was @mentioned, based on the `ref` value.
+                type: string
+                pattern: '[0-9a-f]'
+                minLength: 24
+                maxLength: 24
+              mention:
+                description: Literally the string `@SomeOnesName` or `@GroupName` that was used.
+                type: string
+        recipient:
+          description: The ID of the User receiving the message. Usually, for messages `type outbound`, the recipient is the ID of a patient.
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        recipientType:
+          description: The type of the user in the field `recipient`
+          type: string
+          enum:
+          - doctor
+          - staff
+          - patient
+        appointment:
+          description: ID of Appointment
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        provider:
+          description: ID of Provider
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        appointmentType:
+          description: ID of AppointmentType
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        followup:
+          description: ID of Followup or Custom Action
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        recall:
+          description: ID of Recall
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        referral:
+          description: ID of Referral
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        messageFailure:
+          description: ID of MessageFailure
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+    MessageResponse:
+      type: object
+      description: A Message represents a single communication sent or received between Luma Health and a patient, or between staff members, across channels such as SMS, email, voice, fax, WhatsApp, and in-app chat. It tracks delivery status from the messaging vendor (sent, delivered, opened, undelivered, etc), links back to related records like the appointment, provider, referral, or recall that triggered it, and captures the classification of patient replies such as positive, negative, or unrecognized. It also distinguishes public patient-facing messages from private staff notifications and internal staff-to-staff conversations.
+      properties:
+        _id:
+          $ref: '#/components/schemas/idParam'
+        user:
+          $ref: '#/components/schemas/userParam'
+        deleted:
+          $ref: '#/components/schemas/deletedParam'
+        createdBy:
+          $ref: '#/components/schemas/createdByParam'
+        updatedBy:
+          $ref: '#/components/schemas/updatedByParam'
+        createdAt:
+          $ref: '#/components/schemas/createdAtParam'
+        updatedAt:
+          $ref: '#/components/schemas/updatedAtParam'
+        patient:
+          description: The ID of the patient linked to this message.
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        key:
+          description: 'The MessageTemplate name. There are only 2 templates available through the RESTful API.
+
+            The secure template means that the patient only gets a generic message with a link to open the patient web app
+
+            and then read the real message. In that case, there are 2 messages, one with that generic message,
+
+            and one with the real message. This parameter is set automatically on the message,
+
+            depending on the `secure` parameter which was chosen when the message was created.
+
+            '
+          type: string
+        from:
+          description: the phone number or e-mail address from whom this message was received. It depends on the value of the parameter `channel`.
+          type: string
+        to:
+          description: the phone number or e-mail address to whom this message was sent. It depends on the value of the parameter `channel`.
+          type: string
+        type:
+          description: Indicates if a message was sent from Luma to an external person, or the other way around.
+          type: string
+          enum:
+          - inbound
+          - outbound
+        voiceAnsweredBy:
+          description: voiceAnsweredBy
+          type: string
+          enum:
+          - human
+          - fax
+          - unknown
+          - machine-start
+          - machine-end-beep
+          - machine-end-silence
+          - machine-end-other
+        ref:
+          $ref: '#/components/schemas/Ref'
+        refId:
+          description: The ID of the object referenced by the `ref` parameter.
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        patientMessageTemplate:
+          description: The ID of a Hub Message Template (or `PatientMessageTemplate`). These are custom messages, created by users, to make their typing experience easier.
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        outboundMessage:
+          description: 'This field is only present on a patient''s reply (aka `messages` whose `type` are `inbound`)
+
+            so as to link it to the original outbound `message` that was sent to them.
+
+            '
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        status:
+          description: 'The deliverability status, provided by Luma''s external vendors.<br/>
+
+            Messages are initially created as `sent`, and later updated to some other status.<br/>
+
+            - Sent = vendor has acknowledged receipt of request<br/>
+
+            - Pending = vendor has sent non-terminating status update<br/>
+
+            - Delivered = vendor has confirmed a delivered message<br/>
+
+            - Undelivered = vendor has confirmed an undelivered message<br/>
+
+            - Opened = vendor has confirmed an opened message<br/>
+
+            - Skipped = system skipped sending the message<br/>
+
+            '
+          type: string
+          default: sent
+          enum:
+          - sent
+          - pending
+          - delivered
+          - undelivered
+          - opened
+          - skipped
+        skippedStatusReason:
+          description: 'This field is only present on messages whose `status` is `skipped`.
+
+            It contains the reason why Luma decided to skip sending the message out.
+
+            '
+          type: string
+        language:
+          $ref: '#/components/schemas/Language'
+        externalStatus:
+          description: Delivery status codes and messages provided by external vendors.
+          type: object
+          properties:
+            code:
+              type: string
+              description: Status code provided by vendor
+            reason:
+              type: string
+              description: Status message provided by vendor
+        channel:
+          description: "The channel used to send this message.<br/>\nOn our RESTful API, you may search for multiple channels, but only POST `chat` messages.<br/>\nTwo of them deserve an explanation:<br/>\n- `chat` will check the recipient's contact and pick the channel automatically.<br/>\n- `inapp` are meant for internal messages, when a staff user `@mentions` another staff user on Hub.\nThe mentioned person only gets a notification on their browser window, \nby fetching from the `notifications` API.\n"
+          type: string
+          enum:
+          - sms
+          - email
+          - voice
+          - inapp
+          - chat
+          - fax
+          - whatsapp
+        notifyTo:
+          description: Messages with channel=chat may specify in this field where the message notification must be sent.
+          type: array
+          items:
+            type: object
+            properties:
+              channel:
+                description: channel
+                type: string
+                enum:
+                - sms
+                - email
+                - voice
+                - inapp
+                - chat
+                - fax
+                - whatsapp
+              to:
+                description: to
+                type: string
+        shouldForceContactWithNotifyTo:
+          description: 'When the patient has the patient web app open, we detect that and only send messages through the web interface.
+
+            This is to avoid having the patient receive the same message both on the web and also by SMS.
+
+            But if this flag is set to TRUE, then we will send to the contact specified in the `notifyTo` field, regardless of the patient''s online presence.
+
+            '
+          type: boolean
+        text:
+          description: 'The content of the message.
+
+            If the channel was `chat`, then the text was manually provided when the message was created.
+
+            For all other channels, the `key` was used to fetch a `messageTemplate` and determine the `text`
+
+            based on that template.
+
+            '
+          type: string
+        classification:
+          description: 'The classification of patient replies (inbound messages) interpreted by our
+
+            NLP (Natural Language Processing) service.<br/>
+
+            - `positive` indicates a yes-type answer (e.g. "sounds good", "yes", or "ok")<br/>
+
+            - `negative` indicates a no-type answer (e.g. "no way", "negative", "no good")<br/>
+
+            - `irregular` indicates classification attempt was not able to classify the text as positive or negative<br/>
+
+            - `recognized-keywords` indicates that an expected keyword was identified (e.g. "waitlist")<br/>
+
+            - `unclassified` indicates no classification attempted - yet<br/>
+
+            '
+          type: string
+          default: unclassified
+          enum:
+          - positive
+          - negative
+          - irregular
+          - recognized-keywords
+          - unclassified
+        externalId:
+          $ref: '#/components/schemas/ExternalId'
+        secure:
+          description: 'Indicates how a message with channel `chat` will be delivered.<br/>
+
+            Secure messages are created on the database but not really sent to patients. Instead, we create another unsecure message whose content is the messageTemplate `chatRequestInsecure`, which basically instructs the patient to click on a link to open patient-web-app to log in and then read the secure message.
+
+            Insecure messages are sent directly to patients. Their text should not contain any PHI or sensitive information.
+
+            '
+          type: boolean
+        automated:
+          description: Indicates if a message was created by users (chat) or by the system (reminders, recalls, etc).
+          type: boolean
+          default: true
+        visibility:
+          description: 'Helps determine where a certain message should be displayed.
+
+            - `public` = manual and automated messages sent to patients, visible to patients logged into our patient web app;<br/>
+
+            - `private` = automated messages sent to staff, only visible to one recipient staff user;<br/>
+
+            - `internal` = manual messages sent from staff to staff, visible to both staff users involved in a conversation, whenever one @mentined the other, both logged into our internal web app, and usually on Hub rather than any notification areas.<br/>
+
+            '
+          type: string
+          default: public
+          enum:
+          - public
+          - private
+          - internal
+        file:
+          description: 'The ID of a `FileUpload`, in case this message has any attachment,
+
+            sent via the `FileUpload` RESTful API.
+
+            '
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        media:
+          description: Any recorded media (voice recording, fax image, etc) that represents this message. URL should be the location from which to retreive it
+          type: object
+          properties:
+            url:
+              type: string
+            contentType:
+              type: string
+        stats:
+          description: stats
+          type: object
+          properties:
+            timers:
+              type: object
+              properties:
+                elapsedReplyTime:
+                  description: How long it took for a user to reply to a message in seconds
+                  type: number
+                  default: 0
+                pricing:
+                  type: object
+                  properties:
+                    segments:
+                      type: number
+                    carrierFee:
+                      type: number
+                      default: 0
+                    baseRate:
+                      type: number
+                      default: 0
+            pricing:
+              type: string
+        retry:
+          description: Information about additional messages that were created in an attempt to retry sending messages that failed to be delivered.
+          type: object
+          properties:
+            originalMessage:
+              description: ID of the original Message that had an undelivered status
+              type: string
+              pattern: '[0-9a-f]'
+              minLength: 24
+              maxLength: 24
+            count:
+              description: Sequential number of attempts
+              type: number
+              default: 0
+        terminatingStateAt:
+          description: The time that we recognize a terminal state of a message updated based on the vendor status callbacks.
+          type: string
+          format: date-time
+        mentions:
+          description: Array of IDs of either users or groups that have been `@mentioned` inside messages, usually messages with visibility `internal`.
+          type: array
+          items:
+            type: object
+            properties:
+              ref:
+                description: Describes if the `@mention` refers to a `User` ID or a `Group` ID. Determines the meaning of the `refId` field.
+                type: string
+                enum:
+                - user
+                - group
+              refId:
+                description: The ID of either a user or a group that was @mentioned, based on the `ref` value.
+                type: string
+                pattern: '[0-9a-f]'
+                minLength: 24
+                maxLength: 24
+              mention:
+                description: Literally the string `@SomeOnesName` or `@GroupName` that was used.
+                type: string
+        recipient:
+          description: The ID of the User receiving the message. Usually, for messages `type outbound`, the recipient is the ID of a patient.
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        recipientType:
+          description: The type of the user in the field `recipient`
+          type: string
+          enum:
+          - doctor
+          - staff
+          - patient
+        appointment:
+          description: ID of Appointment
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        provider:
+          description: ID of Provider
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        appointmentType:
+          description: ID of AppointmentType
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        followup:
+          description: ID of Followup or Custom Action
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        recall:
+          description: ID of Recall
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        referral:
+          description: ID of Referral
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        messageFailure:
+          description: ID of MessageFailure
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
+    updatedByParam:
+      in: query
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
+    ExternalId:
+      type: object
+      properties:
+        source:
+          description: externalId.source
+          type: string
+          enum:
+          - gcalendar
+          - successehs
+          - drchrono
+          - dentrix
+          - webpt
+          - theraoffice
+          - mi7
+          - practicefusion
+          - advancedmd
+          - acomrapidpm
+          - kareo
+          - nextech
+          - mwtherapy
+          - clinicient
+          - carecloud
+          - eclinicalmobile
+          - duxware
+          - labretriever
+          - optimispt
+          - referral
+          - recall
+          - allscriptspm
+          - lytec
+          - brightree
+          - fullslate
+          - nuemd
+          - centricityps
+          - officeally
+          - greenwayintergy
+          - compulink
+          - adspm
+          - dsnpm
+          - lumamock
+          - medicalmastermind
+          - meditouch
+          - healthnautica
+          - ezemrx
+          - hl7
+          - amazingcharts
+          - greenwayprimesuite
+          - raintree
+          - athenahealth
+          - revflow
+          - eclinicalworks10e
+          - hl7pickup
+          - mindbody
+          - eclinicalworkssql
+          - nextgen
+          - practiceperfect
+          - avimark
+          - clinix
+          - keymedical
+          - mdoffice
+          - webedoctor
+          - emapm
+          - medinformatix
+          - imsgo
+          - emds
+          - allscriptsunity
+          - medevolve
+          - caretracker
+          - clearpractice
+          - valant
+          - micromd
+          - systemedx
+          - medicalmaster
+          - athenamdp
+          - gmed
+          - roche
+          - onetouch
+          - somnoware
+          - managementplus
+          - lumacare
+          - nextechfhir
+          - curemd
+          - epic
+          - phoenixortho
+          - ezderm
+          - ggastromobile
+          - epicconfirmationpickup
+          - cerner
+          - allmeds
+          - oncoemrfilepickup
+          - imedicware
+          - modmedfhir
+          - clinux
+          - acuityscheduling
+          - medstreaming
+          - isalus
+          - meditechexpanse
+          - openemr
+          - genericfhir
+          - nextechpracticeplus
+          - sms
+          - voice
+          - email
+          - none
+        value:
+          description: externalId.value
+          type: string
+    Language:
+      description: Language
+      type: string
+      enum:
+      - ar
+      - bn
+      - cn
+      - de
+      - en
+      - es
+      - fa
+      - fl
+      - fr
+      - gr
+      - gu
+      - hi
+      - ht
+      - hy
+      - it
+      - ja
+      - km
+      - ko
+      - mr
+      - my
+      - pa
+      - pl
+      - pt
+      - ru
+      - so
+      - th
+      - ti
+      - ur
+      - vi
+      - zh-t
+      - zh
+    MessagesUpdateVisibilityRequest:
+      type: object
+      properties:
+        markMessageAs:
+          type: string
+          default: public
+          enum:
+          - public
+          - private
+          - internal
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+    Ref:
+      description: 'Indicates what this is about. Depending on this value, you also know what the parameter `refId` refers to.<br/>
+
+        - reminder (`refId` will be the ID of a `Reminder`)<br/>
+
+        - referral-reminder (`refId` will be the ID of a `Reminder`)<br/>
+
+        - feedback-reminder (`refId` will be the ID of a `Reminder`)<br/>
+
+        - followup (`refId` will be the ID of a `Reminder`)<br/>
+
+        - outbound-referral-reminder (`refId` will be the ID of a `Reminder`)<br/>
+
+        - form-reminder (`refId` will be the ID of a `Reminder`)<br/>
+
+        - reschedule (`refId` will be the ID of a `Reminder`)<br/>
+
+        - waitlist (`refId` will be the ID of a `Waitlist`)<br/>
+
+        - appointment-offer (`refId` will be the ID of a `Offer`)<br/>
+
+        - chat-notification (`refId` will be the ID of a `Message`)<br/>
+
+        - pin-verification (`refId` will be the ID of a `Message`)<br/>
+
+        - chat (`refId` will be the ID of a `ChatActivity`)<br/>
+
+        - chat-audit (`refId` will be the ID of a `ChatActivity`)<br/>
+
+        - chat-audit-tz (`refId` will be the ID of a `ChatActivity`)<br/>
+
+        - feedback (`refId` will be the ID of a `Feedback` request)<br/>
+
+        - waitlist-offer (`refId` will be the ID of an `Appointment`)<br/>
+
+        - referral-followup (`refId` will be the ID of a `Referral`)<br/>
+
+        - outbound-referral-outreach (`refId` will be the ID of a `Referral`)<br/>
+
+        - referral-redirect (`refId` will be the ID of a `Referral`)<br/>
+
+        - broadcast (`refId` will be the ID of a `Broadcast`)<br/>
+
+        - generic (`refId` will refer to the same object of the previous message to this same patient)<br/>
+
+        - stop (`refId` will refer to the same object of the previous message to this same patient)<br/>
+
+        - bot:followup (`refId` will be the ID of a `Patient`)<br/>
+
+        - telehealth (`refId` will be the ID of a `Telehealth` object)<br/>
+
+        - waiting-room-patient (`refId` will be the ID of a `WaitingRoomPatient` object)<br/>
+
+        '
+      type: string
+      enum:
+      - reminder
+      - referral-reminder
+      - feedback-reminder
+      - followup
+      - outbound-referral-reminder
+      - form-reminder
+      - reschedule
+      - waitlist
+      - appointment-offer
+      - chat-notification
+      - pin-verification
+      - chat
+      - chat-audit
+      - chat-audit-tz
+      - feedback
+      - waitlist-offer
+      - referral-followup
+      - outbound-referral-outreach
+      - referral-redirect
+      - broadcast
+      - generic
+      - stop
+      - bot:followup
+      - telehealth
+      - waiting-room-patient
+  securitySchemes:
+    Bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

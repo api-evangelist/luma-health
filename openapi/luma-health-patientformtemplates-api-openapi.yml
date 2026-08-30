@@ -1,0 +1,1138 @@
+openapi: 3.2.0
+info:
+  version: 2.0.0
+  title: Rest-Service Patient Form Templates API
+  x-logo:
+    url: https://lumahealth-assets.s3.us-west-2.amazonaws.com/new_luma_logo_black.png
+    backgroundColor: '#FFFFFF'
+    altText: Luma Health
+  description: OpenAPI [Basic Structure](https://swagger.io/docs/specification/basic-structure/)
+servers:
+- url: https://api.lumahealth.io/api/v2
+security:
+- Bearer: []
+tags:
+- name: patientFormTemplates
+  description: Templates from patient forms
+paths:
+  /patientFormTemplates:
+    get:
+      summary: Show a list of patientFormTemplates
+      operationId: listPatientFormTemplates
+      tags:
+      - patientFormTemplates
+      parameters:
+      - name: source
+        in: query
+        description: of the patient form template
+        schema:
+          type: string
+          enum:
+          - system
+          - user
+      - name: externalId
+        in: query
+        description: The ID of externalId
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: description
+        in: query
+        description: description of the patient form template
+        schema:
+          type: string
+      - name: type
+        in: query
+        description: type of the patient form template
+        schema:
+          type: string
+          enum:
+          - pre-qualification
+          - intake
+          - feedback
+          - ccda
+      - name: active
+        in: query
+        description: active
+        schema:
+          type: boolean
+      - name: url
+        in: query
+        description: url of the patient form template
+        schema:
+          type: string
+      - name: tag
+        in: query
+        description: tag of the patient form template
+        schema:
+          type: string
+      - name: integratorMapping
+        in: query
+        description: integratorMapping
+        schema:
+          type: string
+      - name: calculation
+        in: query
+        description: calculation
+        schema:
+          type: string
+      - name: finalDispositionCalculation
+        in: query
+        description: finalDispositionCalculation
+        schema:
+          type: string
+      - name: schedulerRequestInterceptor
+        in: query
+        description: schedulerRequestInterceptor
+        schema:
+          type: string
+      - name: schedulerResponseInterceptor
+        in: query
+        description: schedulerResponseInterceptor
+        schema:
+          type: string
+      - name: htmlPdfTemplateHeader
+        in: query
+        description: htmlPdfTemplateHeader
+        schema:
+          type: string
+      - name: htmlPdfTemplateBody
+        in: query
+        description: htmlPdfTemplateBody of the patient form template
+        schema:
+          type: string
+      - name: htmlPdfTemplateFooter
+        in: query
+        description: htmlPdfTemplateFooter of the patient form template
+        schema:
+          type: string
+      - name: lumabot
+        in: query
+        description: lumabot
+        schema:
+          type: string
+      - name: sendToDirectMessageEmail
+        in: query
+        description: sendToDirectMessageEmail
+        schema:
+          type: string
+      - name: lumaBotFlow
+        in: query
+        description: lumaBotFlow
+        schema:
+          type: string
+          enum:
+          - welcome
+          - authenticate-patient
+          - speak-with-staff
+          - session-timeout
+          - knock-knock
+          - cul-de-sac
+          - feedback
+      - $ref: '#/components/parameters/userParam'
+      - $ref: '#/components/parameters/deletedParam'
+      - $ref: '#/components/parameters/createdByParam'
+      - $ref: '#/components/parameters/updatedByParam'
+      - $ref: '#/components/parameters/createdAtParam'
+      - $ref: '#/components/parameters/updatedAtParam'
+      - $ref: '#/components/parameters/pageParam'
+      - $ref: '#/components/parameters/limitParam'
+      - $ref: '#/components/parameters/populateParam'
+      - $ref: '#/components/parameters/selectParam'
+      responses:
+        '200':
+          description: Returns a list of patientFormTemplates
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - response
+                - page
+                - size
+                properties:
+                  response:
+                    type: array
+                    minItems: 0
+                    items:
+                      $ref: '#/components/schemas/PatientFormTemplateResponse'
+                  page:
+                    type: integer
+                    format: int32
+                    minimum: 1
+                  size:
+                    type: integer
+                    format: int32
+                    minimum: 0
+                additionalProperties: false
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      summary: Create a patientFormTemplate
+      operationId: patientFormTemplateCreate
+      tags:
+      - patientFormTemplates
+      requestBody:
+        description: Create a patientFormTemplate
+        required: true
+        content:
+          application:json:
+            schema:
+              $ref: '#/components/schemas/PatientFormTemplateRequestCreate'
+      responses:
+        '201':
+          description: Successful creation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatientFormTemplateResponse'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+  /patientFormTemplates/{patientFormTemplateId}:
+    get:
+      summary: Get patientFormTemplate by id
+      operationId: patientFormTemplateGet
+      tags:
+      - patientFormTemplates
+      parameters:
+      - name: patientFormTemplateId
+        in: path
+        required: true
+        description: PatientFormTemplates' unique identifier in Luma's database.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      responses:
+        '200':
+          description: PatientFormTemplate
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatientFormTemplateResponse'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+    put:
+      summary: Update a patientFormTemplate
+      operationId: patientFormTemplateUpdate
+      tags:
+      - patientFormTemplates
+      parameters:
+      - name: patientFormTemplateId
+        in: path
+        required: true
+        description: PatientFormTemplates' unique identifier in Luma's database.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      requestBody:
+        description: A patientFormTemplate (full or partial) to be updated
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatientFormTemplateRequestUpdate'
+      responses:
+        '200':
+          description: PatientFormTemplate
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatientFormTemplateResponse'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+    delete:
+      summary: Delete a patientFormTemplate
+      operationId: patientFormTemplateDelete
+      tags:
+      - patientFormTemplates
+      parameters:
+      - name: patientFormTemplateId
+        in: path
+        required: true
+        description: PatientFormTemplates' unique identifier in Luma's database.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      responses:
+        '200':
+          description: Deleted patientFormTemplate
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatientFormTemplateResponse'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+  /patientFormTemplates/docusign/template:
+    get:
+      summary: Get list of DocuSign accounts availables
+      operationId: listDocuSign accounts
+      tags:
+      - patientFormTemplates
+      responses:
+        '200':
+          description: Returns a list of DocuSign accounts that user can switch in Luma
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  response:
+                    type: array
+                    minItems: 0
+                    items:
+                      type: object
+                      properties:
+                        accountId:
+                          type: string
+                        isDefault:
+                          type: string
+                        accountName:
+                          type: string
+                        baseUri:
+                          type: string
+                additionalProperties: false
+        '400':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - message
+                properties:
+                  error:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                additionalProperties: false
+        '500':
+          description: An unexpected error occurred
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - message
+                properties:
+                  error:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                additionalProperties: false
+components:
+  parameters:
+    pageParam:
+      in: query
+      name: page
+      required: false
+      type: integer
+      format: int32
+      default: 1
+      minimum: 1
+      schema:
+        type: integer
+        format: int32
+        default: 1
+        minimum: 1
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
+    updatedByParam:
+      in: query
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+    populateParam:
+      name: _populate
+      in: query
+      description: Response properties which will be replaced by the referenced objects, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    selectParam:
+      name: _select
+      in: query
+      description: Response properties that should be returned, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+    limitParam:
+      name: limit
+      in: query
+      description: How many items to fetch per page
+      required: false
+      type: integer
+      format: int32
+      default: 500
+      minimum: 1
+      maximum: 1000
+      schema:
+        type: integer
+        format: int32
+        default: 500
+        minimum: 1
+        maximum: 1000
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+  schemas:
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+    PatientFormTemplateRequestUpdate:
+      type: object
+      properties:
+        source:
+          description: source of the patient form template
+          type: string
+          enum:
+          - system
+          - user
+        externalId:
+          description: externalId of the patient form template
+          type: object
+          properties:
+            source:
+              type: string
+              enum:
+              - docusign
+              - hellosign
+              - surveymonkey
+              - luma
+            id:
+              type: string
+              pattern: '[0-9a-f]'
+              minLength: 24
+              maxLength: 24
+        title:
+          description: title of the patient form template
+          type: string
+        description:
+          description: description of the patient form template
+          type: string
+        insurance:
+          description: insurance of the patient form template
+          type: object
+          properties:
+            enabled:
+              type: boolean
+            id:
+              type: string
+              pattern: '[0-9a-f]'
+              minLength: 24
+              maxLength: 24
+        reminder:
+          description: reminder of the patient form template
+          type: object
+          properties:
+            enabled:
+              type: boolean
+            id:
+              type: string
+              pattern: '[0-9a-f]'
+              minLength: 24
+              maxLength: 24
+        type:
+          description: type of the patient form template
+          type: string
+          enum:
+          - pre-qualification
+          - intake
+          - feedback
+          - ccda
+        active:
+          description: describes if the patient form template is active
+          type: boolean
+        url:
+          description: url of the patient form template
+          type: string
+        tag:
+          description: tag of the patient form template which is used to build the squiggly
+          type: string
+        template:
+          description: template of the patient form template
+          type: object
+          properties:
+            version:
+              type: string
+            welcomeScreens:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  template:
+                    type: string
+                  title:
+                    type: string
+                  properties:
+                    type: object
+                    properties:
+                      template:
+                        type: string
+                      actionLabel:
+                        type: string
+            items:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  type:
+                    type: string
+                  squiggly:
+                    type: string
+                  title:
+                    type: string
+                  redirectType:
+                    type: string
+                  validations:
+                    type: object
+                    properties:
+                      required:
+                        type: boolean
+                  properties:
+                    type: object
+                    properties:
+                      addToAppointment:
+                        type: boolean
+                      showCustomAction:
+                        type: boolean
+                      includeNoneOfAboveChoice:
+                        type: boolean
+                      allowOtherChoice:
+                        type: boolean
+                      scoringEnabled:
+                        type: boolean
+                      visibility:
+                        type: string
+                      allowMultipleSelection:
+                        type: boolean
+                      showDescription:
+                        type: boolean
+                      answers:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                          redirectType:
+                            type: string
+        integratorMapping:
+          description: integratorMapping of the patient form template
+          type: string
+        calculation:
+          description: calculation of the patient form template
+          type: string
+        finalDispositionCalculation:
+          description: finalDispositionCalculation of the patient form template
+          type: string
+        schedulerRequestInterceptor:
+          description: schedulerRequestInterceptor of the patient form template
+          type: string
+        schedulerResponseInterceptor:
+          description: schedulerResponseInterceptor of the patient form template
+          type: string
+        htmlPdfTemplateHeader:
+          description: htmlPdfTemplateHeader of the patient form template
+          type: string
+        htmlPdfTemplateBody:
+          description: htmlPdfTemplateBody of the patient form template
+          type: string
+        htmlPdfTemplateFooter:
+          description: htmlPdfTemplateFooter of the patient form template
+          type: string
+        lumabot:
+          description: lumabot of the patient form template
+          type: boolean
+        sendToDirectMessageEmail:
+          description: sendToDirectMessageEmail of the patient form template
+          type: boolean
+        lumaBotFlow:
+          description: lumaBotFlow of the patient form template
+          type: string
+          enum:
+          - welcome
+          - authenticate-patient
+          - speak-with-staff
+          - session-timeout
+          - knock-knock
+          - cul-de-sac
+          - feedback
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    PatientFormTemplateRequestCreate:
+      type: object
+      required:
+      - source
+      - lumabot
+      properties:
+        source:
+          description: source of the patient form template
+          type: string
+          enum:
+          - system
+          - user
+        externalId:
+          description: externalId of the patient form template
+          type: object
+          properties:
+            source:
+              type: string
+              enum:
+              - docusign
+              - hellosign
+              - surveymonkey
+              - luma
+            id:
+              type: string
+              pattern: '[0-9a-f]'
+              minLength: 24
+              maxLength: 24
+        title:
+          description: title of the patient form template
+          type: string
+        description:
+          description: description of the patient form template
+          type: string
+        insurance:
+          description: insurance of the patient form template
+          type: object
+          properties:
+            enabled:
+              type: boolean
+            id:
+              type: string
+              pattern: '[0-9a-f]'
+              minLength: 24
+              maxLength: 24
+        reminder:
+          description: reminder of the patient form template
+          type: object
+          properties:
+            enabled:
+              type: boolean
+            id:
+              type: string
+              pattern: '[0-9a-f]'
+              minLength: 24
+              maxLength: 24
+        type:
+          description: type of the patient form template
+          type: string
+          enum:
+          - pre-qualification
+          - intake
+          - feedback
+          - ccda
+        active:
+          description: describes if the patient form template is active
+          type: boolean
+        url:
+          description: url of the patient form template
+          type: string
+        tag:
+          description: tag of the patient form template which is used to build the squiggly
+          type: string
+        template:
+          description: template of the patient form template
+          type: object
+          properties:
+            version:
+              type: string
+            welcomeScreens:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  template:
+                    type: string
+                  title:
+                    type: string
+                  properties:
+                    type: object
+                    properties:
+                      template:
+                        type: string
+                      actionLabel:
+                        type: string
+            items:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  type:
+                    type: string
+                  squiggly:
+                    type: string
+                  title:
+                    type: string
+                  redirectType:
+                    type: string
+                  validations:
+                    type: object
+                    properties:
+                      required:
+                        type: boolean
+                  properties:
+                    type: object
+                    properties:
+                      addToAppointment:
+                        type: boolean
+                      showCustomAction:
+                        type: boolean
+                      includeNoneOfAboveChoice:
+                        type: boolean
+                      allowOtherChoice:
+                        type: boolean
+                      scoringEnabled:
+                        type: boolean
+                      visibility:
+                        type: string
+                      allowMultipleSelection:
+                        type: boolean
+                      showDescription:
+                        type: boolean
+                      answers:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                          redirectType:
+                            type: string
+        integratorMapping:
+          description: integratorMapping of the patient form template
+          type: string
+        calculation:
+          description: calculation of the patient form template
+          type: string
+        finalDispositionCalculation:
+          description: finalDispositionCalculation of the patient form template
+          type: string
+        schedulerRequestInterceptor:
+          description: schedulerRequestInterceptor of the patient form template
+          type: string
+        schedulerResponseInterceptor:
+          description: schedulerResponseInterceptor of the patient form template
+          type: string
+        htmlPdfTemplateHeader:
+          description: htmlPdfTemplateHeader of the patient form template
+          type: string
+        htmlPdfTemplateBody:
+          description: htmlPdfTemplateBody of the patient form template
+          type: string
+        htmlPdfTemplateFooter:
+          description: htmlPdfTemplateFooter of the patient form template
+          type: string
+        lumabot:
+          description: lumabot of the patient form template
+          type: boolean
+        sendToDirectMessageEmail:
+          description: sendToDirectMessageEmail of the patient form template
+          type: boolean
+        lumaBotFlow:
+          description: lumaBotFlow of the patient form template
+          type: string
+          enum:
+          - welcome
+          - authenticate-patient
+          - speak-with-staff
+          - session-timeout
+          - knock-knock
+          - cul-de-sac
+          - feedback
+    idParam:
+      in: query
+      name: _id
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      required: false
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: Luma's internal ID of an object.
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
+    updatedByParam:
+      in: query
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+    PatientFormTemplateResponse:
+      type: object
+      description: A form template is the reusable definition of a form that staff configure once and then send to many patients, such as intake, pre-qualification, feedback, or consent forms. It defines the form content, jump logic for branching between questions, optional insurance and reminder settings, and custom scripts used to calculate results, map answers to EHR fields, or intercept scheduler requests when the form leads into booking an appointment. Each time a patient fills it out, a separate patient form instance is created from this template.
+      properties:
+        _id:
+          $ref: '#/components/schemas/idParam'
+        user:
+          $ref: '#/components/schemas/userParam'
+        deleted:
+          $ref: '#/components/schemas/deletedParam'
+        createdBy:
+          $ref: '#/components/schemas/createdByParam'
+        updatedBy:
+          $ref: '#/components/schemas/updatedByParam'
+        createdAt:
+          $ref: '#/components/schemas/createdAtParam'
+        updatedAt:
+          $ref: '#/components/schemas/updatedAtParam'
+        source:
+          description: source of the patient form template
+          type: string
+          enum:
+          - system
+          - user
+        externalId:
+          description: externalId of the patient form template
+          type: object
+          properties:
+            source:
+              type: string
+              enum:
+              - docusign
+              - hellosign
+              - surveymonkey
+              - luma
+            id:
+              type: string
+              pattern: '[0-9a-f]'
+              minLength: 24
+              maxLength: 24
+        title:
+          description: title of the patient form template
+          type: string
+        description:
+          description: description of the patient form template
+          type: string
+        insurance:
+          description: insurance of the patient form template
+          type: object
+          properties:
+            enabled:
+              type: boolean
+            id:
+              type: string
+              pattern: '[0-9a-f]'
+              minLength: 24
+              maxLength: 24
+        reminder:
+          description: reminder of the patient form template
+          type: object
+          properties:
+            enabled:
+              type: boolean
+            id:
+              type: string
+              pattern: '[0-9a-f]'
+              minLength: 24
+              maxLength: 24
+        type:
+          description: type of the patient form template
+          type: string
+          enum:
+          - pre-qualification
+          - intake
+          - feedback
+          - ccda
+        active:
+          description: describes if the patient form template is active
+          type: boolean
+        url:
+          description: url of the patient form template
+          type: string
+        tag:
+          description: tag of the patient form template which is used to build the squiggly
+          type: string
+        template:
+          description: template of the patient form template
+          type: object
+          properties:
+            version:
+              type: string
+            welcomeScreens:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  template:
+                    type: string
+                  title:
+                    type: string
+                  properties:
+                    type: object
+                    properties:
+                      template:
+                        type: string
+                      actionLabel:
+                        type: string
+            items:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  type:
+                    type: string
+                  squiggly:
+                    type: string
+                  title:
+                    type: string
+                  redirectType:
+                    type: string
+                  validations:
+                    type: object
+                    properties:
+                      required:
+                        type: boolean
+                  properties:
+                    type: object
+                    properties:
+                      addToAppointment:
+                        type: boolean
+                      showCustomAction:
+                        type: boolean
+                      includeNoneOfAboveChoice:
+                        type: boolean
+                      allowOtherChoice:
+                        type: boolean
+                      scoringEnabled:
+                        type: boolean
+                      visibility:
+                        type: string
+                      allowMultipleSelection:
+                        type: boolean
+                      showDescription:
+                        type: boolean
+                      answers:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                          redirectType:
+                            type: string
+        integratorMapping:
+          description: integratorMapping of the patient form template
+          type: string
+        calculation:
+          description: calculation of the patient form template
+          type: string
+        finalDispositionCalculation:
+          description: finalDispositionCalculation of the patient form template
+          type: string
+        schedulerRequestInterceptor:
+          description: schedulerRequestInterceptor of the patient form template
+          type: string
+        schedulerResponseInterceptor:
+          description: schedulerResponseInterceptor of the patient form template
+          type: string
+        htmlPdfTemplateHeader:
+          description: htmlPdfTemplateHeader of the patient form template
+          type: string
+        htmlPdfTemplateBody:
+          description: htmlPdfTemplateBody of the patient form template
+          type: string
+        htmlPdfTemplateFooter:
+          description: htmlPdfTemplateFooter of the patient form template
+          type: string
+        lumabot:
+          description: lumabot of the patient form template
+          type: boolean
+        sendToDirectMessageEmail:
+          description: sendToDirectMessageEmail of the patient form template
+          type: boolean
+        lumaBotFlow:
+          description: lumaBotFlow of the patient form template
+          type: string
+          enum:
+          - welcome
+          - authenticate-patient
+          - speak-with-staff
+          - session-timeout
+          - knock-knock
+          - cul-de-sac
+          - feedback
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+  securitySchemes:
+    Bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

@@ -1,0 +1,612 @@
+openapi: 3.2.0
+info:
+  version: 2.0.0
+  title: Rest-Service Billing Charges API
+  x-logo:
+    url: https://lumahealth-assets.s3.us-west-2.amazonaws.com/new_luma_logo_black.png
+    backgroundColor: '#FFFFFF'
+    altText: Luma Health
+  description: OpenAPI [Basic Structure](https://swagger.io/docs/specification/basic-structure/)
+servers:
+- url: https://api.lumahealth.io/api/v2
+security:
+- Bearer: []
+tags:
+- name: billingCharges
+  description: Financial charges tracked against a patient, such as copays and patient balances
+paths:
+  /billingCharges:
+    get:
+      summary: List billing charges
+      operationId: billingChargesList
+      tags:
+      - billingCharges
+      parameters:
+      - name: status
+        in: query
+        schema:
+          type: string
+          enum:
+          - planned
+          - billable
+          - billed
+          - aborted
+      - name: type
+        in: query
+        schema:
+          type: string
+          enum:
+          - copay
+          - balance
+          - custom-appointment-charge
+          - convenience-fee
+      - name: source
+        in: query
+        schema:
+          type: string
+          enum:
+          - manual
+          - integrator
+          - insurance-verification
+          - fixedAmount
+      - name: paymentStatus
+        in: query
+        schema:
+          type: string
+          enum:
+          - pending
+          - not-paid
+          - paid
+          - partially-paid
+          - refunded
+      - name: patient
+        in: query
+        description: ID of a patient.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: appointment
+        in: query
+        description: ID of an appointment.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - $ref: '#/components/parameters/userParam'
+      - $ref: '#/components/parameters/deletedParam'
+      - $ref: '#/components/parameters/createdByParam'
+      - $ref: '#/components/parameters/updatedByParam'
+      - $ref: '#/components/parameters/createdAtParam'
+      - $ref: '#/components/parameters/updatedAtParam'
+      - $ref: '#/components/parameters/pageParam'
+      - $ref: '#/components/parameters/limitParam'
+      - $ref: '#/components/parameters/populateParam'
+      - $ref: '#/components/parameters/selectParam'
+      responses:
+        '200':
+          description: List of billing charges. When the caller is authenticated as a patient, the `reason` field (staff-only) is omitted from each charge.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - response
+                - page
+                - size
+                properties:
+                  response:
+                    type: array
+                    minItems: 0
+                    items:
+                      $ref: '#/components/schemas/BillingChargeResponse'
+                  page:
+                    type: integer
+                    format: int32
+                    minimum: 1
+                  size:
+                    type: integer
+                    format: int32
+                    minimum: 0
+                additionalProperties: false
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+    put:
+      summary: Bulk upsert billing charges for an appointment
+      description: Creates or updates the set of billing charges tied to a single appointment in one call. Only one `copay` type charge is allowed per appointment, and any existing `custom-appointment-charge` not present in the request will be aborted.
+      operationId: billingChargesUpsert
+      tags:
+      - billingCharges
+      requestBody:
+        description: Charges to upsert for an appointment
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BillingChargesUpsertRequest'
+      responses:
+        '200':
+          description: The upserted billing charges
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BillingChargeResponse'
+        '400':
+          description: Missing appointmentId or charges
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+  /billingCharges/balance:
+    post:
+      summary: Create a balance charge for a patient
+      description: Creates a standalone charge against a patient's balance, independent of the appointment upsert flow. Does not require an appointment.
+      operationId: billingChargeCreateBalance
+      tags:
+      - billingCharges
+      requestBody:
+        description: The balance charge to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BillingChargeBalanceRequestCreate'
+      responses:
+        '201':
+          description: Successful creation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BillingChargeResponse'
+        '400':
+          description: patient and a positive numeric amount are required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+  /billingCharges/{billingChargeId}:
+    get:
+      summary: Get billing charge by id
+      operationId: billingChargeGet
+      tags:
+      - billingCharges
+      parameters:
+      - name: billingChargeId
+        in: path
+        required: true
+        description: BillingCharge's unique identifier in Luma's database.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      responses:
+        '200':
+          description: BillingCharge
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BillingChargeResponse'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+components:
+  parameters:
+    pageParam:
+      in: query
+      name: page
+      required: false
+      type: integer
+      format: int32
+      default: 1
+      minimum: 1
+      schema:
+        type: integer
+        format: int32
+        default: 1
+        minimum: 1
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
+    updatedByParam:
+      in: query
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+    populateParam:
+      name: _populate
+      in: query
+      description: Response properties which will be replaced by the referenced objects, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    selectParam:
+      name: _select
+      in: query
+      description: Response properties that should be returned, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+    limitParam:
+      name: limit
+      in: query
+      description: How many items to fetch per page
+      required: false
+      type: integer
+      format: int32
+      default: 500
+      minimum: 1
+      maximum: 1000
+      schema:
+        type: integer
+        format: int32
+        default: 500
+        minimum: 1
+        maximum: 1000
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+  schemas:
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    BillingChargesUpsertRequest:
+      type: object
+      required:
+      - appointmentId
+      - charges
+      properties:
+        appointmentId:
+          type: string
+          description: ID of the appointment these charges belong to.
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        charges:
+          type: array
+          description: Charges to upsert for this appointment. Include `_id` to update an existing charge, or omit it to create a new one. Only one `copay` type charge is allowed per appointment. Any existing custom-appointment-charge not present in this array will be aborted.
+          minItems: 1
+          items:
+            type: object
+            properties:
+              _id:
+                type: string
+                description: ID of an existing charge to update. Omit to create a new charge.
+                pattern: '[0-9a-f]'
+                minLength: 24
+                maxLength: 24
+              amount:
+                type: number
+                description: The charge amount.
+              type:
+                type: string
+                description: The kind of charge.
+                enum:
+                - copay
+                - balance
+                - custom-appointment-charge
+                - convenience-fee
+              description:
+                type: string
+                description: Public description of the charge, visible to the patient.
+    BillingChargeResponse:
+      type: object
+      description: Represents a single financial charge tracked against a patient, such as a copay, patient balance, custom appointment fee, or convenience fee. A billing charge moves through a status lifecycle (planned, billable, billed, or aborted) and a separate payment status (pending, paid, partially paid, refunded) as it is billed and collected, and can be linked to an appointment, patient, insurance verification, and one or more billing transactions.
+      properties:
+        _id:
+          $ref: '#/components/schemas/idParam'
+        user:
+          $ref: '#/components/schemas/userParam'
+        deleted:
+          $ref: '#/components/schemas/deletedParam'
+        createdBy:
+          $ref: '#/components/schemas/createdByParam'
+        updatedBy:
+          $ref: '#/components/schemas/updatedByParam'
+        createdAt:
+          $ref: '#/components/schemas/createdAtParam'
+        updatedAt:
+          $ref: '#/components/schemas/updatedAtParam'
+        amount:
+          type: number
+          description: The charge amount.
+        currency:
+          type: string
+          description: Currency code for the charge.
+          default: USD
+        status:
+          type: string
+          description: Lifecycle status of the charge. `planned` = planned but not yet billed, `billable` = confirmed by staff and ready to bill, `billed` = sent to the patient for collection, `aborted` = wrongfully added or aborted.
+          enum:
+          - planned
+          - billable
+          - billed
+          - aborted
+        lastStatusUpdatedAt:
+          type: string
+          format: date-time
+          description: When `status` was last changed.
+        lastStatusUpdatedBy:
+          type: string
+          description: ID of the user who last changed `status`.
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        type:
+          type: string
+          description: The kind of charge. `copay` = copay amount for the appointment, `balance` = patient balance tied to the appointment, `custom-appointment-charge` = custom value added by staff, `convenience-fee` = a convenience fee charge.
+          enum:
+          - copay
+          - balance
+          - custom-appointment-charge
+          - convenience-fee
+        source:
+          type: string
+          description: Where the charge originated from. `manual` = added by staff, `integrator` = from the EHR, `insurance-verification` = from the insurance verification process, `fixedAmount` = created from a fixed copay rule.
+          enum:
+          - manual
+          - integrator
+          - insurance-verification
+          - fixedAmount
+        description:
+          type: string
+          description: Public description of the charge, visible to the patient.
+        reason:
+          type: string
+          description: Internal, staff-only note about the charge. Omitted from patient-facing responses.
+        appointment:
+          type: string
+          description: ID of the appointment associated with this charge.
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        patient:
+          type: string
+          description: ID of the patient associated with this charge.
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        insuranceVerification:
+          type: string
+          description: ID of the insurance verification this charge's copay was derived from, if any.
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        insurance:
+          type: string
+          description: ID of the patient's insurance saved alongside the insurance verification.
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        paymentStatus:
+          type: string
+          description: How much of the charge has been collected.
+          enum:
+          - pending
+          - not-paid
+          - paid
+          - partially-paid
+          - refunded
+        amountPaid:
+          type: number
+          description: The amount paid toward this charge so far.
+        billingTransactions:
+          type: array
+          description: IDs of the billing transactions associated with this charge.
+          items:
+            type: string
+            pattern: '[0-9a-f]'
+            minLength: 24
+            maxLength: 24
+        isCreatedByAI:
+          type: boolean
+          description: Indicates whether this charge was created or suggested by AI.
+    idParam:
+      in: query
+      name: _id
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      required: false
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: Luma's internal ID of an object.
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
+    updatedByParam:
+      in: query
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
+    BillingChargeBalanceRequestCreate:
+      type: object
+      required:
+      - patient
+      - amount
+      properties:
+        patient:
+          type: string
+          description: ID of the patient this balance charge is for.
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        amount:
+          type: number
+          description: The balance amount to charge. Must be a positive number.
+        currency:
+          type: string
+          description: Currency code for the charge. Defaults to the account's payment localization currency, or USD.
+        appointment:
+          type: string
+          description: ID of an appointment to associate with this balance charge, if any.
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+  securitySchemes:
+    Bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

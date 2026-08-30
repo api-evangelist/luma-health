@@ -1,0 +1,1490 @@
+openapi: 3.2.0
+info:
+  version: 2.0.0
+  title: Rest-Service Lumabot Flows API
+  x-logo:
+    url: https://lumahealth-assets.s3.us-west-2.amazonaws.com/new_luma_logo_black.png
+    backgroundColor: '#FFFFFF'
+    altText: Luma Health
+  description: OpenAPI [Basic Structure](https://swagger.io/docs/specification/basic-structure/)
+servers:
+- url: https://api.lumahealth.io/api/v2
+security:
+- Bearer: []
+tags:
+- name: lumabotFlows
+  description: LumaBot Flows answered by patients
+paths:
+  /lumabotFlows:
+    get:
+      summary: Show a list of lumabotFlows
+      operationId: listLumabotFlows
+      tags:
+      - lumabotFlows
+      parameters:
+      - name: patient
+        in: query
+        description: the ID of the patient who filled out the answers for this flow.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: status
+        in: query
+        description: 'The completion status of the lumabot flow under the patient''s perspective, knowingly:
+
+          - `started`: when the patient started answering at least one question, but hasn''t finished the flow yet;
+
+          - `completed`: the patient has finished answering all the questions and cannot edit the flow anymore.
+
+          '
+        schema:
+          type: string
+          enum:
+          - started
+          - completed
+      - name: completedAt
+        in: query
+        description: the date/time when the patient finished all the responses of this flow.
+        schema:
+          type: string
+          flowat: date-time
+      - name: appointment
+        in: query
+        description: the ID of an appointment related to this flow.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: fileUpload
+        in: query
+        description: the ID of a fileUpload related to this flow.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: url
+        in: query
+        description: 'deprecated: custom lumabot flow url, basically to identify any patient in survey monkey,
+
+          an external flows service that''s not being used anymore by Luma.
+
+          '
+        schema:
+          type: string
+      - name: currentItemId
+        in: query
+        description: 'The code of the current question the patient was last shown, before answering it.
+
+          Such a code must be the content of any `questions[x].id`, or `success`.
+
+          Usually this will contain each id, in sequence, but patients can go back and forth.
+
+          Also, flows can have jump logic, and some questions might not be displayed to the patient.
+
+          When the flow is completed, this is updated to `success`.
+
+          '
+        schema:
+          type: string
+      - name: lumabotFlowTemplate
+        in: query
+        description: the ID of the template of questions that was displayed for the patient.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: lumabotFlowTemplateName
+        in: query
+        description: the name of the template of questions used as a basis for these flow answers. See `lumabotFlowTemplates`.
+        schema:
+          type: string
+      - name: language
+        in: query
+        description: The language in which the flow was answered by the patient.
+        schema:
+          type: string
+          enum:
+          - en
+          - es
+          - pt
+      - name: accessedFrom
+        in: query
+        description: IP address of the patient who filled out the flow.
+        schema:
+          type: string
+      - name: previousLumabotFlow
+        in: query
+        description: 'PreviousLumabotFlow and nextLumabotFlow will be used to make it possible for flows
+
+          to be able to jump to another flow with another template so we can reduce the number of
+
+          unecessary questions in a single flow, which should help with organization and performance.
+
+          One flow must call the jump template, at which time we create a new lumabotFlow and set
+
+          the previous flow ID on its `previousLumabotFlow` property.
+
+          '
+      - name: nextLumabotFlow
+        in: query
+        description: 'PreviousLumabotFlow and nextLumabotFlow will be used to make it possible for flows
+
+          to be able to jump to another flow with another template so we can reduce the number of
+
+          unecessary questions in a single flow, which should help with organization and performance.
+
+          One flow must call the jump template, at which time we create a new lumabotFlow and set
+
+          the new flow ID on the first flow''s `nextLumabotFlow` property.
+
+          '
+        schema:
+          type: string
+      - $ref: '#/components/parameters/userParam'
+      - $ref: '#/components/parameters/deletedParam'
+      - $ref: '#/components/parameters/createdByParam'
+      - $ref: '#/components/parameters/updatedByParam'
+      - $ref: '#/components/parameters/createdAtParam'
+      - $ref: '#/components/parameters/updatedAtParam'
+      - $ref: '#/components/parameters/pageParam'
+      - $ref: '#/components/parameters/limitParam'
+      - $ref: '#/components/parameters/populateParam'
+      - $ref: '#/components/parameters/selectParam'
+      responses:
+        '200':
+          description: Returns a list of lumabotFlows
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - response
+                - page
+                - size
+                properties:
+                  response:
+                    type: array
+                    minItems: 0
+                    items:
+                      $ref: '#/components/schemas/LumabotFlowResponse'
+                  page:
+                    type: integer
+                    flowat: int32
+                    minimum: 1
+                  size:
+                    type: integer
+                    flowat: int32
+                    minimum: 0
+                additionalProperties: false
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      summary: Create a lumabot flow
+      operationId: lumabotFlowCreate
+      tags:
+      - lumabotFlows
+      parameters:
+      - name: flowType
+        in: query
+        description: If you don't provide the lumabotFlowTemplate for the new flow, the system will pick a template based on the type specified here.
+        schema:
+          type: string
+          enum:
+          - welcome
+          - authenticate-patient
+          - speak-with-staff
+          - session-timeout
+          - knock-knock
+          - cul-de-sac
+          - feedback
+          - error
+          - no-availabilities
+          - regular
+      requestBody:
+        description: Create a lumabot flow
+        required: true
+        content:
+          application:json:
+            schema:
+              $ref: '#/components/schemas/LumabotFlowRequest'
+      responses:
+        '201':
+          description: Successful creation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LumabotFlowResponse'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+  /lumabotFlows/sessions:
+    get:
+      summary: Get a list of LumaBot unique sessions
+      operationId: lumabotFlowGetSessions
+      tags:
+      - lumabotFlows
+      parameters:
+      - name: patient
+        in: query
+        description: the ID of the patient who filled out the answers for this flow.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: status
+        in: query
+        description: 'The completion status of the lumabot flow under the patient''s perspective, knowingly:
+
+          - `started`: when the patient started answering at least one question, but hasn''t finished the flow yet;
+
+          - `completed`: the patient has finished answering all the questions and cannot edit the flow anymore.
+
+          '
+        schema:
+          type: string
+          enum:
+          - started
+          - completed
+      - name: completedAt
+        in: query
+        description: the date/time when the patient finished all the responses of this flow.
+        schema:
+          type: string
+          flowat: date-time
+      - name: lumabotFlowTemplate
+        in: query
+        description: the ID of the template of questions that was displayed for the patient.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: lumabotFlowTemplateName
+        in: query
+        description: the name of the template of questions used as a basis for these flow answers. See `lumabotFlowTemplates`.
+        schema:
+          type: string
+      - name: language
+        in: query
+        description: The language in which the flow was answered by the patient.
+        schema:
+          type: string
+          enum:
+          - en
+          - es
+          - pt
+      - name: accessedFrom
+        in: query
+        description: IP address of the patient who filled out the flow.
+        schema:
+          type: string
+      - $ref: '#/components/parameters/userParam'
+      - $ref: '#/components/parameters/deletedParam'
+      - $ref: '#/components/parameters/createdByParam'
+      - $ref: '#/components/parameters/updatedByParam'
+      - $ref: '#/components/parameters/createdAtParam'
+      - $ref: '#/components/parameters/updatedAtParam'
+      - $ref: '#/components/parameters/pageParam'
+      - $ref: '#/components/parameters/limitParam'
+      - $ref: '#/components/parameters/populateParam'
+      - $ref: '#/components/parameters/selectParam'
+      responses:
+        '200':
+          description: Returns a list of lumabotFlows that started a session
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - response
+                - page
+                - size
+                properties:
+                  response:
+                    type: array
+                    minItems: 0
+                    items:
+                      $ref: '#/components/schemas/LumabotFlowResponse'
+                  page:
+                    type: integer
+                    flowat: int32
+                    minimum: 1
+                  size:
+                    type: integer
+                    flowat: int32
+                    minimum: 0
+                additionalProperties: false
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+  /lumabotFlows/{lumabotFlowId}:
+    get:
+      summary: Get lumabotFlow by id
+      operationId: lumabotFlowGet
+      tags:
+      - lumabotFlows
+      parameters:
+      - name: lumabotFlowId
+        in: path
+        required: true
+        description: LumabotFlows' unique identifier in Luma's database.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      responses:
+        '200':
+          description: LumabotFlow
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LumabotFlowResponse'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+    put:
+      summary: Update a lumabotFlow
+      operationId: lumabotFlowUpdate
+      tags:
+      - lumabotFlows
+      parameters:
+      - name: lumabotFlowId
+        in: path
+        required: true
+        description: LumabotFlows' unique identifier in Luma's database.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      requestBody:
+        description: A lumabotFlow (full or partial) to be updated
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LumabotFlowRequest'
+      responses:
+        '200':
+          description: LumabotFlow
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LumabotFlowResponse'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+    delete:
+      summary: Delete a lumabotFlow
+      operationId: lumabotFlowDelete
+      tags:
+      - lumabotFlows
+      parameters:
+      - name: lumabotFlowId
+        in: path
+        required: true
+        description: LumabotFlows' unique identifier in Luma's database.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      responses:
+        '200':
+          description: Deleted lumabotFlow
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LumabotFlowResponse'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+  /lumabotFlows/{lumabotFlowId}/currentQuestion:
+    get:
+      summary: Get current question(s) of a lumabotFlow
+      operationId: lumabotFlowGetCurrentQuestion
+      tags:
+      - lumabotFlows
+      parameters:
+      - name: lumabotFlowId
+        in: path
+        required: true
+        description: LumabotFlows' unique identifier in Luma's database.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      responses:
+        '200':
+          description: LumabotFlow's one or more current questions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LumabotFlowQuestionResponse'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+  /lumabotFlows/{lumabotFlowId}/pdf:
+    get:
+      summary: Get responses of a lumabotFlow in PDF format.
+      operationId: lumabotFlowGetPdf
+      tags:
+      - lumabotFlows
+      parameters:
+      - name: lumabotFlowId
+        in: path
+        required: true
+        description: LumabotFlows' unique identifier in Luma's database.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      responses:
+        '200':
+          description: Returns a PDF with the LumaBot flow responses.
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+                additionalProperties: false
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+  /lumabotFlows/{lumabotFlowId}/responses:
+    get:
+      summary: Get responses of a lumabotFlow and its subsequent flows.
+      operationId: lumabotFlowGetResponses
+      tags:
+      - lumabotFlows
+      parameters:
+      - name: lumabotFlowId
+        in: path
+        required: true
+        description: LumabotFlows' unique identifier in Luma's database.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      responses:
+        '200':
+          description: Returns the list of responses of the lumabotFlow and its subsequent flows.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - response
+                - page
+                - size
+                properties:
+                  response:
+                    type: array
+                    minItems: 0
+                    items:
+                      $ref: '#/components/schemas/LumabotFlowResponsesResponse'
+                  page:
+                    type: integer
+                    flowat: int32
+                    minimum: 1
+                  size:
+                    type: integer
+                    flowat: int32
+                    minimum: 0
+                additionalProperties: false
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+  /lumabotFlows/{lumabotFlowId}/snapshot:
+    get:
+      summary: Get responses of a lumabotFlow and its subsequent flows in a question/answer format.
+      operationId: lumabotFlowGetSnapshot
+      tags:
+      - lumabotFlows
+      parameters:
+      - name: lumabotFlowId
+        in: path
+        required: true
+        description: LumabotFlows' unique identifier in Luma's database.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      responses:
+        '200':
+          description: Returns the list of responses of the lumabotFlow and its subsequent flows in a question/answer format.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LumabotFlowSnapshotResponse'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+  /lumabotFlows/{lumabotFlowId}/answer:
+    post:
+      summary: Answer the current question of a lumabot flow
+      operationId: lumabotFlowAnswer
+      tags:
+      - lumabotFlows
+      parameters:
+      - name: lumabotFlowId
+        in: path
+        required: true
+        description: LumabotFlows' unique identifier in Luma's database.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      requestBody:
+        description: A lumabotFlow answer (full or partial) to be created
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LumabotFlowAnswerRequest'
+      responses:
+        '200':
+          description: LumabotFlow new current questions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LumabotFlowQuestionResponse'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+  /lumabotFlows/{lumabotFlowId}/answer/{itemId}:
+    delete:
+      summary: Delete a lumabotFlow answer
+      operationId: lumabotFlowAnswerDelete
+      tags:
+      - lumabotFlows
+      parameters:
+      - name: lumabotFlowId
+        in: path
+        required: true
+        description: LumabotFlows' unique identifier in Luma's database.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: itemId
+        in: path
+        required: true
+        description: The unique identifier of the question whose answer you want to delete.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: LumabotFlow new current questions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LumabotFlowQuestionResponse'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+components:
+  parameters:
+    pageParam:
+      in: query
+      name: page
+      required: false
+      type: integer
+      format: int32
+      default: 1
+      minimum: 1
+      schema:
+        type: integer
+        format: int32
+        default: 1
+        minimum: 1
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
+    updatedByParam:
+      in: query
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+    populateParam:
+      name: _populate
+      in: query
+      description: Response properties which will be replaced by the referenced objects, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    selectParam:
+      name: _select
+      in: query
+      description: Response properties that should be returned, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+    limitParam:
+      name: limit
+      in: query
+      description: How many items to fetch per page
+      required: false
+      type: integer
+      format: int32
+      default: 500
+      minimum: 1
+      maximum: 1000
+      schema:
+        type: integer
+        format: int32
+        default: 500
+        minimum: 1
+        maximum: 1000
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+  schemas:
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    LumabotFlowAnswerRequest:
+      type: object
+      properties:
+        id:
+          description: itemId of the answer if selecting a multiple-choice option
+          type: string
+        text:
+          description: Simple text answer or a summary of the answer (in case of complex answers) to show on reports and hub
+          type: string
+        details:
+          description: Complex object containing details of a complex answer, like appointment details or address, for example
+          type: object
+    LumabotFlowRequest:
+      type: object
+      properties:
+        patient:
+          description: the ID of the patient who filled out the answers for this form.
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        status:
+          description: 'The completion status of the lumabot flow under the patient''s perspective, knowingly:
+
+            - `started`: when the patient started answering at least one question, but hasn''t finished the form yet;
+
+            - `completed`: the patient has finished answering all the questions and cannot edit the form anymore.
+
+            '
+          type: string
+          default: started
+          enum:
+          - started
+          - completed
+        flowType:
+          description: type of the lumabot flow template
+          type: string
+          enum:
+          - welcome
+          - authenticate-patient
+          - speak-with-staff
+          - session-timeout
+          - knock-knock
+          - cul-de-sac
+          - feedback
+          - error
+          - no-availabilities
+          - regular
+        completedAt:
+          description: the date/time when the patient finished all the responses of this form.
+          type: string
+          format: date-time
+        processingStatus:
+          description: 'The internal staff''s management status for a completed flow, serving the purpose of organizing which answers were analysed by a staff member or not.
+
+            - `open`: the flow was completed by a patient but not seen by any staff member yet;
+
+            - `in-progress`: a staff user is analysing the answers;
+
+            - `closed`: the flow has been completely analysed by a member of the staff team.
+
+            '
+          type: string
+          default: open
+          enum:
+          - open
+          - in-progress
+          - closed
+        processingStatusUpdatedBy:
+          description: the ID of a staff `user` who analysed the responses of this completed flow and changed its `processingStatus`.
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        processingStatusUpdatedAt:
+          description: the date/time when a staff `user` analysed the responses of this completed flow and changed its `processingStatus`.
+          type: string
+          format: date-time
+        appointment:
+          description: the ID of an appointment related to this form.
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        url:
+          description: 'deprecated: custom lumabot flow url, basically to identify any patient in survey monkey,
+
+            an external forms service that''s not being used anymore by Luma.
+
+            '
+          type: string
+        currentItemId:
+          description: 'The code of the current question the patient was last shown, before answering it.
+
+            Such a code must be the content of any `responses.page[0].questions[x].id`, or `success`.
+
+            Usually this will contain each id, in sequence, but patients can go back and forth.
+
+            Also, forms can have jump logic, and some questions might not be displayed to the patient.
+
+            When the form is completed, this is updated to `success`.
+
+            '
+          type: string
+        lumabotFlowTemplate:
+          description: the ID of the template of questions that was displayed for the patient.
+          type: string
+          pattern: '[0-9a-f]'
+          required: true
+          minLength: 24
+          maxLength: 24
+        lumabotFlowTemplateName:
+          description: the name of the template of questions used as a basis for these form answers. See `lumabotFlowTemplates`.
+          type: string
+        language:
+          description: The language in which the form was answered by the patient.
+          type: string
+          enum:
+          - en
+          - es
+          - pt
+        accessedFrom:
+          description: IP address of the patient who filled out the form.
+          type: string
+        previousLumabotFlow:
+          description: 'PreviousLumabotFlow and nextLumabotFlow will be used to make it possible for forms
+
+            to be able to jump to another form with another template so we can reduce the number of
+
+            unecessary questions in a single form, which should help with organization and performance.
+
+            One form must call the jump template, at which time we create a new lumabotFlow and set
+
+            the previous form ID on its `previousLumabotFlow` property.
+
+            '
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        nextLumabotFlow:
+          description: 'PreviousLumabotFlow and nextLumabotFlow will be used to make it possible for forms
+
+            to be able to jump to another form with another template so we can reduce the number of
+
+            unecessary questions in a single form, which should help with organization and performance.
+
+            One form must call the jump template, at which time we create a new lumabotFlow and set
+
+            the new form ID on the first form''s `nextLumabotFlow` property.
+
+            '
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        questions:
+          description: Contains information about the questions and answers given by the patient.
+          type: array
+          items:
+            type: object
+            properties:
+              answer:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  text:
+                    type: string
+                  createdAt:
+                    type: date-time
+                  details:
+                    type: object
+              askedAt:
+                type: date-time
+              id:
+                type: string
+              type:
+                type: string
+              squiggly:
+                type: string
+              title:
+                type: string
+              redirectType:
+                type: string
+                enum:
+                - none
+                - goTo
+                - goToFlow
+                - goToPrevious
+                - isFinal
+                - externalUrl
+                - scheduler
+              redirectValue:
+                type: string
+              validations:
+                type: object
+                properties:
+                  required:
+                    type: boolean
+              properties:
+                type: object
+                properties:
+                  template:
+                    type: string
+        availabilities:
+          description: availabilities
+          type: array
+          items:
+            type: string
+            pattern: '[0-9a-f]'
+            minLength: 24
+            maxLength: 24
+        facilities:
+          description: facilities
+          type: array
+          items:
+            type: string
+            pattern: '[0-9a-f]'
+            minLength: 24
+            maxLength: 24
+    idParam:
+      in: query
+      name: _id
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      required: false
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: Luma's internal ID of an object.
+    LumabotFlowSnapshotResponse:
+      type: object
+      description: This resource is a read only, point in time snapshot of a completed or in progress Lumabot conversation, presented as a simple transcript of messages exchanged between the patient and the chatbot along with when the conversation started and ended. Unlike the editable flow template or the live flow object, this snapshot is a fixed record meant for display or auditing rather than further modification. It is used to let staff or systems review exactly what was said during a specific patient interaction such as an intake or screening session.
+      properties:
+        id:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        title:
+          type: string
+        startDate:
+          type: string
+          format: date-time
+        endDate:
+          type: string
+          format: date-time
+        messages:
+          type: array
+          items:
+            type: object
+            properties:
+              text:
+                type: string
+              createdAt:
+                type: string
+                format: date-time
+              source:
+                type: string
+                enum:
+                - patient
+                - lumabot
+    LumabotFlowQuestionResponse:
+      type: object
+      description: This resource represents a single question within a Lumabot conversational flow, including its type such as text, date, multiple choice, phone number, or scheduler, along with its title, validation rules, answer options, and redirect logic that determines what question comes next. It also carries Spanish and Portuguese translations for the question text so the chatbot can present questions in the patient's preferred language. It is used to define and render one interactive step in an automated patient facing conversation such as an intake form or screening questionnaire.
+      properties:
+        id:
+          description: null
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        type:
+          type: string
+          enum:
+          - 2FA
+          - address
+          - availability_details
+          - date
+          - email
+          - jump
+          - manage_appointment
+          - medication_search
+          - multiple_choice
+          - pharmacy_search
+          - phone_number
+          - scheduler
+          - template_welcome
+          - template
+          - text
+          - yes_no
+          - zipcode
+        squiggly:
+          type: string
+        title:
+          type: string
+        redirectType:
+          type: string
+          enum:
+          - none
+          - goTo
+          - goToFlow
+          - goToPrevious
+          - isFinal
+          - externalUrl
+          - scheduler
+        redirectValue:
+          type: string
+        validations:
+          type: object
+          properties:
+            required:
+              type: boolean
+        properties:
+          type: object
+          properties:
+            template:
+              type: string
+            visibility:
+              type: string
+            answers:
+              type: object
+              properties:
+                id:
+                  type: string
+                redirectType:
+                  type: string
+                  enum:
+                  - none
+                  - goTo
+                  - goToFlow
+                  - goToPrevious
+                  - isFinal
+                  - externalUrl
+                  - scheduler
+                redirectValue:
+                  type: string
+                label:
+                  type: string
+                locales:
+                  description: A map-object whose keys may be any of these language codes `es` or `pt`
+                  type: object
+                  properties:
+                    es:
+                      type: object
+                      properties:
+                        description:
+                          description: the translation of the description of the question into spanish
+                          type: string
+                        title:
+                          description: the translation of the title of the question into spanish
+                          type: string
+                        properties:
+                          type: object
+                    pt:
+                      type: object
+                      properties:
+                        description:
+                          description: the translation of the description of the question into portuguese
+                          type: string
+                        title:
+                          description: the translation of the title of the question into portuguese
+                          type: string
+                        properties:
+                          type: object
+                disable:
+                  type: boolean
+                properties:
+                  type: object
+                  properties:
+                    params:
+                      type: object
+        locales:
+          description: A map-object whose keys may be any of these language codes `es` or `pt`
+          type: object
+          properties:
+            es:
+              type: object
+              properties:
+                description:
+                  description: the translation of the description of the question into spanish
+                  type: string
+                title:
+                  description: the translation of the title of the question into spanish
+                  type: string
+                properties:
+                  description: same structure as `responses.pages[0].questions[i].properties`.
+                  type: object
+            pt:
+              type: object
+              properties:
+                description:
+                  description: the translation of the description of the question into portuguese
+                  type: string
+                title:
+                  description: the translation of the title of the question into portuguese
+                  type: string
+                properties:
+                  description: same structure as `responses.pages[0].properties`.
+                  type: object
+        lumabotFlowId:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
+    updatedByParam:
+      in: query
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
+    LumabotFlowResponsesResponse:
+      type: object
+      description: This resource captures a single question and answer pair that a patient submitted while completing a Lumabot flow, recording the question text, the patient's answer, the question type, and the order in which it was answered. Each record links back to the parent flow and its template, so a full set of these responses reconstructs everything a patient said during one chatbot interaction. It is used to review or report on patient answers collected through automated intake, reminder, or screening conversations.
+      properties:
+        lumabotFlowId:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        id:
+          type: string
+        squiggly:
+          type: string
+        question:
+          type: string
+        askedAt:
+          type: string
+          format: date-time
+        repliedAt:
+          type: string
+          format: date-time
+        answer:
+          type: string
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+    LumabotFlowResponse:
+      type: object
+      description: A LumabotFlow represents a single running or completed instance of a Lumabot conversational flow that a patient goes through, such as an intake form, appointment related questionnaire, or screening flow, generated from a LumabotFlowTemplate. It tracks the patient, the questions asked and answers given, current progress, completion status, and links to related records like appointments, offers, or availabilities produced as a result of the flow. It also supports chaining flows together and lets staff track a separate processing status for follow up after the patient completes the automated interaction.
+      properties:
+        _id:
+          $ref: '#/components/schemas/idParam'
+        user:
+          $ref: '#/components/schemas/userParam'
+        deleted:
+          $ref: '#/components/schemas/deletedParam'
+        createdBy:
+          $ref: '#/components/schemas/createdByParam'
+        updatedBy:
+          $ref: '#/components/schemas/updatedByParam'
+        createdAt:
+          $ref: '#/components/schemas/createdAtParam'
+        updatedAt:
+          $ref: '#/components/schemas/updatedAtParam'
+        patient:
+          description: the ID of the patient who filled out the answers for this form.
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        status:
+          description: 'The completion status of the lumabot flow under the patient''s perspective, knowingly:
+
+            - `started`: when the patient started answering at least one question, but hasn''t finished the form yet;
+
+            - `completed`: the patient has finished answering all the questions and cannot edit the form anymore.
+
+            '
+          type: string
+          default: started
+          enum:
+          - started
+          - completed
+        flowType:
+          description: type of the lumabot flow template
+          type: string
+          enum:
+          - welcome
+          - authenticate-patient
+          - speak-with-staff
+          - session-timeout
+          - knock-knock
+          - cul-de-sac
+          - feedback
+          - error
+          - no-availabilities
+          - regular
+        completedAt:
+          description: the date/time when the patient finished all the responses of this form.
+          type: string
+          format: date-time
+        processingStatus:
+          description: 'The internal staff''s management status for a completed flow, serving the purpose of organizing which answers were analysed by a staff member or not.
+
+            - `open`: the flow was completed by a patient but not seen by any staff member yet;
+
+            - `in-progress`: a staff user is analysing the answers;
+
+            - `closed`: the flow has been completely analysed by a member of the staff team.
+
+            '
+          type: string
+          default: open
+          enum:
+          - open
+          - in-progress
+          - closed
+        processingStatusUpdatedBy:
+          description: the ID of a staff `user` who analysed the responses of this completed flow and changed its `processingStatus`.
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        processingStatusUpdatedAt:
+          description: the date/time when a staff `user` analysed the responses of this completed flow and changed its `processingStatus`.
+          type: string
+          format: date-time
+        appointment:
+          description: the ID of an appointment related to this form.
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        url:
+          description: 'deprecated: custom lumabot flow url, basically to identify any patient in survey monkey,
+
+            an external forms service that''s not being used anymore by Luma.
+
+            '
+          type: string
+        currentItemId:
+          description: 'The code of the current question the patient was last shown, before answering it.
+
+            Such a code must be the content of any `responses.page[0].questions[x].id`, or `success`.
+
+            Usually this will contain each id, in sequence, but patients can go back and forth.
+
+            Also, forms can have jump logic, and some questions might not be displayed to the patient.
+
+            When the form is completed, this is updated to `success`.
+
+            '
+          type: string
+        lumabotFlowTemplate:
+          description: the ID of the template of questions that was displayed for the patient.
+          type: string
+          pattern: '[0-9a-f]'
+          required: true
+          minLength: 24
+          maxLength: 24
+        lumabotFlowTemplateName:
+          description: the name of the template of questions used as a basis for these form answers. See `lumabotFlowTemplates`.
+          type: string
+        language:
+          description: The language in which the form was answered by the patient.
+          type: string
+          enum:
+          - en
+          - es
+          - pt
+        accessedFrom:
+          description: IP address of the patient who filled out the form.
+          type: string
+        previousLumabotFlow:
+          description: 'PreviousLumabotFlow and nextLumabotFlow will be used to make it possible for forms
+
+            to be able to jump to another form with another template so we can reduce the number of
+
+            unecessary questions in a single form, which should help with organization and performance.
+
+            One form must call the jump template, at which time we create a new lumabotFlow and set
+
+            the previous form ID on its `previousLumabotFlow` property.
+
+            '
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        nextLumabotFlow:
+          description: 'PreviousLumabotFlow and nextLumabotFlow will be used to make it possible for forms
+
+            to be able to jump to another form with another template so we can reduce the number of
+
+            unecessary questions in a single form, which should help with organization and performance.
+
+            One form must call the jump template, at which time we create a new lumabotFlow and set
+
+            the new form ID on the first form''s `nextLumabotFlow` property.
+
+            '
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        questions:
+          description: Contains information about the questions and answers given by the patient.
+          type: array
+          items:
+            type: object
+            properties:
+              answer:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  text:
+                    type: string
+                  createdAt:
+                    type: date-time
+                  details:
+                    type: object
+              askedAt:
+                type: date-time
+              id:
+                type: string
+              type:
+                type: string
+              squiggly:
+                type: string
+              title:
+                type: string
+              redirectType:
+                type: string
+                enum:
+                - none
+                - goTo
+                - goToFlow
+                - goToPrevious
+                - isFinal
+                - externalUrl
+                - scheduler
+              redirectValue:
+                type: string
+              validations:
+                type: object
+                properties:
+                  required:
+                    type: boolean
+              properties:
+                type: object
+                properties:
+                  template:
+                    type: string
+        availabilities:
+          description: availabilities
+          type: array
+          items:
+            type: string
+            pattern: '[0-9a-f]'
+            minLength: 24
+            maxLength: 24
+        facilities:
+          description: facilities
+          type: array
+          items:
+            type: string
+            pattern: '[0-9a-f]'
+            minLength: 24
+            maxLength: 24
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+  securitySchemes:
+    Bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

@@ -1,0 +1,1062 @@
+openapi: 3.2.0
+info:
+  version: 2.0.0
+  title: Rest-Service Assistant Instances API
+  x-logo:
+    url: https://lumahealth-assets.s3.us-west-2.amazonaws.com/new_luma_logo_black.png
+    backgroundColor: '#FFFFFF'
+    altText: Luma Health
+  description: OpenAPI [Basic Structure](https://swagger.io/docs/specification/basic-structure/)
+servers:
+- url: https://api.lumahealth.io/api/v2
+security:
+- Bearer: []
+tags:
+- name: assistantInstances
+  description: Conversations between the Navigator AI assistant and a patient or staff member
+paths:
+  /assistantInstances:
+    get:
+      summary: List assistant instances
+      operationId: assistantInstancesList
+      tags:
+      - assistantInstances
+      parameters:
+      - name: assistant
+        in: query
+        description: ID of the assistant.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: patient
+        in: query
+        description: ID of the patient.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: patient.name
+        in: query
+        description: Search by the patient's name.
+        schema:
+          type: string
+      - name: status
+        in: query
+        schema:
+          type: string
+          enum:
+          - idle
+          - in-progress
+          - failure
+          - success
+      - $ref: '#/components/parameters/userParam'
+      - $ref: '#/components/parameters/deletedParam'
+      - $ref: '#/components/parameters/createdByParam'
+      - $ref: '#/components/parameters/updatedByParam'
+      - $ref: '#/components/parameters/createdAtParam'
+      - $ref: '#/components/parameters/updatedAtParam'
+      - $ref: '#/components/parameters/pageParam'
+      - $ref: '#/components/parameters/limitParam'
+      - $ref: '#/components/parameters/populateParam'
+      - $ref: '#/components/parameters/selectParam'
+      responses:
+        '200':
+          description: List of assistant instances
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - response
+                - page
+                - size
+                properties:
+                  response:
+                    type: array
+                    minItems: 0
+                    items:
+                      $ref: '#/components/schemas/AssistantInstanceResponse'
+                  page:
+                    type: integer
+                    format: int32
+                    minimum: 1
+                  size:
+                    type: integer
+                    format: int32
+                    minimum: 0
+                additionalProperties: false
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+    post:
+      summary: Create an assistant instance
+      operationId: assistantInstanceCreate
+      tags:
+      - assistantInstances
+      requestBody:
+        description: Create an assistant instance
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssistantInstanceRequestCreate'
+      responses:
+        '201':
+          description: Successful creation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssistantInstanceResponse'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+  /assistantInstances/{assistantInstanceId}:
+    get:
+      summary: Get assistant instance by id
+      operationId: assistantInstanceGet
+      tags:
+      - assistantInstances
+      parameters:
+      - name: assistantInstanceId
+        in: path
+        required: true
+        description: AssistantInstance's unique identifier in Luma's database.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      responses:
+        '200':
+          description: AssistantInstance
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssistantInstanceResponse'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+    put:
+      summary: Update an assistant instance
+      operationId: assistantInstanceUpdate
+      tags:
+      - assistantInstances
+      parameters:
+      - name: assistantInstanceId
+        in: path
+        required: true
+        description: AssistantInstance's unique identifier in Luma's database.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      requestBody:
+        description: An assistant instance (full or partial) to be updated
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssistantInstanceRequestUpdate'
+      responses:
+        '200':
+          description: AssistantInstance
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssistantInstanceResponse'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+    delete:
+      summary: Delete an assistant instance
+      operationId: assistantInstanceDelete
+      tags:
+      - assistantInstances
+      parameters:
+      - name: assistantInstanceId
+        in: path
+        required: true
+        description: AssistantInstance's unique identifier in Luma's database.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      responses:
+        '200':
+          description: Deleted assistant instance
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssistantInstanceResponse'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+  /assistantInstances/{assistantInstanceId}/analysis:
+    get:
+      summary: Get the analysis timeline for an assistant instance
+      description: Returns a merged timeline of AssistantActions and underlying LLM vendor events for a conversation, for debugging and QA.
+      operationId: assistantInstanceGetAnalysis
+      tags:
+      - assistantInstances
+      parameters:
+      - name: assistantInstanceId
+        in: path
+        required: true
+        description: AssistantInstance's unique identifier in Luma's database.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      responses:
+        '200':
+          description: The assistant instance's analysis timeline
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  assistant:
+                    type: object
+                  assistantInstance:
+                    $ref: '#/components/schemas/AssistantInstanceResponse'
+                  version:
+                    type: number
+                  release:
+                    type: string
+                  analysisEvents:
+                    type: array
+                    items:
+                      type: object
+                  patientJourneyEvents:
+                    type: array
+                    items:
+                      type: object
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+        '404':
+          description: Assistant instance not found
+  /assistantInstances/{assistantInstanceId}/reporting:
+    get:
+      summary: Get QA reporting data for an assistant instance
+      description: Returns a QA/reporting summary for a conversation, including the transcript, the tool calls made, and vendor/skill details.
+      operationId: assistantInstanceGetReportingData
+      tags:
+      - assistantInstances
+      parameters:
+      - name: assistantInstanceId
+        in: path
+        required: true
+        description: AssistantInstance's unique identifier in Luma's database.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      responses:
+        '200':
+          description: The assistant instance's reporting data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  conversation:
+                    type: array
+                    items:
+                      type: object
+                  tools:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AssistantActionResponse'
+                  skillDetails:
+                    type: object
+                  vendorDetails:
+                    type: object
+                  assistantInstance:
+                    $ref: '#/components/schemas/AssistantInstanceResponse'
+                  externalStatus:
+                    type: object
+                  status:
+                    type: string
+                  statusReason:
+                    type: string
+                  createdAt:
+                    type: string
+                    format: date-time
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+        '404':
+          description: Assistant instance not found
+  /assistantInstances/patients/{patientId}/completions:
+    post:
+      summary: Generate an assistant chat completion for a patient
+      description: Generates an AI completion for a patient's chat conversation with the Navigator assistant.
+      operationId: assistantInstanceCompletion
+      tags:
+      - assistantInstances
+      parameters:
+      - name: patientId
+        in: path
+        required: true
+        description: The patient's unique identifier in Luma's database.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: The generated completion
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  text:
+                    type: string
+        '400':
+          description: Not found chat activity, default assistant, or internal entry point in assistant
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+components:
+  parameters:
+    pageParam:
+      in: query
+      name: page
+      required: false
+      type: integer
+      format: int32
+      default: 1
+      minimum: 1
+      schema:
+        type: integer
+        format: int32
+        default: 1
+        minimum: 1
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
+    updatedByParam:
+      in: query
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+    populateParam:
+      name: _populate
+      in: query
+      description: Response properties which will be replaced by the referenced objects, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    selectParam:
+      name: _select
+      in: query
+      description: Response properties that should be returned, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+    limitParam:
+      name: limit
+      in: query
+      description: How many items to fetch per page
+      required: false
+      type: integer
+      format: int32
+      default: 500
+      minimum: 1
+      maximum: 1000
+      schema:
+        type: integer
+        format: int32
+        default: 500
+        minimum: 1
+        maximum: 1000
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+  schemas:
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    AssistantInstanceRequestUpdate:
+      type: object
+      properties:
+        _id:
+          $ref: '#/components/schemas/idParam'
+        user:
+          $ref: '#/components/schemas/userParam'
+        deleted:
+          $ref: '#/components/schemas/deletedParam'
+        createdBy:
+          $ref: '#/components/schemas/createdByParam'
+        updatedBy:
+          $ref: '#/components/schemas/updatedByParam'
+        createdAt:
+          $ref: '#/components/schemas/createdAtParam'
+        updatedAt:
+          $ref: '#/components/schemas/updatedAtParam'
+        release:
+          type: string
+          description: Which release track of the assistant handled this conversation.
+          default: current
+          enum:
+          - current
+          - next
+          - preProd
+        patient:
+          type: string
+          description: ID of the patient in this conversation.
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        verified:
+          type: boolean
+          description: Whether the patient's identity has been confirmed.
+          default: false
+        onBehalfOf:
+          type: string
+          description: ID of the patient being discussed, when different from `patient` (for example, a guardian calling about a dependent).
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        status:
+          type: string
+          description: Lifecycle status of the conversation.
+          default: idle
+          enum:
+          - idle
+          - in-progress
+          - failure
+          - success
+        statusUpdatedAt:
+          type: string
+          format: date-time
+          description: When `status` was last updated.
+        statusReason:
+          type: string
+          description: Why the conversation reached its terminal status.
+          enum:
+          - success-by-assistant
+          - success-by-transfer
+          - success-by-patient
+          - success-by-staff
+          - success-by-assistant-timeout
+          - failure-by-assistant
+          - failure-by-patient
+          - failure-by-staff
+          - incomplete-success-criteria
+          - timed-out
+          - no-new-messages
+          - maximum-retries
+        assistant:
+          type: string
+          description: ID of the Assistant configuration driving this conversation.
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        entryPoints:
+          type: array
+          description: The channels used to reach the assistant during this conversation.
+          items:
+            type: object
+            properties:
+              channel:
+                type: string
+                enum:
+                - sms
+                - email
+                - voice
+                - inapp
+                - chat
+                - fax
+                - whatsapp
+                - rcs
+                - lumabot
+                - internal
+              lastMessageAt:
+                type: string
+                format: date-time
+              direction:
+                type: string
+                enum:
+                - inbound
+                - outbound
+        startedAt:
+          type: string
+          format: date-time
+        finishedAt:
+          type: string
+          format: date-time
+        duration:
+          type: number
+          description: Duration of the conversation, in seconds.
+        reporting:
+          type: object
+          description: Structured reporting/QA data collected about this conversation.
+          properties:
+            callOutcome:
+              type: string
+              enum:
+              - transferred
+              - assistant-ended
+              - patient-ended
+              - timed-out
+            intents:
+              type: array
+              description: The intents detected during the conversation.
+              items:
+                type: object
+                properties:
+                  intent:
+                    type: string
+                  inScope:
+                    type: boolean
+                  handled:
+                    type: boolean
+                  evidence:
+                    type: string
+                    description: ID of the message that evidences this intent.
+                    pattern: '[0-9a-f]'
+                    minLength: 24
+                    maxLength: 24
+            summary:
+              type: string
+            callTransferAttempt:
+              type: boolean
+            transferWasAfterHours:
+              type: boolean
+    AssistantInstanceResponse:
+      type: object
+      description: An AssistantInstance represents a single conversation between Luma's Navigator AI assistant and a patient (or staff member), spanning one or more channels such as a voice call, SMS, or chat. It tracks the lifecycle of that conversation as it moves from idle to in-progress to a terminal success or failure status, whether the patient's identity was verified, which entry points were used, and reporting data about the call's outcome and detected intents. AssistantActions attach to an AssistantInstance as the individual tool calls made during the conversation.
+      properties:
+        _id:
+          $ref: '#/components/schemas/idParam'
+        user:
+          $ref: '#/components/schemas/userParam'
+        deleted:
+          $ref: '#/components/schemas/deletedParam'
+        createdBy:
+          $ref: '#/components/schemas/createdByParam'
+        updatedBy:
+          $ref: '#/components/schemas/updatedByParam'
+        createdAt:
+          $ref: '#/components/schemas/createdAtParam'
+        updatedAt:
+          $ref: '#/components/schemas/updatedAtParam'
+        release:
+          type: string
+          description: Which release track of the assistant handled this conversation.
+          default: current
+          enum:
+          - current
+          - next
+          - preProd
+        patient:
+          type: string
+          description: ID of the patient in this conversation.
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        verified:
+          type: boolean
+          description: Whether the patient's identity has been confirmed.
+          default: false
+        onBehalfOf:
+          type: string
+          description: ID of the patient being discussed, when different from `patient` (for example, a guardian calling about a dependent).
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        status:
+          type: string
+          description: Lifecycle status of the conversation.
+          default: idle
+          enum:
+          - idle
+          - in-progress
+          - failure
+          - success
+        statusUpdatedAt:
+          type: string
+          format: date-time
+          description: When `status` was last updated.
+        statusReason:
+          type: string
+          description: Why the conversation reached its terminal status.
+          enum:
+          - success-by-assistant
+          - success-by-transfer
+          - success-by-patient
+          - success-by-staff
+          - success-by-assistant-timeout
+          - failure-by-assistant
+          - failure-by-patient
+          - failure-by-staff
+          - incomplete-success-criteria
+          - timed-out
+          - no-new-messages
+          - maximum-retries
+        assistant:
+          type: string
+          description: ID of the Assistant configuration driving this conversation.
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        entryPoints:
+          type: array
+          description: The channels used to reach the assistant during this conversation.
+          items:
+            type: object
+            properties:
+              channel:
+                type: string
+                enum:
+                - sms
+                - email
+                - voice
+                - inapp
+                - chat
+                - fax
+                - whatsapp
+                - rcs
+                - lumabot
+                - internal
+              lastMessageAt:
+                type: string
+                format: date-time
+              direction:
+                type: string
+                enum:
+                - inbound
+                - outbound
+        startedAt:
+          type: string
+          format: date-time
+        finishedAt:
+          type: string
+          format: date-time
+        duration:
+          type: number
+          description: Duration of the conversation, in seconds.
+        reporting:
+          type: object
+          description: Structured reporting/QA data collected about this conversation.
+          properties:
+            callOutcome:
+              type: string
+              enum:
+              - transferred
+              - assistant-ended
+              - patient-ended
+              - timed-out
+            intents:
+              type: array
+              description: The intents detected during the conversation.
+              items:
+                type: object
+                properties:
+                  intent:
+                    type: string
+                  inScope:
+                    type: boolean
+                  handled:
+                    type: boolean
+                  evidence:
+                    type: string
+                    description: ID of the message that evidences this intent.
+                    pattern: '[0-9a-f]'
+                    minLength: 24
+                    maxLength: 24
+            summary:
+              type: string
+            callTransferAttempt:
+              type: boolean
+            transferWasAfterHours:
+              type: boolean
+    AssistantActionResponse:
+      type: object
+      description: An AssistantAction is an audit-log record of a single tool or function call made by the Navigator AI assistant during a conversation, such as listing appointments, canceling an appointment, or confirming an appointment. It captures the function name, the parameters passed in, the raw response, and whether the call succeeded, failed, or is still pending, and is linked to the parent AssistantInstance conversation it occurred during.
+      properties:
+        _id:
+          $ref: '#/components/schemas/idParam'
+        user:
+          $ref: '#/components/schemas/userParam'
+        deleted:
+          $ref: '#/components/schemas/deletedParam'
+        createdBy:
+          $ref: '#/components/schemas/createdByParam'
+        updatedBy:
+          $ref: '#/components/schemas/updatedByParam'
+        createdAt:
+          $ref: '#/components/schemas/createdAtParam'
+        updatedAt:
+          $ref: '#/components/schemas/updatedAtParam'
+        description:
+          type: string
+          description: Free-form description of the action taken.
+        status:
+          type: string
+          description: Outcome of the underlying API call this action made.
+          enum:
+          - success
+          - failure
+          - pending
+        functionName:
+          type: string
+          description: Name of the tool/function called, for example `cancelAppointment` or `listAvailabilities`.
+        parameters:
+          description: The parameters passed to the underlying API call.
+        response:
+          description: The raw response returned by the underlying API call.
+        assistantInstance:
+          type: string
+          description: ID of the AssistantInstance (conversation) this action was taken during.
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+    AssistantInstanceRequestCreate:
+      type: object
+      required:
+      - assistant
+      properties:
+        _id:
+          $ref: '#/components/schemas/idParam'
+        user:
+          $ref: '#/components/schemas/userParam'
+        deleted:
+          $ref: '#/components/schemas/deletedParam'
+        createdBy:
+          $ref: '#/components/schemas/createdByParam'
+        updatedBy:
+          $ref: '#/components/schemas/updatedByParam'
+        createdAt:
+          $ref: '#/components/schemas/createdAtParam'
+        updatedAt:
+          $ref: '#/components/schemas/updatedAtParam'
+        release:
+          type: string
+          description: Which release track of the assistant handled this conversation.
+          default: current
+          enum:
+          - current
+          - next
+          - preProd
+        patient:
+          type: string
+          description: ID of the patient in this conversation.
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        verified:
+          type: boolean
+          description: Whether the patient's identity has been confirmed.
+          default: false
+        onBehalfOf:
+          type: string
+          description: ID of the patient being discussed, when different from `patient` (for example, a guardian calling about a dependent).
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        status:
+          type: string
+          description: Lifecycle status of the conversation.
+          default: idle
+          enum:
+          - idle
+          - in-progress
+          - failure
+          - success
+        statusUpdatedAt:
+          type: string
+          format: date-time
+          description: When `status` was last updated.
+        statusReason:
+          type: string
+          description: Why the conversation reached its terminal status.
+          enum:
+          - success-by-assistant
+          - success-by-transfer
+          - success-by-patient
+          - success-by-staff
+          - success-by-assistant-timeout
+          - failure-by-assistant
+          - failure-by-patient
+          - failure-by-staff
+          - incomplete-success-criteria
+          - timed-out
+          - no-new-messages
+          - maximum-retries
+        assistant:
+          type: string
+          description: ID of the Assistant configuration driving this conversation.
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        entryPoints:
+          type: array
+          description: The channels used to reach the assistant during this conversation.
+          items:
+            type: object
+            properties:
+              channel:
+                type: string
+                enum:
+                - sms
+                - email
+                - voice
+                - inapp
+                - chat
+                - fax
+                - whatsapp
+                - rcs
+                - lumabot
+                - internal
+              lastMessageAt:
+                type: string
+                format: date-time
+              direction:
+                type: string
+                enum:
+                - inbound
+                - outbound
+        startedAt:
+          type: string
+          format: date-time
+        finishedAt:
+          type: string
+          format: date-time
+        duration:
+          type: number
+          description: Duration of the conversation, in seconds.
+        reporting:
+          type: object
+          description: Structured reporting/QA data collected about this conversation.
+          properties:
+            callOutcome:
+              type: string
+              enum:
+              - transferred
+              - assistant-ended
+              - patient-ended
+              - timed-out
+            intents:
+              type: array
+              description: The intents detected during the conversation.
+              items:
+                type: object
+                properties:
+                  intent:
+                    type: string
+                  inScope:
+                    type: boolean
+                  handled:
+                    type: boolean
+                  evidence:
+                    type: string
+                    description: ID of the message that evidences this intent.
+                    pattern: '[0-9a-f]'
+                    minLength: 24
+                    maxLength: 24
+            summary:
+              type: string
+            callTransferAttempt:
+              type: boolean
+            transferWasAfterHours:
+              type: boolean
+    idParam:
+      in: query
+      name: _id
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      required: false
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: Luma's internal ID of an object.
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
+    updatedByParam:
+      in: query
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+  securitySchemes:
+    Bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

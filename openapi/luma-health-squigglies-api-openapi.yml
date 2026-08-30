@@ -1,0 +1,150 @@
+openapi: 3.2.0
+info:
+  version: 2.0.0
+  title: Rest-Service Squigglies API
+  x-logo:
+    url: https://lumahealth-assets.s3.us-west-2.amazonaws.com/new_luma_logo_black.png
+    backgroundColor: '#FFFFFF'
+    altText: Luma Health
+  description: OpenAPI [Basic Structure](https://swagger.io/docs/specification/basic-structure/)
+servers:
+- url: https://api.lumahealth.io/api/v2
+security:
+- Bearer: []
+tags:
+- name: squigglies
+  description: Messages Squigglies
+paths:
+  /squigglies:
+    get:
+      summary: Show a list of all available squigglies. Enabling filtering by tag, label, q and scope.
+      operationId: listSquigglies
+      tags:
+      - squigglies
+      parameters:
+      - name: tag
+        in: query
+        description: Filters by tag value. Accepts Wildcard(*)
+        schema:
+          type: string
+      - name: label
+        in: query
+        description: Filters by label value. Accepts Wildcard(*)
+        schema:
+          type: string
+      - name: q
+        in: query
+        description: Applies an OR operation for both value and tag. Accepts Wildcard(*)
+        schema:
+          type: string
+      - name: scope
+        in: query
+        description: Used to filter out squigglies by supported product
+        schema:
+          type: string
+          enum:
+          - actionsAppointment
+          - actionsRecall
+          - actionsProcedure
+          - actionsDiagnostic
+          - broadcast
+          - broadcastUpload
+          - hub
+          - systemTemplatesWaitingRoom
+          - systemTemplates
+      - $ref: '#/components/parameters/pageParam'
+      - $ref: '#/components/parameters/limitParam'
+      responses:
+        '200':
+          description: Returns a list of squigglies
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - response
+                - page
+                - size
+                properties:
+                  response:
+                    type: array
+                    minItems: 0
+                    items:
+                      $ref: '#/components/schemas/SquiggliesResponse'
+                  page:
+                    type: integer
+                    format: int32
+                    minimum: 1
+                  size:
+                    type: integer
+                    format: int32
+                    minimum: 0
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  parameters:
+    pageParam:
+      in: query
+      name: page
+      required: false
+      type: integer
+      format: int32
+      default: 1
+      minimum: 1
+      schema:
+        type: integer
+        format: int32
+        default: 1
+        minimum: 1
+    limitParam:
+      name: limit
+      in: query
+      description: How many items to fetch per page
+      required: false
+      type: integer
+      format: int32
+      default: 500
+      minimum: 1
+      maximum: 1000
+      schema:
+        type: integer
+        format: int32
+        default: 500
+        minimum: 1
+        maximum: 1000
+  schemas:
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    SquiggliesResponse:
+      type: object
+      description: Represents a squiggly, a reusable template tag such as a dynamic URL or system value that can be inserted into messages and rendered at send time. It defines the tag name, namespace, and which product scopes it is available in.
+      properties:
+        tag:
+          type: string
+          pattern: '{{[aA-zZ]+}}'
+        label:
+          type: string
+        ref:
+          type: string
+  securitySchemes:
+    Bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

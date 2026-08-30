@@ -1,0 +1,711 @@
+openapi: 3.2.0
+info:
+  version: 2.0.0
+  title: Rest-Service Billing Copays API
+  x-logo:
+    url: https://lumahealth-assets.s3.us-west-2.amazonaws.com/new_luma_logo_black.png
+    backgroundColor: '#FFFFFF'
+    altText: Luma Health
+  description: OpenAPI [Basic Structure](https://swagger.io/docs/specification/basic-structure/)
+servers:
+- url: https://api.lumahealth.io/api/v2
+security:
+- Bearer: []
+tags:
+- name: billingCopays
+  description: Copay amounts configured per source (system, EHR, or manual) and referenced by patient form templates
+paths:
+  /billingCopays:
+    get:
+      summary: List BillingCopays
+      operationId: billingCopaysList
+      tags:
+      - billingCopays
+      parameters:
+      - $ref: '#/components/parameters/idParam'
+      - $ref: '#/components/parameters/userParam'
+      - name: source
+        in: query
+        description: Source of the billing copay. Accepts a comma-separated list (e.g. system,ehr).
+        style: form
+        explode: false
+        schema:
+          type: array
+          items:
+            type: string
+            enum:
+            - system
+            - ehr
+            - manual
+      - name: type
+        in: query
+        description: Type of the billing copay
+        schema:
+          type: string
+          enum:
+          - balance
+          - behavioral
+          - copay
+          - custom
+          - dental
+          - medical
+      - name: visible
+        in: query
+        description: Whether the billing copay is visible. Defaults to true when not specified.
+        schema:
+          type: boolean
+      - $ref: '#/components/parameters/deletedParam'
+      - $ref: '#/components/parameters/createdByParam'
+      - $ref: '#/components/parameters/updatedByParam'
+      - $ref: '#/components/parameters/deletedByParam'
+      - $ref: '#/components/parameters/createdAtParam'
+      - $ref: '#/components/parameters/updatedAtParam'
+      - $ref: '#/components/parameters/deletedAtParam'
+      - $ref: '#/components/parameters/pageParam'
+      - $ref: '#/components/parameters/limitParam'
+      - $ref: '#/components/parameters/populateParam'
+      - $ref: '#/components/parameters/selectParam'
+      responses:
+        '200':
+          description: List of billing copays
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - response
+                - page
+                - size
+                properties:
+                  response:
+                    type: array
+                    minItems: 0
+                    items:
+                      $ref: '#/components/schemas/BillingCopaysResponse'
+                  page:
+                    type: integer
+                    format: int32
+                    minimum: 1
+                  size:
+                    type: integer
+                    format: int32
+                    minimum: 0
+                additionalProperties: false
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+    post:
+      summary: Create BillingCopay
+      operationId: billingCopayCreate
+      tags:
+      - billingCopays
+      requestBody:
+        description: Create a billing copay
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BillingCopaysCreate'
+      responses:
+        '200':
+          description: Successful creation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BillingCopaysResponse'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /billingCopays/{billingCopayId}:
+    get:
+      summary: Get a BillingCopay by id
+      operationId: billingCopayById
+      tags:
+      - billingCopays
+      parameters:
+      - name: billingCopayId
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: ^[0-9a-f]{24}$
+          minLength: 24
+          maxLength: 24
+      responses:
+        '200':
+          description: BillingCopay
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BillingCopaysResponse'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+    put:
+      summary: Update a BillingCopay
+      operationId: billingCopayUpdate
+      tags:
+      - billingCopays
+      parameters:
+      - name: billingCopayId
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: ^[0-9a-f]{24}$
+          minLength: 24
+          maxLength: 24
+      requestBody:
+        description: A billingCopay (full or partial) to be updated
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BillingCopaysUpdate'
+      responses:
+        '200':
+          description: BillingCopay
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BillingCopaysResponse'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+    delete:
+      summary: Delete a BillingCopay
+      operationId: billingCopayDelete
+      tags:
+      - billingCopays
+      parameters:
+      - name: billingCopayId
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: ^[0-9a-f]{24}$
+          minLength: 24
+          maxLength: 24
+      responses:
+        '200':
+          description: Deleted billingCopay
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BillingCopaysResponse'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+        '409':
+          description: Copay is referenced by a patient form template and cannot be deleted
+  /billingCopays/{billingCopayId}/patientFormTemplates:
+    get:
+      summary: List the patient form templates that reference a BillingCopay
+      operationId: billingCopayPatientFormTemplates
+      tags:
+      - billingCopays
+      parameters:
+      - name: billingCopayId
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: ^[0-9a-f]{24}$
+          minLength: 24
+          maxLength: 24
+      responses:
+        '200':
+          description: Patient form templates referencing the billing copay
+          content:
+            application/json:
+              schema:
+                type: array
+                minItems: 0
+                items:
+                  type: object
+                  properties:
+                    _id:
+                      type: string
+                      pattern: ^[0-9a-f]{24}$
+                      minLength: 24
+                      maxLength: 24
+                    title:
+                      type: string
+                    template:
+                      type: object
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+components:
+  parameters:
+    pageParam:
+      in: query
+      name: page
+      required: false
+      type: integer
+      format: int32
+      default: 1
+      minimum: 1
+      schema:
+        type: integer
+        format: int32
+        default: 1
+        minimum: 1
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
+    idParam:
+      in: query
+      name: _id
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      required: false
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: Luma's internal ID of an object.
+    updatedByParam:
+      in: query
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+    deletedByParam:
+      in: query
+      name: deletedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who deleted this object.
+    populateParam:
+      name: _populate
+      in: query
+      description: Response properties which will be replaced by the referenced objects, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    selectParam:
+      name: _select
+      in: query
+      description: Response properties that should be returned, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+    deletedAtParam:
+      in: query
+      name: deletedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was deleted.
+    limitParam:
+      name: limit
+      in: query
+      description: How many items to fetch per page
+      required: false
+      type: integer
+      format: int32
+      default: 500
+      minimum: 1
+      maximum: 1000
+      schema:
+        type: integer
+        format: int32
+        default: 500
+        minimum: 1
+        maximum: 1000
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+  schemas:
+    BillingCopaysResponse:
+      type: object
+      properties:
+        deleted:
+          $ref: '#/components/schemas/deletedParam'
+        createdBy:
+          $ref: '#/components/schemas/createdByParam'
+        updatedBy:
+          $ref: '#/components/schemas/updatedByParam'
+        deletedBy:
+          $ref: '#/components/schemas/deletedByParam'
+        createdAt:
+          $ref: '#/components/schemas/createdAtParam'
+        updatedAt:
+          $ref: '#/components/schemas/updatedAtParam'
+        deletedAt:
+          $ref: '#/components/schemas/deletedAtParam'
+        _id:
+          $ref: '#/components/schemas/idParam'
+        user:
+          $ref: '#/components/schemas/userParam'
+        source:
+          type: string
+          enum:
+          - system
+          - ehr
+          - manual
+        type:
+          type: string
+          enum:
+          - balance
+          - behavioral
+          - copay
+          - custom
+          - dental
+          - medical
+        model:
+          type: string
+          enum:
+          - appointment
+          - patient
+          - offer
+        calculation:
+          type: string
+        name:
+          type: string
+        amount:
+          type: number
+        currency:
+          type: string
+          pattern: ^[A-Z]{3}$
+        visible:
+          type: boolean
+        appointment:
+          type: string
+          pattern: ^[0-9a-f]{24}$
+          minLength: 24
+          maxLength: 24
+        patient:
+          type: string
+          pattern: ^[0-9a-f]{24}$
+          minLength: 24
+          maxLength: 24
+        preAuthorization:
+          type: boolean
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    idParam:
+      in: query
+      name: _id
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      required: false
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: Luma's internal ID of an object.
+    deletedAtParam:
+      in: query
+      name: deletedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was deleted.
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
+    updatedByParam:
+      in: query
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
+    BillingCopaysUpdate:
+      type: object
+      properties:
+        _id:
+          $ref: '#/components/schemas/idParam'
+        user:
+          $ref: '#/components/schemas/userParam'
+        source:
+          type: string
+          enum:
+          - system
+          - ehr
+          - manual
+        type:
+          type: string
+          enum:
+          - balance
+          - behavioral
+          - copay
+          - custom
+          - dental
+          - medical
+        model:
+          type: string
+          enum:
+          - appointment
+          - patient
+          - offer
+        calculation:
+          type: string
+        name:
+          type: string
+        amount:
+          type: number
+        currency:
+          type: string
+          pattern: ^[A-Z]{3}$
+        visible:
+          type: boolean
+        appointment:
+          type: string
+          pattern: ^[0-9a-f]{24}$
+          minLength: 24
+          maxLength: 24
+        patient:
+          type: string
+          pattern: ^[0-9a-f]{24}$
+          minLength: 24
+          maxLength: 24
+        preAuthorization:
+          type: boolean
+    BillingCopaysCreate:
+      type: object
+      required:
+      - name
+      properties:
+        _id:
+          $ref: '#/components/schemas/idParam'
+        user:
+          $ref: '#/components/schemas/userParam'
+        source:
+          type: string
+          enum:
+          - system
+          - ehr
+          - manual
+        type:
+          type: string
+          enum:
+          - balance
+          - behavioral
+          - copay
+          - custom
+          - dental
+          - medical
+        model:
+          type: string
+          enum:
+          - appointment
+          - patient
+          - offer
+        calculation:
+          type: string
+        name:
+          type: string
+        amount:
+          type: number
+        currency:
+          type: string
+          pattern: ^[A-Z]{3}$
+        visible:
+          type: boolean
+        appointment:
+          type: string
+          pattern: ^[0-9a-f]{24}$
+          minLength: 24
+          maxLength: 24
+        patient:
+          type: string
+          pattern: ^[0-9a-f]{24}$
+          minLength: 24
+          maxLength: 24
+        preAuthorization:
+          type: boolean
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+    deletedByParam:
+      in: query
+      name: deletedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who deleted this object.
+  securitySchemes:
+    Bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

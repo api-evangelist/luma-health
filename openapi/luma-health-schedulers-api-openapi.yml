@@ -1,0 +1,169 @@
+openapi: 3.2.0
+info:
+  version: 2.0.0
+  title: Rest-Service Schedulers API
+  x-logo:
+    url: https://lumahealth-assets.s3.us-west-2.amazonaws.com/new_luma_logo_black.png
+    backgroundColor: '#FFFFFF'
+    altText: Luma Health
+  description: OpenAPI [Basic Structure](https://swagger.io/docs/specification/basic-structure/)
+servers:
+- url: https://api.lumahealth.io/api/v2
+security:
+- Bearer: []
+tags:
+- name: schedulers
+  description: Scheduler
+paths:
+  /schedulers/{schedulerId}:
+    put:
+      summary: Update a scheduler
+      operationId: schedulerUpdate
+      tags:
+      - schedulers
+      parameters:
+      - name: schedulerId
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      requestBody:
+        description: A scheduler (full or partial) to be updated
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SchedulerRequestUpdate'
+      responses:
+        '200':
+          description: Reminder
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    default: ok
+                  statusCode:
+                    type: integer
+                    default: 200
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+components:
+  schemas:
+    SchedulerRequestUpdate:
+      type: object
+      required:
+      - date
+      - endDate
+      properties:
+        locked:
+          type: boolean
+        showEntireDay:
+          type: boolean
+          default: false
+        date:
+          type: integer
+        endDate:
+          type: integer
+        facility:
+          type: object
+          properties:
+            in:
+              type: array
+              items:
+                type: string
+            nin:
+              type: array
+              items:
+                type: string
+        provider:
+          type: object
+          properties:
+            in:
+              type: array
+              items:
+                type: string
+            nin:
+              type: array
+              items:
+                type: string
+        status:
+          type: object
+          properties:
+            in:
+              type: array
+              items:
+                type: string
+            nin:
+              type: array
+              items:
+                type: string
+        statusReason:
+          type: object
+          properties:
+            in:
+              type: array
+              items:
+                type: string
+            nin:
+              type: array
+              items:
+                type: string
+        statusSource:
+          type: object
+          properties:
+            in:
+              type: array
+              items:
+                type: string
+            nin:
+              type: array
+              items:
+                type: string
+        type:
+          type: object
+          properties:
+            in:
+              type: array
+              items:
+                type: string
+            nin:
+              type: array
+              items:
+                type: string
+        insuranceVerificationStatus:
+          type: object
+          properties:
+            in:
+              type: array
+              items:
+                type: string
+            nin:
+              type: array
+              items:
+                type: string
+        billingTransactionStatus:
+          type: object
+          properties:
+            in:
+              type: array
+              items:
+                type: string
+            nin:
+              type: array
+              items:
+                type: string
+        modality:
+          type: string
+  securitySchemes:
+    Bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

@@ -1,0 +1,313 @@
+openapi: 3.2.0
+info:
+  version: 2.0.0
+  title: Rest-Service Auth API
+  x-logo:
+    url: https://lumahealth-assets.s3.us-west-2.amazonaws.com/new_luma_logo_black.png
+    backgroundColor: '#FFFFFF'
+    altText: Luma Health
+  description: OpenAPI [Basic Structure](https://swagger.io/docs/specification/basic-structure/)
+servers:
+- url: https://api.lumahealth.io/api/v2
+security:
+- Bearer: []
+tags:
+- name: auth
+  description: Luma Client Access
+paths:
+  /auth/clients:
+    post:
+      summary: Generate client id and secret
+      description: This endpoint allows our users to generate clientId and clientSecrets that can be used  for machine-to-machine communication without the need of a username / password. Since  clientId / clientSecret never expires, it is usefull in running automation process / scripts etc. A user can only have one clientId/clientSecret at any given time.
+      tags:
+      - auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - clientName
+              properties:
+                clientName:
+                  type: string
+                  description: Name of the client
+              additionalProperties: false
+      x-codeSamples:
+      - lang: cURL
+        source: 'curl --request POST \
+
+          --url ''https://api.lumahealth.io/v2/auth/clients'' \
+
+          --header ''content-type: application/json'' \
+
+          --header ''Authorization: Bearer <jwt token from luma>
+
+          --data ''{"clientName": "Luma Client Inc."}''
+
+          '
+      responses:
+        '200':
+          description: Returns a clientId and clientSecret
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - clientId
+                - clientSecret
+                properties:
+                  clientId:
+                    type: string
+                  clientSecret:
+                    type: string
+        '400':
+          description: If the request parameter - clientName - is malformed/invalid or missing. We will also return 400 if the operation fails.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '406':
+          description: If a clientId/clientSecret pair has already been generated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+    patch:
+      summary: Rotate clientSecret
+      description: This action allows our users to change secrets associated with a clientId. This does not generate a new clientId.
+      tags:
+      - auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - clientName
+              properties:
+                clientName:
+                  type: string
+                  description: Name of the client
+              additionalProperties: false
+      x-codeSamples:
+      - lang: cURL
+        source: 'curl --request PATCH \
+
+          --url ''https://api.lumahealth.io/v2/auth/clients'' \
+
+          --header ''content-type: application/json'' \
+
+          --header ''Authorization: Bearer <jwt token from luma>
+
+          --data ''{"clientName": "Luma Client Inc."}''
+
+          '
+      responses:
+        '200':
+          description: Returns a clientId and clientSecret
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - clientId
+                - clientSecret
+                properties:
+                  clientId:
+                    type: string
+                  clientSecret:
+                    type: string
+        '400':
+          description: If the request parameter - clientName - is malformed/invalid or missing. We will also return 400 if the operation fails.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '404':
+          description: If the user associated with this clientId is not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+    get:
+      summary: Get clientIds
+      description: This action returns the clientId value as well as its creation date or the last time clientSecret was rotated.
+      tags:
+      - auth
+      x-codeSamples:
+      - lang: cURL
+        source: 'curl --request GET \
+
+          --url ''https://api.lumahealth.io/v2/auth/clients'' \
+
+          --header ''content-type: application/json'' \
+
+          --header ''Authorization: Bearer <jwt token from luma>
+
+          '
+      responses:
+        '200':
+          description: Returns clientId and last updated time. If no clientId is found, an emptry array will be returned.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  required:
+                  - clientId
+                  - updatedAt
+                  properties:
+                    clientId:
+                      type: string
+                    updatedAt:
+                      type: string
+                      format: date-time
+        '400':
+          description: If server encounters an error in processing the request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+  /auth/token:
+    post:
+      summary: Get access token
+      description: This endpoint allows user to receive access token that can be used to access luma service with. This is similar to login flow except that client receives access token by providing clientId and clientSecret.
+      tags:
+      - auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - client_id
+              - client_secret
+              - grant_type
+              properties:
+                client_id:
+                  type: string
+                  description: client_id provided by luma
+                client_secret:
+                  type: string
+                  description: client_secret provided by luma
+                grant_type:
+                  type: string
+                  description: The type of token to generate
+                  enum:
+                  - client_credentials
+              additionalProperties: false
+      x-codeSamples:
+      - lang: cURL
+        source: "curl --location --request POST 'https://api.lumahealth.io/api/v2/auth/token' \\\n--header 'Content-Type: application/json' \\\n--data-raw '{\n    \"client_id\": \"XXXXX\",\n    \"client_secret\": \"XXXXX\",\n    \"grant_type\": \"client_credentials\"\n}'\n"
+      responses:
+        '200':
+          description: Returns a JWT token that can be used as a Bearer token.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - access_token
+                - token_type
+                - expires_in
+                properties:
+                  access_token:
+                    type: string
+                  token_type:
+                    type: string
+                    enum:
+                    - Bearer
+                  expires_in:
+                    type: number
+        '400':
+          description: A 400 will be returned if any of the request parameters (client_id or client_secret) is malformed/invalid or missing.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+        '401':
+          description: A 401 Unauthorized will be returned if wrong clientId and/or clientSecret is given.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+  /auth/token/{userId}:
+    put:
+      summary: Get subaccount access token
+      description: This endpoint allows user to receive access token of another user that can be used to impersonate their account and access luma services. It can only be invoked by an access token with apiUser role, generated with a client_id and a client_secret via POST /api/v2/auth/token.
+      tags:
+      - auth
+      parameters:
+      - name: userId
+        description: The user id for which an impersonated token will be returned.
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                expires_in:
+                  type: number
+                  description: Seconds for the token to expire.
+              additionalProperties: false
+      x-codeSamples:
+      - lang: cURL
+        source: 'curl --request PUT \
+
+          --url ''https://api.lumahealth.io/v2/auth/token/62269a436124f88ce8d73488'' \
+
+          --header ''content-type: application/json'' \
+
+          --data ''{ "expires_in": "600" }''
+
+          '
+      responses:
+        '200':
+          description: Returns a JWT token that can be used as a Bearer token.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - access_token
+                - token_type
+                properties:
+                  access_token:
+                    type: string
+                  token_type:
+                    type: string
+                    enum:
+                    - Bearer
+        '400':
+          description: A 400 will be returned if any of the request parameters (clientId or clientSecret) is malformed/invalid or missing.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSchema'
+components:
+  schemas:
+    ErrorSchema:
+      type: object
+      required:
+      - message
+      properties:
+        message:
+          type: string
+  securitySchemes:
+    Bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

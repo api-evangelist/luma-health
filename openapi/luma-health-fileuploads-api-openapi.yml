@@ -1,0 +1,808 @@
+openapi: 3.2.0
+info:
+  version: 2.0.0
+  title: Rest-Service File Uploads API
+  x-logo:
+    url: https://lumahealth-assets.s3.us-west-2.amazonaws.com/new_luma_logo_black.png
+    backgroundColor: '#FFFFFF'
+    altText: Luma Health
+  description: OpenAPI [Basic Structure](https://swagger.io/docs/specification/basic-structure/)
+servers:
+- url: https://api.lumahealth.io/api/v2
+security:
+- Bearer: []
+tags:
+- name: fileUploads
+  description: File Uploads
+paths:
+  /fileUploads:
+    get:
+      summary: List file uploads
+      operationId: fileUploadsList
+      tags:
+      - fileUploads
+      parameters:
+      - name: bucket
+        in: query
+        description: AWS Bucket S3 name.
+        schema:
+          type: string
+      - name: aswId
+        in: query
+        description: The ID of the AWS of uploaded file.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: name
+        in: query
+        description: The name of uploaded file.
+        schema:
+          type: string
+      - name: extension
+        in: query
+        description: The extension of uploaded file.
+        schema:
+          type: string
+      - name: contentType
+        in: query
+        description: The content type/MIME of uploaded file.
+        schema:
+          type: string
+      - name: type
+        in: query
+        description: The type of uploaded file.
+        schema:
+          type: string
+          enum:
+          - patient-insurance-image
+          - patient-message
+          - patient-referral-fax
+          - patient-referral
+          - patient-form
+          - provider-headshot
+          - avatar
+          - custom-web-style-logo
+          - generic
+          - integration-archive
+          - patient-pdf
+          - patient-ccda
+          - bulk-patients-insurance
+          - bulk-patients-form
+          - do-not-contact-patients-list
+          - archived-contacts-list
+          - bulk-users-update
+          - bulk-users-create
+          - upload
+          - lumabot-html-preview
+      - name: patient
+        in: query
+        description: The ID of the patient of uploaded file.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: insurance
+        in: query
+        description: The ID of the insurance of uploaded file.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: referral
+        in: query
+        description: The ID of the referral of uploaded file.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: outboundReferral
+        in: query
+        description: The ID of the outboundReferral of uploaded file.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: patientForm
+        in: query
+        description: The ID of the patientForm of uploaded file.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: message
+        in: query
+        description: The ID of the message of uploaded file.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: broadcast
+        in: query
+        description: The ID of the broadcast of uploaded file.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: website
+        in: query
+        description: The ID of website.
+        schema: null
+      - name: status
+        in: query
+        description: Status of the file upload. Processing = File-upload was created, but still being processed, Completed = File-upload was completed successfully, Failed = File-upload has failed.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+          enum:
+          - processing
+          - completed
+          - failed
+      - name: estimate
+        in: query
+        description: The ID of the estimate of uploaded file.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - $ref: '#/components/parameters/languageParam'
+      - $ref: '#/components/parameters/createdByParam'
+      - $ref: '#/components/parameters/updatedByParam'
+      - $ref: '#/components/parameters/createdAtParam'
+      - $ref: '#/components/parameters/updatedAtParam'
+      - $ref: '#/components/parameters/pageParam'
+      - $ref: '#/components/parameters/limitParam'
+      - $ref: '#/components/parameters/populateParam'
+      - $ref: '#/components/parameters/selectParam'
+      responses:
+        '200':
+          description: List of fileUploads
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - response
+                - page
+                - size
+                properties:
+                  response:
+                    type: array
+                    minItems: 0
+                    items:
+                      $ref: '#/components/schemas/FileUploadResponse'
+                  page:
+                    type: integer
+                    format: int32
+                    minimum: 1
+                  size:
+                    type: integer
+                    format: int32
+                    minimum: 0
+                additionalProperties: false
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+    post:
+      summary: Create fileUpload
+      description: 'There are two ways to upload a file, base64 and multipart. <br/>
+
+        For base64, you will need to describe the fields name, extension, patient, content-type, type and the image converted to base64. You can see a request example on the right side. <br/>
+
+        For multipart: you will have to create an HTML form, with an input field type "file" named "file", as well as the other required fields, and submit the form <br/>
+
+        '
+      operationId: fileUploadCreate
+      tags:
+      - fileUploads
+      requestBody:
+        description: Optional description in *Markdown*
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FileUploadRequest'
+      x-codeSamples:
+      - lang: cURL
+        description: test
+        source: 'curl --location --request POST ''http://localhost:8002/api/v2/fileUploads'' \
+
+          --header ''Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhBgciOiJIUzI1NiJ9.eyJpc3MiOiI2MmJhZjA3ZmVhMTdkODkxZTUwYzMwM2YiLCJleHAiOjE2NTY1OTEzMTk5NTgsInR5cGUiOiJzdGFmZiJ9.sRVWzaTAaf4kvTAmUWVjlUA7AmAfV4iCXaceNeTyJOA'' \
+
+          --form ''file=@"/home/user/Pictures/kgroka6i0vw41.jpg"'' \
+
+          --form ''extension="jpg"'' \
+
+          --form ''name="kgroka6i0vw41.jpg"'' \
+
+          --form ''contentType="image/png"'' \
+
+          --form ''type="generic"''
+
+          '
+      responses:
+        '201':
+          description: Successful creation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FileUploadResponse'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /fileUploads/{fileUploadId}:
+    get:
+      summary: Get file upload by id
+      operationId: fileUploadGet
+      tags:
+      - fileUploads
+      parameters:
+      - name: fileUploadId
+        in: path
+        required: true
+        description: FileUploads unique identifier in Luma's database.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      responses:
+        '200':
+          description: FileUpload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FileUploadResponse'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+    put:
+      summary: Update a fileUpload
+      operationId: fileUploadUpdate
+      tags:
+      - fileUploads
+      parameters:
+      - name: fileUploadId
+        in: path
+        required: true
+        description: File Upload unique identifier in Luma's database.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      requestBody:
+        description: A fileUpload (full or partial) to be updated
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FileUploadRequest'
+      responses:
+        '200':
+          description: FileUpload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FileUploadResponse'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+    delete:
+      summary: Delete a fileUpload
+      operationId: fileUploadDelete
+      tags:
+      - fileUploads
+      parameters:
+      - name: fileUploadId
+        in: path
+        required: true
+        description: FileUploads' unique identifier in Luma's database.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      responses:
+        '200':
+          description: Deleted fileUpload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FileUploadResponse'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+components:
+  parameters:
+    pageParam:
+      in: query
+      name: page
+      required: false
+      type: integer
+      format: int32
+      default: 1
+      minimum: 1
+      schema:
+        type: integer
+        format: int32
+        default: 1
+        minimum: 1
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
+    updatedByParam:
+      in: query
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
+    languageParam:
+      in: query
+      name: language
+      type: string
+      schema:
+        type: string
+        enum:
+        - ar
+        - bn
+        - cn
+        - de
+        - en
+        - es
+        - fa
+        - fl
+        - fr
+        - gr
+        - gu
+        - hi
+        - ht
+        - hy
+        - it
+        - ja
+        - km
+        - ko
+        - mr
+        - my
+        - pa
+        - pl
+        - pt
+        - ru
+        - so
+        - th
+        - ti
+        - ur
+        - vi
+        - zh-t
+        - zh
+      description: Language code.
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+    populateParam:
+      name: _populate
+      in: query
+      description: Response properties which will be replaced by the referenced objects, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    selectParam:
+      name: _select
+      in: query
+      description: Response properties that should be returned, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    limitParam:
+      name: limit
+      in: query
+      description: How many items to fetch per page
+      required: false
+      type: integer
+      format: int32
+      default: 500
+      minimum: 1
+      maximum: 1000
+      schema:
+        type: integer
+        format: int32
+        default: 500
+        minimum: 1
+        maximum: 1000
+  schemas:
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+    FileUploadResponse:
+      type: object
+      description: A FileUpload represents a file uploaded to the Luma Health platform, such as a patient insurance card image, a referral fax, a form attachment, a chat attachment, or a provider headshot. It stores metadata about the file including its storage location, name, extension, content type, upload type, and processing status, and it can link back to related records like a patient, insurance, referral, patient form, message, or estimate. Staff and integrations use this resource to check on an uploaded file's metadata and confirm whether processing completed successfully or failed.
+      properties:
+        _id:
+          $ref: '#/components/schemas/idParam'
+        user:
+          $ref: '#/components/schemas/userParam'
+        deleted:
+          $ref: '#/components/schemas/deletedParam'
+        createdBy:
+          $ref: '#/components/schemas/createdByParam'
+        updatedBy:
+          $ref: '#/components/schemas/updatedByParam'
+        createdAt:
+          $ref: '#/components/schemas/createdAtParam'
+        updatedAt:
+          $ref: '#/components/schemas/updatedAtParam'
+        bucket:
+          type: string
+          description: AWS Bucket S3 name.
+        aswId:
+          type: string
+          description: Asw Id.
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        name:
+          type: string
+          description: Name of file.
+        extension:
+          type: string
+          description: Extension of file.
+        contentType:
+          type: string
+          description: Content Type/MIME of file.
+        type:
+          type: string
+          description: Type of the uploaded file.
+          enum:
+          - patient-insurance-image
+          - patient-message
+          - patient-referral-fax
+          - patient-referral
+          - patient-form
+          - provider-headshot
+          - avatar
+          - custom-web-style-logo
+          - generic
+          - integration-archive
+          - patient-pdf
+          - patient-ccda
+          - bulk-patients-insurance
+          - bulk-patients-form
+          - do-not-contact-patients-list
+          - archived-contacts-list
+          - bulk-users-update
+          - bulk-users-create
+          - upload
+          - lumabot-html-preview
+        base64:
+          type: string
+          description: base64 representation of the binary file.
+        patient:
+          type: string
+          description: ID of a Patient.
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        insurance:
+          type: string
+          description: ID of an Insurance.
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        referral:
+          type: string
+          description: ID of a Referral.
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        outboundReferral:
+          type: string
+          description: ID of an Outbound Referral.
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        patientForm:
+          type: string
+          description: ID of a Patient Form.
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        message:
+          type: string
+          description: ID of a Message.
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        broadcast:
+          type: string
+          description: ID of a Broadcast.
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        website:
+          type: string
+          description: ID of a Website.
+        status:
+          type: string
+          description: Status of the file upload. Processing = File-upload was created, but still being processed, Completed = File-upload was completed successfully, Failed = File-upload has failed.
+          enum:
+          - processing
+          - completed
+          - failed
+        estimate:
+          type: string
+          description: Estimate Id.
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    FileUploadRequest:
+      type: object
+      required:
+      - name
+      - extension
+      - contentType
+      - type
+      - base64
+      properties:
+        bucket:
+          type: string
+          description: AWS Bucket S3 name.
+        aswId:
+          type: string
+          description: Asw Id.
+        name:
+          type: string
+          description: Name of file.
+        extension:
+          type: string
+          description: Extension of file.
+        contentType:
+          type: string
+          description: Content Type/MIME of file.
+        type:
+          type: string
+          description: Type of the uploaded file
+          enum:
+          - patient-insurance-image
+          - patient-message
+          - patient-referral-fax
+          - patient-referral
+          - patient-form
+          - provider-headshot
+          - avatar
+          - custom-web-style-logo
+          - generic
+          - integration-archive
+          - patient-pdf
+          - patient-ccda
+          - bulk-patients-insurance
+          - bulk-patients-form
+          - do-not-contact-patients-list
+          - archived-contacts-list
+          - bulk-users-update
+          - bulk-users-create
+          - upload
+          - lumabot-html-preview
+        base64:
+          type: string
+          description: base64 representation of the binary file.
+        patient:
+          type: string
+          description: ID of a Patient.
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        insurance:
+          type: string
+          description: ID of an Insurance.
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        referral:
+          type: string
+          description: ID of a Referral.
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        outboundReferral:
+          type: string
+          description: ID of an Outbound Referral.
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        patientForm:
+          type: string
+          description: ID of a Patient Form.
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        message:
+          type: string
+          description: ID of a Message.
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        broadcast:
+          type: string
+          description: ID of a Broadcast.
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        website:
+          type: string
+          description: Website.
+        status:
+          type: string
+          description: Status of the file upload. Processing = File-upload was created, but still being processed, Completed = File-upload was completed successfully, Failed = File-upload has failed.
+          enum:
+          - processing
+          - completed
+          - failed
+        estimate:
+          type: string
+          description: ID of an estimate.
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+    idParam:
+      in: query
+      name: _id
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      required: false
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: Luma's internal ID of an object.
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
+    updatedByParam:
+      in: query
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+  securitySchemes:
+    Bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

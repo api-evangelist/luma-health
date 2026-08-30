@@ -1,0 +1,438 @@
+openapi: 3.2.0
+info:
+  version: 2.0.0
+  title: Rest-Service Assistant Transfer Rules API
+  x-logo:
+    url: https://lumahealth-assets.s3.us-west-2.amazonaws.com/new_luma_logo_black.png
+    backgroundColor: '#FFFFFF'
+    altText: Luma Health
+  description: OpenAPI [Basic Structure](https://swagger.io/docs/specification/basic-structure/)
+servers:
+- url: https://api.lumahealth.io/api/v2
+security:
+- Bearer: []
+tags:
+- name: assistantTransferRules
+  description: Transfer rules for AI assistants (Navigator) to handle call routing
+paths:
+  /assistantTransferRules/bulk:
+    post:
+      summary: Bulk create assistant transfer rules
+      description: 'Creates multiple AssistantTransferRules documents and syncs them with the AI service for intent routing.
+
+
+        This endpoint:
+
+        1. Creates AssistantTransferRules documents in MongoDB
+
+        2. Uses the created document _ids as departmentIds for intent routing sync
+
+        3. Syncs the intent routing table with the AI service
+
+        4. Rolls back created documents if sync fails
+
+        '
+      operationId: assistantTransferRulesBulkCreate
+      tags:
+      - assistantTransferRules
+      requestBody:
+        description: Bulk create assistant transfer rules
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssistantTransferRulesBulkRequest'
+      responses:
+        '200':
+          description: Successfully created transfer rules
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  createdRules:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AssistantTransferRulesResponse'
+        '400':
+          description: Bad request - missing entries, invalid entry data, or sync failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+components:
+  schemas:
+    AssistantTransferRulesBulkRequest:
+      type: object
+      required:
+      - entries
+      properties:
+        entries:
+          type: array
+          description: Array of transfer rule entries to create
+          minItems: 1
+          items:
+            type: object
+            required:
+            - assistants
+            - name
+            - transferNumber
+            - type
+            properties:
+              assistants:
+                type: array
+                description: Array of assistant IDs for this entry
+                minItems: 1
+                items:
+                  type: string
+                  pattern: '[0-9a-f]'
+                  minLength: 24
+                  maxLength: 24
+              name:
+                type: string
+                description: Name of the transfer rule (used for intent routing)
+                minLength: 1
+              metadata:
+                type: object
+                description: Additional metadata
+                properties:
+                  city:
+                    type: string
+                    description: City where the department is located
+                  state:
+                    type: string
+                    description: State where the department is located
+                  zip:
+                    type: string
+                    description: ZIP code for the department location
+                  address:
+                    type: string
+                    description: Street address of the department
+                  suiteBuildingRoom:
+                    type: string
+                    description: Suite, building, or room number
+                  specialty:
+                    type: string
+                    description: Medical specialty of the department
+                  action:
+                    type: string
+                    description: Action associated with the department
+              enabled:
+                type: boolean
+                description: Whether the transfer rule is enabled
+                default: false
+              type:
+                type: string
+                description: Type of transfer rule
+                enum:
+                - intent_routing
+                - rule_based
+              assistantNumbers:
+                type: array
+                description: Array of outbound number IDs
+                items:
+                  type: string
+              transferNumber:
+                type: string
+                description: Phone number to transfer calls to
+              transferMessage:
+                type: string
+                description: Message played when transferring
+              transferFailedMessage:
+                type: string
+                description: Message played when transfer fails
+              afterHoursEndCallMessage:
+                type: string
+                description: Message played when office is closed
+              timezone:
+                type: string
+                description: Timezone for working hours (e.g., America/Los_Angeles)
+              textPatientBackInHub:
+                type: object
+                description: Configuration for texting patient back
+                properties:
+                  enabled:
+                    type: boolean
+                    description: Whether text-back feature is enabled
+                  minutesBeforeClosingTime:
+                    type: integer
+                    description: Minutes before closing to offer text-back option
+                    minimum: 0
+              textPatientBackConfirmationSentMessage:
+                type: string
+                description: Confirmation message sent when text-back is requested
+              hubSmsTextPatientBackConfirmationSentMessage:
+                type: string
+                description: SMS confirmation message sent via hub
+              offerToTransferMessage:
+                type: string
+                description: Message offering to transfer the caller
+              offerToTextBackOrTransferMessage:
+                type: string
+                description: Message offering text-back or transfer options
+              offerToTextBackOrEndCallMessage:
+                type: string
+                description: Message offering text-back or end call options
+              officeClosedTransferNotAvailableOfferToTextBackMessage:
+                type: string
+                description: Message when office is closed and transfer unavailable
+              officeNearClosingTimeTransferNotAdvisedOfferToTextBackMessage:
+                type: string
+                description: Message when office is near closing time
+              workingHours:
+                type: array
+                description: Working hours configuration for each day of the week
+                items:
+                  type: object
+                  required:
+                  - earliest
+                  - latest
+                  - dayOfWeek
+                  properties:
+                    earliest:
+                      type: object
+                      description: Start time for the day
+                      required:
+                      - hour
+                      - minute
+                      properties:
+                        hour:
+                          type: integer
+                          minimum: 0
+                          maximum: 23
+                        minute:
+                          type: integer
+                          minimum: 0
+                          maximum: 59
+                    latest:
+                      type: object
+                      description: End time for the day
+                      required:
+                      - hour
+                      - minute
+                      properties:
+                        hour:
+                          type: integer
+                          minimum: 0
+                          maximum: 23
+                        minute:
+                          type: integer
+                          minimum: 0
+                          maximum: 59
+                    dayOfWeek:
+                      type: integer
+                      description: Day of week (0=Sunday, 6=Saturday)
+                      minimum: 0
+                      maximum: 6
+        replaceAll:
+          type: boolean
+          description: Whether to replace all existing entries in the intent routing table
+          default: false
+    AssistantTransferRulesResponse:
+      type: object
+      description: Represents the call routing configuration for a Navigator AI assistant, defining which assistant or phone numbers it applies to, the number and message to use when transferring a caller to staff, and business hours used to decide whether to offer a transfer, an SMS follow up, or an after-hours message instead. It drives how an automated phone assistant decides when and where to hand a call off to a human.
+      properties:
+        _id:
+          type: string
+          description: Unique identifier in Luma's database
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        user:
+          type: string
+          description: Organization ID
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        deleted:
+          type: integer
+          description: Soft delete timestamp (0 if not deleted)
+          default: 0
+        createdBy:
+          type: string
+          description: ID of user who created this record
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        updatedBy:
+          type: string
+          description: ID of user who last updated this record
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        createdAt:
+          type: string
+          format: date-time
+          description: Timestamp when record was created
+        updatedAt:
+          type: string
+          format: date-time
+          description: Timestamp when record was last updated
+        name:
+          type: string
+          description: Name of the transfer rule (used for intent routing)
+        metadata:
+          type: object
+          description: Additional metadata
+          properties:
+            city:
+              type: string
+              description: City where the department is located
+            state:
+              type: string
+              description: State where the department is located
+            zip:
+              type: string
+              description: ZIP code for the department location
+            address:
+              type: string
+              description: Street address of the department
+            suiteBuildingRoom:
+              type: string
+              description: Suite, building, or room number
+            specialty:
+              type: string
+              description: Medical specialty of the department
+            action:
+              type: string
+              description: Action associated with the department
+        enabled:
+          type: boolean
+          description: Whether the transfer rule is enabled
+          default: false
+        type:
+          type: string
+          description: Type of transfer rule
+          enum:
+          - intent_routing
+          - rule_based
+        assistants:
+          type: array
+          description: Array of assistant IDs
+          items:
+            type: string
+            pattern: '[0-9a-f]'
+            minLength: 24
+            maxLength: 24
+        assistantNumbers:
+          type: array
+          description: Array of outbound number IDs
+          items:
+            type: string
+            pattern: '[0-9a-f]'
+            minLength: 24
+            maxLength: 24
+        transferNumber:
+          type: string
+          description: Phone number to transfer calls to
+        transferMessage:
+          type: string
+          description: Message played when transferring
+          default: Transferring you to a staff.
+        transferFailedMessage:
+          type: string
+          description: Message played when transfer fails
+          default: Unfortunately the transfer has failed. Sorry please try calling again.
+        afterHoursEndCallMessage:
+          type: string
+          description: Message played when office is closed
+          default: Unfortunately, the office is closed. Please call back during normal business hours. Goodbye
+        timezone:
+          type: string
+          description: Timezone for working hours
+          default: America/Los_Angeles
+        textPatientBackInHub:
+          type: object
+          description: Configuration for texting patient back
+          properties:
+            enabled:
+              type: boolean
+              description: Whether text-back feature is enabled
+              default: false
+            minutesBeforeClosingTime:
+              type: integer
+              description: Minutes before closing to offer text-back option
+              default: 30
+        textPatientBackConfirmationSentMessage:
+          type: string
+          description: Confirmation message sent when text-back is requested
+          default: I've sent you an SMS confirming this request. Our team will text you back via the number you have provided.
+        hubSmsTextPatientBackConfirmationSentMessage:
+          type: string
+          description: SMS confirmation message sent via hub
+          default: Thank you for your message. We will get back to you as soon as possible.
+        offerToTransferMessage:
+          type: string
+          description: Message offering to transfer the caller
+          default: Would you like to be transferred to a staff member?
+        offerToTextBackOrTransferMessage:
+          type: string
+          description: Message offering text-back or transfer options
+          default: Would you like to receive a text message or be transferred to a staff member?
+        offerToTextBackOrEndCallMessage:
+          type: string
+          description: Message offering text-back or end call options
+          default: Would you like to receive a text message or end the call?
+        officeClosedTransferNotAvailableOfferToTextBackMessage:
+          type: string
+          description: Message when office is closed and transfer unavailable
+          default: Unfortunately, the office is closed. Would you like to leave a message and a staff member will reach back in the next business day?
+        officeNearClosingTimeTransferNotAdvisedOfferToTextBackMessage:
+          type: string
+          description: Message when office is near closing time
+          default: The office is closing soon. If you choose to be transferred to a Staff, there is a chance that your call won't be answered. Would you like to leave a message and a staff member will reach you as soon as possible?
+        workingHours:
+          type: array
+          description: Working hours configuration for each day of the week
+          items:
+            type: object
+            properties:
+              earliest:
+                type: object
+                description: Start time for the day
+                properties:
+                  hour:
+                    type: integer
+                    minimum: 0
+                    maximum: 23
+                  minute:
+                    type: integer
+                    minimum: 0
+                    maximum: 59
+              latest:
+                type: object
+                description: End time for the day
+                properties:
+                  hour:
+                    type: integer
+                    minimum: 0
+                    maximum: 23
+                  minute:
+                    type: integer
+                    minimum: 0
+                    maximum: 59
+              dayOfWeek:
+                type: integer
+                description: Day of week (0=Sunday, 6=Saturday)
+                minimum: 0
+                maximum: 6
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+  securitySchemes:
+    Bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

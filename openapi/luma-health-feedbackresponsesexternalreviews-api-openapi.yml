@@ -1,0 +1,256 @@
+openapi: 3.2.0
+info:
+  version: 2.0.0
+  title: Rest-Service Feedback Responses External Reviews API
+  x-logo:
+    url: https://lumahealth-assets.s3.us-west-2.amazonaws.com/new_luma_logo_black.png
+    backgroundColor: '#FFFFFF'
+    altText: Luma Health
+  description: OpenAPI [Basic Structure](https://swagger.io/docs/specification/basic-structure/)
+servers:
+- url: https://api.lumahealth.io/api/v2
+security:
+- Bearer: []
+tags:
+- name: feedbackResponsesExternalReviews
+  description: Scraped external reviews from Google Business Profile and Yelp
+paths:
+  /feedbackResponsesExternalReviews:
+    get:
+      summary: List external reviews
+      description: 'Returns scraped external reviews (Google, Yelp) for the authenticated account.
+
+        Reviews are upserted by the scraping pipeline and include AI-extracted themes and sentiment.
+
+        '
+      operationId: feedbackResponsesExternalReviewsList
+      tags:
+      - feedbackResponsesExternalReviews
+      parameters:
+      - $ref: '#/components/parameters/userParam'
+      - $ref: '#/components/parameters/deletedParam'
+      - $ref: '#/components/parameters/pageParam'
+      - $ref: '#/components/parameters/limitParam'
+      - $ref: '#/components/parameters/selectParam'
+      - name: platform
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - google
+          - yelp
+        description: Filter by review platform
+      - name: replyEligible
+        in: query
+        required: false
+        schema:
+          type: boolean
+        description: Filter to only reviews eligible for replies (Google only)
+      responses:
+        '200':
+          description: A list of external reviews
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  response:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        _id:
+                          type: string
+                        platform:
+                          type: string
+                          enum:
+                          - google
+                          - yelp
+                        externalId:
+                          type: string
+                          description: Platform-native review ID
+                        externalAuthorName:
+                          type: string
+                        rating:
+                          type: number
+                          minimum: 1
+                          maximum: 5
+                        reviewText:
+                          type: string
+                        reviewedAt:
+                          type: string
+                          format: date-time
+                        sentiment:
+                          type: string
+                          enum:
+                          - positive
+                          - neutral
+                          - negative
+                        themes:
+                          type: array
+                          items:
+                            type: string
+                          description: AI-extracted themes from the review text
+                        replyEligible:
+                          type: boolean
+                        platformRepliedAt:
+                          type: string
+                          format: date-time
+                        facility:
+                          type: string
+                  page:
+                    type: integer
+                  size:
+                    type: integer
+        '401':
+          description: Not authenticated
+        '403':
+          description: Not authorized
+        '500':
+          description: Internal server error
+  /feedbackResponsesExternalReviews/{id}:
+    get:
+      summary: Get external review by id
+      description: 'Returns a single scraped external review (Google, Yelp) for the authenticated account.
+
+        '
+      operationId: feedbackResponsesExternalReviewGet
+      tags:
+      - feedbackResponsesExternalReviews
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      responses:
+        '200':
+          description: An external review
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  _id:
+                    type: string
+                  platform:
+                    type: string
+                    enum:
+                    - google
+                    - yelp
+                  externalId:
+                    type: string
+                    description: Platform-native review ID
+                  externalAuthorName:
+                    type: string
+                  rating:
+                    type: number
+                    minimum: 1
+                    maximum: 5
+                  reviewText:
+                    type: string
+                  reviewedAt:
+                    type: string
+                    format: date-time
+                  sentiment:
+                    type: string
+                    enum:
+                    - positive
+                    - neutral
+                    - negative
+                  themes:
+                    type: array
+                    items:
+                      type: string
+                    description: AI-extracted themes from the review text
+                  replyEligible:
+                    type: boolean
+                  platformRepliedAt:
+                    type: string
+                    format: date-time
+                  facility:
+                    type: string
+        '401':
+          description: Not authenticated
+        '403':
+          description: Not authorized
+        '404':
+          description: Not found
+        '500':
+          description: Internal server error
+components:
+  parameters:
+    pageParam:
+      in: query
+      name: page
+      required: false
+      type: integer
+      format: int32
+      default: 1
+      minimum: 1
+      schema:
+        type: integer
+        format: int32
+        default: 1
+        minimum: 1
+    selectParam:
+      name: _select
+      in: query
+      description: Response properties that should be returned, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+    limitParam:
+      name: limit
+      in: query
+      description: How many items to fetch per page
+      required: false
+      type: integer
+      format: int32
+      default: 500
+      minimum: 1
+      maximum: 1000
+      schema:
+        type: integer
+        format: int32
+        default: 500
+        minimum: 1
+        maximum: 1000
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+  securitySchemes:
+    Bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

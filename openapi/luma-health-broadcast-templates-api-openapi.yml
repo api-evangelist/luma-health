@@ -1,0 +1,515 @@
+openapi: 3.2.0
+info:
+  version: 2.0.0
+  title: Rest-Service Broadcast Templates API
+  x-logo:
+    url: https://lumahealth-assets.s3.us-west-2.amazonaws.com/new_luma_logo_black.png
+    backgroundColor: '#FFFFFF'
+    altText: Luma Health
+  description: OpenAPI [Basic Structure](https://swagger.io/docs/specification/basic-structure/)
+servers:
+- url: https://api.lumahealth.io/api/v2
+security:
+- Bearer: []
+tags:
+- name: Broadcast Templates
+paths:
+  /broadcastTemplates:
+    get:
+      summary: List broadcast templates
+      description: Retrieves a list of broadcast templates
+      operationId: listBroadcastTemplates
+      tags:
+      - Broadcast Templates
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BroadcastTemplate'
+    post:
+      summary: Create a broadcast template
+      description: Creates a new broadcast template
+      operationId: createBroadcastTemplate
+      tags:
+      - Broadcast Templates
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BroadcastTemplate'
+      responses:
+        '201':
+          description: Broadcast template created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BroadcastTemplate'
+  /broadcastTemplates/{broadcastTemplateId}:
+    /broadcast-templates/{id}/duplicate: null
+    parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: string
+      description: Broadcast template ID to duplicate
+    get:
+      summary: Get broadcast template
+      description: Retrieves a specific broadcast template by ID
+      operationId: getBroadcastTemplate
+      tags:
+      - Broadcast Templates
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BroadcastTemplate'
+        '404':
+          description: Broadcast template not found
+    put:
+      summary: Update broadcast template
+      description: Updates an existing broadcast template
+      operationId: updateBroadcastTemplate
+      tags:
+      - Broadcast Templates
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BroadcastTemplate'
+      responses:
+        '200':
+          description: Broadcast template updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BroadcastTemplate'
+        '404':
+          description: Broadcast template not found
+    delete:
+      summary: Delete broadcast template
+      description: Deletes a broadcast template
+      operationId: deleteBroadcastTemplate
+      tags:
+      - Broadcast Templates
+      responses:
+        '204':
+          description: Broadcast template deleted successfully
+        '404':
+          description: Broadcast template not found
+    post:
+      summary: Duplicate broadcast template
+      description: Creates a copy of an existing broadcast template
+      operationId: duplicateBroadcastTemplate
+      tags:
+      - Broadcast Templates
+      responses:
+        '201':
+          description: Broadcast template duplicated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BroadcastTemplate'
+        '400':
+          description: Invalid request - missing broadcast template ID
+        '404':
+          description: Original broadcast template not found
+components:
+  schemas:
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
+    updatedByParam:
+      in: query
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+    idParam:
+      in: query
+      name: _id
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      required: false
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: Luma's internal ID of an object.
+    BroadcastTemplate:
+      type: object
+      description: Represents a reusable template for a bulk broadcast messaging campaign, capturing message content per channel and language, throttling and batching settings, and audience filters used to send mass communications to patients such as reminders or announcements via SMS, email, or voice. Templates move through a draft or complete lifecycle and are consumed by the broadcast builder flow to generate an actual broadcast run.
+      properties:
+        _id:
+          $ref: '#/components/schemas/idParam'
+        user:
+          $ref: '#/components/schemas/userParam'
+        deleted:
+          $ref: '#/components/schemas/deletedParam'
+        createdBy:
+          $ref: '#/components/schemas/createdByParam'
+        updatedBy:
+          $ref: '#/components/schemas/updatedByParam'
+        createdAt:
+          $ref: '#/components/schemas/createdAtParam'
+        updatedAt:
+          $ref: '#/components/schemas/updatedAtParam'
+        status:
+          type: string
+          description: 'Lifecycle marker for the multi-step builder flow. `draft` is
+
+            a work-in-progress; `complete` (or unset, for pre-feature rows)
+
+            is consumable by the SFTP filename-driven flow. Defaults to
+
+            `complete` on programmatic creates.
+
+            '
+          enum:
+          - draft
+          - complete
+          default: complete
+        title:
+          type: string
+          description: 'Title of the broadcast template (optional while `status: draft`)'
+        message:
+          type: string
+          description: 'Legacy single-message body (used by the legacy Broadcast flow).
+
+            For the broadcast-redesign (BroadcastFlow), use the `messages` array.
+
+            '
+        patientMessageTemplate:
+          type: string
+          description: Template for patient-specific messages
+        messageOverrides:
+          type: array
+          description: 'Legacy per-language/per-channel overrides paired with `message`.
+
+            Used by the legacy Broadcast flow.
+
+            '
+          items:
+            type: object
+            properties:
+              text:
+                type: string
+              language:
+                type: string
+              channel:
+                type: string
+              subject:
+                type: string
+              patientMessageTemplate:
+                $ref: '#/components/schemas/idParam'
+              secureChat:
+                type: boolean
+        messages:
+          type: array
+          description: 'BroadcastFlow-shaped message array. Used by the broadcast-redesign
+
+            SFTP path to populate a BroadcastFlow from this template (one entry
+
+            per language × channel combination). Coexists with the legacy
+
+            `message` + `messageOverrides[]` fields.
+
+            '
+          items:
+            type: object
+            properties:
+              enabled:
+                type: boolean
+                default: true
+              text:
+                type: string
+              language:
+                type: string
+                description: Language code or `default`
+              channel:
+                type: array
+                items:
+                  type: string
+                  enum:
+                  - sms
+                  - email
+                  - voice
+              secureChat:
+                type: boolean
+                default: false
+              subject:
+                type: string
+                description: Email subject (when `channel` includes `email`)
+              patientMessageTemplate:
+                $ref: '#/components/schemas/idParam'
+        campaign:
+          type: string
+          description: Associated campaign identifier
+        mapping:
+          type: object
+          description: FileMapping reference for the broadcast
+        secureChat:
+          type: boolean
+          description: 'Legacy template-level secure chat flag (used by the legacy Broadcast flow).
+
+            For the new flow, secureChat is per-message under `messages[].secureChat`.
+
+            '
+        shouldUseUploadedContacts:
+          type: boolean
+          description: 'Legacy boolean (used by the legacy Broadcast flow). For the new flow,
+
+            use `configuration.contactPreference` (enum).
+
+            '
+        shouldUsePrimaryContactOnly:
+          type: boolean
+          description: 'Legacy boolean (used by the legacy Broadcast flow). For the new flow,
+
+            use `configuration.contactPreference: primary-contact-only`.
+
+            '
+        sendAt:
+          type: string
+          format: date-time
+          description: 'Legacy scheduled send time (used by the legacy Broadcast flow). For
+
+            the new flow, use `configuration.scheduledAt`.
+
+            '
+        configuration:
+          type: object
+          description: 'Combined configuration. Legacy `throttling` is for the legacy
+
+            Broadcast flow; all other sub-fields are BroadcastFlow-shaped and
+
+            consumed by the broadcast-redesign SFTP path.
+
+            '
+          properties:
+            throttling:
+              type: object
+              description: Legacy throttling (rate-limit sends).
+              properties:
+                enabled:
+                  type: boolean
+                value:
+                  type: number
+                interval:
+                  type: object
+                  properties:
+                    value:
+                      type: number
+                    unit:
+                      type: string
+                      enum:
+                      - minutes
+                      - hours
+            batching:
+              type: object
+              description: 'BroadcastFlow batching — splits large flows into child flows of
+
+                `batchSize` rows, sent every `batchInterval` `batchUnit`(s).
+
+                '
+              properties:
+                enabled:
+                  type: boolean
+                batchSize:
+                  type: integer
+                batchInterval:
+                  type: integer
+                  minimum: 1
+                batchUnit:
+                  type: string
+                  enum:
+                  - minutes
+                  - hours
+            contactPreference:
+              type: string
+              description: BroadcastFlow contact preference enum.
+              enum:
+              - all-contacts
+              - active-contact-only
+              - primary-contact-only
+              - uploaded-contact-only
+            messagesPerPatient:
+              type: string
+              enum:
+              - one-message-per-patient
+              - multiple-messages-per-patient
+            disabledChannels:
+              type: array
+              description: Channels suppressed for this flow.
+              items:
+                type: string
+                enum:
+                - sms
+                - email
+                - voice
+            scheduledAt:
+              type:
+              - string
+              - 'null'
+              format: date-time
+              description: BroadcastFlow scheduled send time (preferred over legacy `sendAt`).
+            filters:
+              type: object
+              description: Appointment-based filters (facilities, providers, types, dates).
+              properties:
+                estimatedAppointmentCount:
+                  type: integer
+                facilities:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/idParam'
+                providers:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/idParam'
+                appointmentTypes:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/idParam'
+                appointmentStatus:
+                  type: array
+                  items:
+                    type: string
+                appointmentDate:
+                  type: object
+                  properties:
+                    startDate:
+                      type: string
+                      format: date-time
+                    endDate:
+                      type: string
+                      format: date-time
+                    dateFilterType:
+                      type: string
+                      enum:
+                      - custom-range
+                      - specific-date
+                      - after-specific-date
+            appointments:
+              type: object
+              description: Appointment include/exclude lists.
+              properties:
+                include:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/idParam'
+                exclude:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/idParam'
+            responseHandling:
+              type: object
+              description: How to route patient responses.
+              properties:
+                onResponse:
+                  type: string
+                  enum:
+                  - ignore-response
+                  - send-to-hub
+                assignee:
+                  type: string
+                  description: Group ObjectId or the literal string `unassigned`.
+            rowProcessingRange:
+              type: object
+              description: Inclusive CSV row range (used by batched child flows).
+              properties:
+                from:
+                  type: integer
+                to:
+                  type: integer
+        allowedSquigglies:
+          type: array
+          items:
+            type: string
+          description: List of allowed template variables resolvable for this template's mapping.
+        fileUpload:
+          $ref: '#/components/schemas/idParam'
+      required: []
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
+  securitySchemes:
+    Bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

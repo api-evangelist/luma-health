@@ -1,0 +1,1033 @@
+openapi: 3.2.0
+info:
+  version: 2.0.0
+  title: Rest-Service Offers API
+  x-logo:
+    url: https://lumahealth-assets.s3.us-west-2.amazonaws.com/new_luma_logo_black.png
+    backgroundColor: '#FFFFFF'
+    altText: Luma Health
+  description: OpenAPI [Basic Structure](https://swagger.io/docs/specification/basic-structure/)
+servers:
+- url: https://api.lumahealth.io/api/v2
+security:
+- Bearer: []
+tags:
+- name: offers
+  description: Offers
+paths:
+  /offers:
+    get:
+      summary: List offers
+      operationId: offersList
+      tags:
+      - offers
+      parameters:
+      - name: provider
+        in: query
+        description: The ID of provider
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: duration
+        in: query
+        description: Duration of the offer
+        schema:
+          type: integer
+      - name: date
+        in: query
+        description: Date of the offer
+        schema:
+          type: date-time
+      - name: facility
+        in: query
+        description: The ID of facility
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: approvedBy
+        in: query
+        description: The ID of approvedBy
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: declinedBy
+        in: query
+        description: The ID of declinedBy
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: currentWaitlist
+        in: query
+        description: current Waitlist of the offer
+        schema:
+          type: integer
+      - name: expireAt
+        in: query
+        description: When the offer will expire
+        schema:
+          type: date-time
+      - name: patientFoundAt
+        in: query
+        description: The ID of patientFoundAt
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: patientFound
+        in: query
+        description: The ID of patientFound
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: estimatedCompletionAt
+        in: query
+        description: When the offer will be estimated complete
+        schema:
+          type: date-time
+      - name: shadowAppointment
+        in: query
+        description: The ID of shadowAppointment
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: availability
+        in: query
+        description: The ID of availability
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: protocol
+        in: query
+        description: Protocol of the offer
+        schema:
+          type: string
+          enum:
+          - serial
+          - parallel
+      - name: offer
+        in: query
+        description: The ID of offer
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: usedForAppointment
+        in: query
+        description: The ID of usedForAppointment
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: rescheduledFromAppointment
+        in: query
+        description: The ID of rescheduledFromAppointment
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: patientForm
+        in: query
+        description: The ID of patientForm
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: patientFormTemplate
+        in: query
+        description: The ID of patientFormTemplate
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: referral
+        in: query
+        description: The ID of referral
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: integratorCreationResults
+        in: query
+        description: Status Integrator Creation Results
+        schema:
+          type: object
+          enum:
+          - success
+          - failure
+          - pending
+      - name: waitlists
+        in: query
+        description: The ID of waitlists
+        schema:
+          type: array
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: appointmentType
+        in: array
+        description: The ID of appointmentType
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: source
+        in: query
+        description: Source of the offer
+        schema:
+          type: string
+          enum:
+          - cancellation
+          - manual
+          - find-open-spots
+          - self-scheduling
+          - reschedule
+          - staff-scheduling
+          - reschedule-from-intent
+      - name: status
+        in: query
+        description: Status of the offer
+        schema:
+          type: string
+          enum:
+          - in-progress
+          - patient-found
+          - patient-not-found
+          - cancelled
+      - $ref: '#/components/parameters/createdByParam'
+      - $ref: '#/components/parameters/updatedByParam'
+      - $ref: '#/components/parameters/createdAtParam'
+      - $ref: '#/components/parameters/updatedAtParam'
+      - $ref: '#/components/parameters/pageParam'
+      - $ref: '#/components/parameters/limitParam'
+      - $ref: '#/components/parameters/populateParam'
+      - $ref: '#/components/parameters/selectParam'
+      responses:
+        '200':
+          description: List of offers
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - response
+                - page
+                - size
+                properties:
+                  response:
+                    type: array
+                    minItems: 0
+                    items:
+                      $ref: '#/components/schemas/OfferResponse'
+                  page:
+                    type: integer
+                    format: int32
+                    minimum: 1
+                  size:
+                    type: integer
+                    format: int32
+                    minimum: 0
+                additionalProperties: false
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+    post:
+      summary: Create offer
+      operationId: offerCreate
+      tags:
+      - offers
+      requestBody:
+        description: Optional description in *Markdown*
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OfferRequestCreate'
+      responses:
+        '201':
+          description: Successful creation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OfferResponse'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /offers/{offerId}:
+    get:
+      summary: Get offer by id
+      operationId: offerGet
+      tags:
+      - offers
+      parameters:
+      - name: offerId
+        in: path
+        required: true
+        description: Offers' unique identifier in Luma's database.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      responses:
+        '200':
+          description: Offer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OfferResponse'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+    put:
+      summary: Update an offer
+      operationId: offerUpdate
+      tags:
+      - offers
+      parameters:
+      - name: offerId
+        in: path
+        required: true
+        description: Offers' unique identifier in Luma's database.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      requestBody:
+        description: An offer (full or partial) to be updated
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OfferRequestUpdate'
+      responses:
+        '200':
+          description: Offer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OfferResponse'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+    delete:
+      summary: Delete an offer
+      operationId: offerDelete
+      tags:
+      - offers
+      parameters:
+      - name: offerId
+        in: path
+        required: true
+        description: Offers' unique identifier in Luma's database.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      responses:
+        '200':
+          description: Deleted offer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OfferResponse'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+components:
+  parameters:
+    pageParam:
+      in: query
+      name: page
+      required: false
+      type: integer
+      format: int32
+      default: 1
+      minimum: 1
+      schema:
+        type: integer
+        format: int32
+        default: 1
+        minimum: 1
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
+    updatedByParam:
+      in: query
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+    populateParam:
+      name: _populate
+      in: query
+      description: Response properties which will be replaced by the referenced objects, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    selectParam:
+      name: _select
+      in: query
+      description: Response properties that should be returned, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    limitParam:
+      name: limit
+      in: query
+      description: How many items to fetch per page
+      required: false
+      type: integer
+      format: int32
+      default: 500
+      minimum: 1
+      maximum: 1000
+      schema:
+        type: integer
+        format: int32
+        default: 500
+        minimum: 1
+        maximum: 1000
+  schemas:
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    OfferRequestCreate:
+      type: object
+      required:
+      - waitlists
+      - appointmentType
+      - source
+      - status
+      properties:
+        provider:
+          description: The ID of provider
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        date:
+          description: Date of the offer
+          type: date-time
+        duration:
+          description: ID of Setting
+          type: integer
+        facility:
+          description: The ID of facility
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        approvedBy:
+          description: The ID of approvedBy
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        declinedBy:
+          description: The ID of declinedBy
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        currentWaitlist:
+          description: current Waitlist of the offer
+          type: integer
+        expireAt:
+          description: When the offer will expire
+          type: date-time
+        patientFoundAt:
+          description: The ID of patientFoundAt
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        patientFound:
+          description: The ID of patientFound
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        estimatedCompletionAt:
+          description: When the offer will be estimated complete
+          type: date-time
+        shadowAppointment:
+          description: The ID of shadowAppointment
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        availability:
+          description: The ID of availability
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        protocol:
+          description: Protocol of the offer
+          type: string
+          enum:
+          - serial
+          - parallel
+        offer:
+          description: The ID of offer
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        usedForAppointment:
+          description: The ID of usedForAppointment
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        rescheduledFromAppointment:
+          description: The ID of rescheduledFromAppointment
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        patientForm:
+          description: The ID of patientForm
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        patientFormTemplate:
+          description: The ID of patientFormTemplate
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        referral:
+          description: The ID of referral
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        integratorCreationResults:
+          description: Integrator Creation Results
+          type: object
+          enum:
+          - success
+          - failure
+          - pending
+        waitlists:
+          description: The ID of waitlists
+          type: array
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        appointmentType:
+          description: The ID of appointmentType
+          type: array
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        source:
+          description: Source of the offer
+          type: string
+          enum:
+          - cancellation
+          - manual
+          - find-open-spots
+          - self-scheduling
+          - reschedule
+          - staff-scheduling
+          - reschedule-from-intent
+        status:
+          description: Status of the offer
+          type: string
+          enum:
+          - in-progress
+          - patient-found
+          - patient-not-found
+          - cancelled
+    idParam:
+      in: query
+      name: _id
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      required: false
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: Luma's internal ID of an object.
+    OfferResponse:
+      type: object
+      description: An Offer represents an available appointment slot that Luma Health is trying to fill by reaching out to patients on a waitlist or through self-scheduling and rescheduling flows. It tracks who the offer is for, its source such as a cancellation, manual creation, or a reschedule request, and its lifecycle status as it moves from in progress to either a patient being found or the offer expiring or being cancelled. It also links to the resulting appointment, the provider and facility involved, and the waitlist entries considered for that slot.
+      properties:
+        _id:
+          $ref: '#/components/schemas/idParam'
+        user:
+          $ref: '#/components/schemas/userParam'
+        deleted:
+          $ref: '#/components/schemas/deletedParam'
+        createdBy:
+          $ref: '#/components/schemas/createdByParam'
+        updatedBy:
+          $ref: '#/components/schemas/updatedByParam'
+        createdAt:
+          $ref: '#/components/schemas/createdAtParam'
+        updatedAt:
+          $ref: '#/components/schemas/updatedAtParam'
+        provider:
+          description: The ID of provider
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        date:
+          description: Date of the offer
+          type: string
+          format: date-time
+        duration:
+          description: ID of Setting
+          type: integer
+        facility:
+          description: The ID of facility
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        approvedBy:
+          description: The ID of approvedBy
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        declinedBy:
+          description: The ID of declinedBy
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        currentWaitlist:
+          description: current Waitlist of the offer
+          type: integer
+        expireAt:
+          description: When the offer will expire
+          type: string
+          format: date-time
+        patientFoundAt:
+          description: The ID of patientFoundAt
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        patientFound:
+          description: The ID of patientFound
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        estimatedCompletionAt:
+          description: When the offer will be estimated complete
+          type: string
+          format: date-time
+        shadowAppointment:
+          description: The ID of shadowAppointment
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        availability:
+          description: The ID of availability
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        protocol:
+          description: Protocol of the offer
+          type: string
+          enum:
+          - serial
+          - parallel
+        offer:
+          description: The ID of offer
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        usedForAppointment:
+          description: The ID of usedForAppointment
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        rescheduledFromAppointment:
+          description: The ID of rescheduledFromAppointment
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        patientForm:
+          description: The ID of patientForm
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        patientFormTemplate:
+          description: The ID of patientFormTemplate
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        referral:
+          description: The ID of referral
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        integratorCreationResults:
+          description: Integrator Creation Results
+          type: object
+          enum:
+          - success
+          - failure
+          - pending
+        waitlists:
+          description: The ID of waitlists
+          type: array
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        appointmentType:
+          description: The ID of appointmentType
+          type: array
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        source:
+          description: Source of the offer
+          type: string
+          enum:
+          - cancellation
+          - manual
+          - find-open-spots
+          - self-scheduling
+          - reschedule
+          - staff-scheduling
+          - reschedule-from-intent
+        status:
+          description: Status of the offer
+          type: string
+          enum:
+          - in-progress
+          - patient-found
+          - patient-not-found
+          - cancelled
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
+    updatedByParam:
+      in: query
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
+    OfferRequestUpdate:
+      type: object
+      properties:
+        provider:
+          description: The ID of provider
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        date:
+          description: Date of the offer
+          type: date-time
+        duration:
+          description: ID of Setting
+          type: integer
+        facility:
+          description: The ID of facility
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        approvedBy:
+          description: The ID of approvedBy
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        declinedBy:
+          description: The ID of declinedBy
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        currentWaitlist:
+          description: current Waitlist of the offer
+          type: integer
+        expireAt:
+          description: When the offer will expire
+          type: date-time
+        patientFoundAt:
+          description: The ID of patientFoundAt
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        patientFound:
+          description: The ID of patientFound
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        estimatedCompletionAt:
+          description: When the offer will be estimated complete
+          type: date-time
+        shadowAppointment:
+          description: The ID of shadowAppointment
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        availability:
+          description: The ID of availability
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        protocol:
+          description: Protocol of the offer
+          type: string
+          enum:
+          - serial
+          - parallel
+        offer:
+          description: The ID of offer
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        usedForAppointment:
+          description: The ID of usedForAppointment
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        rescheduledFromAppointment:
+          description: The ID of rescheduledFromAppointment
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        patientForm:
+          description: The ID of patientForm
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        patientFormTemplate:
+          description: The ID of patientFormTemplate
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        referral:
+          description: The ID of referral
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        integratorCreationResults:
+          description: Integrator Creation Results
+          type: object
+          enum:
+          - success
+          - failure
+          - pending
+        waitlists:
+          description: The ID of waitlists
+          type: array
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        appointmentType:
+          description: The ID of appointmentType
+          type: array
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        source:
+          description: Source of the offer
+          type: string
+          enum:
+          - cancellation
+          - manual
+          - find-open-spots
+          - self-scheduling
+          - reschedule
+          - staff-scheduling
+          - reschedule-from-intent
+        status:
+          description: Status of the offer
+          type: string
+          enum:
+          - in-progress
+          - patient-found
+          - patient-not-found
+          - cancelled
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+  securitySchemes:
+    Bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

@@ -1,0 +1,769 @@
+openapi: 3.2.0
+info:
+  version: 2.0.0
+  title: Rest-Service Insurance Payors API
+  x-logo:
+    url: https://lumahealth-assets.s3.us-west-2.amazonaws.com/new_luma_logo_black.png
+    backgroundColor: '#FFFFFF'
+    altText: Luma Health
+  description: OpenAPI [Basic Structure](https://swagger.io/docs/specification/basic-structure/)
+servers:
+- url: https://api.lumahealth.io/api/v2
+security:
+- Bearer: []
+tags:
+- name: insurancePayors
+  description: Insurance payors/carriers maintained in Luma's payor directory
+paths:
+  /insurancePayors:
+    get:
+      summary: Search insurance payors
+      description: Searches the account's insurance payor directory. Patients (and callers with the `widget` role) receive a filtered, patient-friendly view that excludes payors marked `isHiddenFromPatients` and prefers `friendlyName`.
+      operationId: insurancePayorsList
+      tags:
+      - insurancePayors
+      parameters:
+      - name: query
+        in: query
+        description: Free-text search against name and external identifiers. If this is a 24-character hex string, it is treated as an `_id` lookup instead.
+        schema:
+          type: string
+      - name: hasTransactionId
+        in: query
+        description: Filter to payors that do (or don't) have at least one external identifier value set.
+        schema:
+          type: boolean
+      - name: isHiddenFromPatients
+        in: query
+        schema:
+          type: boolean
+      - name: status
+        in: query
+        description: Filter by the status of the payor's external identifiers.
+        schema:
+          type: string
+          enum:
+          - inactive
+          - testing
+          - live
+      - $ref: '#/components/parameters/userParam'
+      - $ref: '#/components/parameters/deletedParam'
+      - $ref: '#/components/parameters/createdByParam'
+      - $ref: '#/components/parameters/updatedByParam'
+      - $ref: '#/components/parameters/createdAtParam'
+      - $ref: '#/components/parameters/updatedAtParam'
+      - $ref: '#/components/parameters/pageParam'
+      - $ref: '#/components/parameters/limitParam'
+      - $ref: '#/components/parameters/populateParam'
+      - $ref: '#/components/parameters/selectParam'
+      responses:
+        '200':
+          description: List of insurance payors
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - response
+                - page
+                - size
+                properties:
+                  response:
+                    type: array
+                    minItems: 0
+                    items:
+                      $ref: '#/components/schemas/InsurancePayorResponse'
+                  page:
+                    type: integer
+                    format: int32
+                    minimum: 1
+                  size:
+                    type: integer
+                    format: int32
+                    minimum: 0
+                additionalProperties: false
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+    post:
+      summary: Create an insurance payor
+      operationId: insurancePayorCreate
+      tags:
+      - insurancePayors
+      requestBody:
+        description: Create an insurance payor
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InsurancePayorRequestCreate'
+      responses:
+        '201':
+          description: Successful creation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InsurancePayorResponse'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+  /insurancePayors/{insurancePayorId}:
+    get:
+      summary: Get insurance payor by id
+      operationId: insurancePayorGet
+      tags:
+      - insurancePayors
+      parameters:
+      - name: insurancePayorId
+        in: path
+        required: true
+        description: InsurancePayor's unique identifier in Luma's database.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      responses:
+        '200':
+          description: InsurancePayor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InsurancePayorResponse'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+    put:
+      summary: Update an insurance payor
+      description: Updates a payor. If `externalIdentifiers` is included, it is merged into the existing array by matching `source` rather than replacing the whole array.
+      operationId: insurancePayorUpdate
+      tags:
+      - insurancePayors
+      parameters:
+      - name: insurancePayorId
+        in: path
+        required: true
+        description: InsurancePayor's unique identifier in Luma's database.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      requestBody:
+        description: An insurance payor (full or partial) to be updated
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InsurancePayorRequestUpdate'
+      responses:
+        '200':
+          description: InsurancePayor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InsurancePayorResponse'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+    delete:
+      summary: Delete an insurance payor
+      operationId: insurancePayorDelete
+      tags:
+      - insurancePayors
+      parameters:
+      - name: insurancePayorId
+        in: path
+        required: true
+        description: InsurancePayor's unique identifier in Luma's database.
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      responses:
+        '200':
+          description: Deleted insurance payor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InsurancePayorResponse'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+  /insurancePayors/bulk:
+    post:
+      summary: Bulk create insurance payors
+      operationId: insurancePayorsBulkCreate
+      tags:
+      - insurancePayors
+      requestBody:
+        description: The insurance payors to create
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              minItems: 1
+              items:
+                type: object
+                additionalProperties: false
+                required:
+                - name
+                - externalIdentifiers
+                - source
+                properties:
+                  name:
+                    type: string
+                    minLength: 1
+                  externalIdentifiers:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                      - source
+                      - value
+                      properties:
+                        source:
+                          type: string
+                        value:
+                          type: string
+                        status:
+                          type: string
+                  source:
+                    type: string
+                  isHiddenFromPatients:
+                    type: boolean
+      responses:
+        '201':
+          description: The created insurance payors
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/InsurancePayorResponse'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+    put:
+      summary: Bulk update insurance payors
+      description: Updates a set of payors matched by id, optionally patching a single `externalIdentifiers` entry (matched by `source`) plus top-level `source`/`isHiddenFromPatients`.
+      operationId: insurancePayorsBulkUpdate
+      tags:
+      - insurancePayors
+      requestBody:
+        description: The insurance payors to update
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required:
+              - ids
+              properties:
+                ids:
+                  type: array
+                  description: IDs of the payors to update.
+                  items:
+                    type: string
+                    pattern: '[0-9a-f]'
+                    minLength: 24
+                    maxLength: 24
+                externalIdentifiers:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      source:
+                        type: string
+                      value:
+                        type: string
+                      status:
+                        type: string
+                      pin:
+                        type: string
+                source:
+                  type: string
+                isHiddenFromPatients:
+                  type: boolean
+      responses:
+        '200':
+          description: Result of the bulk update
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+components:
+  schemas:
+    InsurancePayorRequestUpdate:
+      type: object
+      properties:
+        _id:
+          $ref: '#/components/schemas/idParam'
+        user:
+          $ref: '#/components/schemas/userParam'
+        deleted:
+          $ref: '#/components/schemas/deletedParam'
+        createdBy:
+          $ref: '#/components/schemas/createdByParam'
+        updatedBy:
+          $ref: '#/components/schemas/updatedByParam'
+        createdAt:
+          $ref: '#/components/schemas/createdAtParam'
+        updatedAt:
+          $ref: '#/components/schemas/updatedAtParam'
+        name:
+          type: string
+          description: The payor's legal/system name.
+        friendlyName:
+          type: string
+          description: Patient-facing display name, preferred over `name` when present.
+        externalId:
+          type: object
+          description: The payor's identifier in the practice's EHR.
+          properties:
+            source:
+              type: string
+            value:
+              type: string
+        externalIdentifiers:
+          type: array
+          description: Identifiers used to match and write back claims and eligibility data to third-party clearinghouses, such as NextGen Transaction Hub, Change Healthcare, or Waystar.
+          items:
+            type: object
+            properties:
+              source:
+                type: string
+                description: The clearinghouse or vendor this identifier is for.
+                enum:
+                - nextgentransactionhub
+                - changehealthcare
+                - waystar
+              value:
+                type: string
+                description: The opaque identifier value used by that vendor.
+              status:
+                type: string
+                enum:
+                - inactive
+                - testing
+                - live
+              pin:
+                type: string
+                description: Waystar-specific identifier for this payor.
+        address:
+          type: string
+        address2:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        country:
+          type: string
+        postcode:
+          type: string
+        phone:
+          type: string
+        source:
+          type: string
+          description: Who owns this payor's fields. If `integrator`, the integrator owns all fields and overwrites Luma edits on every sync. If `manual`, the integrator only owns `name` and `externalId`; `friendlyName` and `externalIdentifiers` can be freely edited in Luma.
+          enum:
+          - integrator
+          - manual
+        isHiddenFromPatients:
+          type: boolean
+          description: Whether this payor is excluded from patient-facing payor search.
+          default: false
+    InsurancePayorRequestCreate:
+      type: object
+      required:
+      - name
+      properties:
+        _id:
+          $ref: '#/components/schemas/idParam'
+        user:
+          $ref: '#/components/schemas/userParam'
+        deleted:
+          $ref: '#/components/schemas/deletedParam'
+        createdBy:
+          $ref: '#/components/schemas/createdByParam'
+        updatedBy:
+          $ref: '#/components/schemas/updatedByParam'
+        createdAt:
+          $ref: '#/components/schemas/createdAtParam'
+        updatedAt:
+          $ref: '#/components/schemas/updatedAtParam'
+        name:
+          type: string
+          description: The payor's legal/system name.
+        friendlyName:
+          type: string
+          description: Patient-facing display name, preferred over `name` when present.
+        externalId:
+          type: object
+          description: The payor's identifier in the practice's EHR.
+          properties:
+            source:
+              type: string
+            value:
+              type: string
+        externalIdentifiers:
+          type: array
+          description: Identifiers used to match and write back claims and eligibility data to third-party clearinghouses, such as NextGen Transaction Hub, Change Healthcare, or Waystar.
+          items:
+            type: object
+            properties:
+              source:
+                type: string
+                description: The clearinghouse or vendor this identifier is for.
+                enum:
+                - nextgentransactionhub
+                - changehealthcare
+                - waystar
+              value:
+                type: string
+                description: The opaque identifier value used by that vendor.
+              status:
+                type: string
+                enum:
+                - inactive
+                - testing
+                - live
+              pin:
+                type: string
+                description: Waystar-specific identifier for this payor.
+        address:
+          type: string
+        address2:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        country:
+          type: string
+        postcode:
+          type: string
+        phone:
+          type: string
+        source:
+          type: string
+          description: Who owns this payor's fields. If `integrator`, the integrator owns all fields and overwrites Luma edits on every sync. If `manual`, the integrator only owns `name` and `externalId`; `friendlyName` and `externalIdentifiers` can be freely edited in Luma.
+          enum:
+          - integrator
+          - manual
+        isHiddenFromPatients:
+          type: boolean
+          description: Whether this payor is excluded from patient-facing payor search.
+          default: false
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+    InsurancePayorResponse:
+      type: object
+      description: 'Represents an insurance payor/carrier maintained in Luma''s payor directory: its name, address, and phone, plus one or more external identifiers used to match and write back claims and eligibility data to third-party clearinghouses or the practice''s EHR. Payors can be marked as integrator-managed or manually managed, and optionally hidden from patient-facing payor search.'
+      properties:
+        _id:
+          $ref: '#/components/schemas/idParam'
+        user:
+          $ref: '#/components/schemas/userParam'
+        deleted:
+          $ref: '#/components/schemas/deletedParam'
+        createdBy:
+          $ref: '#/components/schemas/createdByParam'
+        updatedBy:
+          $ref: '#/components/schemas/updatedByParam'
+        createdAt:
+          $ref: '#/components/schemas/createdAtParam'
+        updatedAt:
+          $ref: '#/components/schemas/updatedAtParam'
+        name:
+          type: string
+          description: The payor's legal/system name.
+        friendlyName:
+          type: string
+          description: Patient-facing display name, preferred over `name` when present.
+        externalId:
+          type: object
+          description: The payor's identifier in the practice's EHR.
+          properties:
+            source:
+              type: string
+            value:
+              type: string
+        externalIdentifiers:
+          type: array
+          description: Identifiers used to match and write back claims and eligibility data to third-party clearinghouses, such as NextGen Transaction Hub, Change Healthcare, or Waystar.
+          items:
+            type: object
+            properties:
+              source:
+                type: string
+                description: The clearinghouse or vendor this identifier is for.
+                enum:
+                - nextgentransactionhub
+                - changehealthcare
+                - waystar
+              value:
+                type: string
+                description: The opaque identifier value used by that vendor.
+              status:
+                type: string
+                enum:
+                - inactive
+                - testing
+                - live
+              pin:
+                type: string
+                description: Waystar-specific identifier for this payor.
+        address:
+          type: string
+        address2:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        country:
+          type: string
+        postcode:
+          type: string
+        phone:
+          type: string
+        source:
+          type: string
+          description: Who owns this payor's fields. If `integrator`, the integrator owns all fields and overwrites Luma edits on every sync. If `manual`, the integrator only owns `name` and `externalId`; `friendlyName` and `externalIdentifiers` can be freely edited in Luma.
+          enum:
+          - integrator
+          - manual
+        isHiddenFromPatients:
+          type: boolean
+          description: Whether this payor is excluded from patient-facing payor search.
+          default: false
+    idParam:
+      in: query
+      name: _id
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      required: false
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: Luma's internal ID of an object.
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
+    updatedByParam:
+      in: query
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+  parameters:
+    pageParam:
+      in: query
+      name: page
+      required: false
+      type: integer
+      format: int32
+      default: 1
+      minimum: 1
+      schema:
+        type: integer
+        format: int32
+        default: 1
+        minimum: 1
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
+    updatedByParam:
+      in: query
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+    populateParam:
+      name: _populate
+      in: query
+      description: Response properties which will be replaced by the referenced objects, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    selectParam:
+      name: _select
+      in: query
+      description: Response properties that should be returned, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+    limitParam:
+      name: limit
+      in: query
+      description: How many items to fetch per page
+      required: false
+      type: integer
+      format: int32
+      default: 500
+      minimum: 1
+      maximum: 1000
+      schema:
+        type: integer
+        format: int32
+        default: 500
+        minimum: 1
+        maximum: 1000
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+  securitySchemes:
+    Bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

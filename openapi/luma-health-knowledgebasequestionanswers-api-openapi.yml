@@ -1,0 +1,338 @@
+openapi: 3.2.0
+info:
+  version: 2.0.0
+  title: Rest-Service Knowledge Base Question Answers API
+  x-logo:
+    url: https://lumahealth-assets.s3.us-west-2.amazonaws.com/new_luma_logo_black.png
+    backgroundColor: '#FFFFFF'
+    altText: Luma Health
+  description: OpenAPI [Basic Structure](https://swagger.io/docs/specification/basic-structure/)
+servers:
+- url: https://api.lumahealth.io/api/v2
+security:
+- Bearer: []
+tags:
+- name: knowledgeBaseQuestionAnswers
+  description: Question and answer entries for knowledge bases
+paths:
+  /knowledgeBaseQuestionAnswers:
+    get:
+      summary: List knowledge base question answers
+      operationId: knowledgeBaseQuestionAnswersList
+      tags:
+      - knowledgeBaseQuestionAnswers
+      parameters:
+      - $ref: '#/components/parameters/userParam'
+      - $ref: '#/components/parameters/deletedParam'
+      - $ref: '#/components/parameters/pageParam'
+      - $ref: '#/components/parameters/limitParam'
+      - $ref: '#/components/parameters/selectParam'
+      - name: knowledgeBase
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Filter by knowledge base ID
+      responses:
+        '200':
+          description: A list of knowledge base question answers
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - response
+                - page
+                - size
+                properties:
+                  response:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/KnowledgeBaseQuestionAnswer'
+                  page:
+                    type: integer
+                    format: int32
+                    minimum: 1
+                  size:
+                    type: integer
+                    format: int32
+                    minimum: 0
+                additionalProperties: false
+        '401':
+          description: Not authenticated
+        '403':
+          description: Not authorized
+        '500':
+          description: Internal server error
+    post:
+      summary: Create a knowledge base question answer
+      operationId: knowledgeBaseQuestionAnswersCreate
+      tags:
+      - knowledgeBaseQuestionAnswers
+      requestBody:
+        description: The knowledge base question answer to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/KnowledgeBaseQuestionAnswer'
+      responses:
+        '200':
+          description: The knowledge base question answer was created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KnowledgeBaseQuestionAnswer'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Not authorized
+        '500':
+          description: Internal server error
+  /knowledgeBaseQuestionAnswers/{knowledgeBaseQuestionAnswerId}:
+    get:
+      summary: Get a knowledge base question answer by ID
+      operationId: knowledgeBaseQuestionAnswersGet
+      tags:
+      - knowledgeBaseQuestionAnswers
+      parameters:
+      - name: knowledgeBaseQuestionAnswerId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: ID of the knowledge base question answer to retrieve
+      - $ref: '#/components/parameters/selectParam'
+      responses:
+        '200':
+          description: The knowledge base question answer was retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KnowledgeBaseQuestionAnswer'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Not authorized
+        '404':
+          description: Not found
+        '500':
+          description: Internal server error
+    put:
+      summary: Update a knowledge base question answer
+      operationId: knowledgeBaseQuestionAnswersUpdate
+      tags:
+      - knowledgeBaseQuestionAnswers
+      parameters:
+      - name: knowledgeBaseQuestionAnswerId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: ID of the knowledge base question answer to update
+      requestBody:
+        description: The knowledge base question answer fields to update
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/KnowledgeBaseQuestionAnswer'
+      responses:
+        '200':
+          description: The knowledge base question answer was updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KnowledgeBaseQuestionAnswer'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Not authorized
+        '404':
+          description: Not found
+        '500':
+          description: Internal server error
+    delete:
+      summary: Delete a knowledge base question answer
+      operationId: knowledgeBaseQuestionAnswersDelete
+      tags:
+      - knowledgeBaseQuestionAnswers
+      parameters:
+      - name: knowledgeBaseQuestionAnswerId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: ID of the knowledge base question answer to delete
+      responses:
+        '200':
+          description: The knowledge base question answer was deleted successfully
+        '401':
+          description: Not authenticated
+        '403':
+          description: Not authorized
+        '404':
+          description: Not found
+        '500':
+          description: Internal server error
+components:
+  schemas:
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
+    KnowledgeBaseQuestionAnswer:
+      type: object
+      properties:
+        _id:
+          $ref: '#/components/schemas/idParam'
+        user:
+          $ref: '#/components/schemas/userParam'
+        deleted:
+          $ref: '#/components/schemas/deletedParam'
+        createdAt:
+          $ref: '#/components/schemas/createdAtParam'
+        updatedAt:
+          $ref: '#/components/schemas/updatedAtParam'
+        knowledgeBase:
+          $ref: '#/components/schemas/idParam'
+        question:
+          type: string
+        answer:
+          type: string
+        category:
+          type: string
+      required:
+      - knowledgeBase
+      - question
+      - answer
+      - category
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+    idParam:
+      in: query
+      name: _id
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      required: false
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: Luma's internal ID of an object.
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
+  parameters:
+    selectParam:
+      name: _select
+      in: query
+      description: Response properties that should be returned, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    pageParam:
+      in: query
+      name: page
+      required: false
+      type: integer
+      format: int32
+      default: 1
+      minimum: 1
+      schema:
+        type: integer
+        format: int32
+        default: 1
+        minimum: 1
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+    limitParam:
+      name: limit
+      in: query
+      description: How many items to fetch per page
+      required: false
+      type: integer
+      format: int32
+      default: 500
+      minimum: 1
+      maximum: 1000
+      schema:
+        type: integer
+        format: int32
+        default: 500
+        minimum: 1
+        maximum: 1000
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+  securitySchemes:
+    Bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

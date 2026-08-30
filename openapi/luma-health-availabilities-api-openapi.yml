@@ -1,0 +1,975 @@
+openapi: 3.2.0
+info:
+  version: 2.0.0
+  title: Rest-Service Availabilities API
+  x-logo:
+    url: https://lumahealth-assets.s3.us-west-2.amazonaws.com/new_luma_logo_black.png
+    backgroundColor: '#FFFFFF'
+    altText: Luma Health
+  description: OpenAPI [Basic Structure](https://swagger.io/docs/specification/basic-structure/)
+servers:
+- url: https://api.lumahealth.io/api/v2
+security:
+- Bearer: []
+tags:
+- name: availabilities
+  description: EHR provider scheduler availability
+paths:
+  /availabilities/scheduler:
+    get:
+      summary: List scheduler availabilities
+      operationId: listSchedulerAvailabilities
+      tags:
+      - availabilities
+      parameters:
+      - name: appointmentType
+        description: 'The ID of an `AppointmentType`. If given, only scheduler availabilities for that type of appointment will be listed.
+
+          '
+        in: query
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: includeNullApptTypes
+        description: 'Some appointments might not have a type at all, so this boolean flag determines
+
+          if scheduler availabilities for such appointments will be listed or not.
+
+          '
+        in: query
+        schema:
+          type: boolean
+      - name: date
+        description: 'The date/time to display scheduler availabilities, in ISO format, including timezone information.
+
+          See the request sample in `curl` displayed at the side.
+
+          This queryParameter should be passed twice, to specify a date/time range.
+
+          Example: `?date=>2022-08-10T09:49:47-07:00&date=<2022-09-09T23:59:59-03:00`
+
+          Notice the greater-than (`>`) and less-than (`<`) operators.
+
+          '
+        in: query
+        schema:
+          type: string
+          format: date-time
+      - name: facility
+        description: Filter the availabilities by the ID of a `Facility` where the doctor/provider may be seen by a patient.
+        in: query
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: patientForm
+        description: 'Only display the availability that was chosen by the patient who answered this form.
+
+          If a form template with type `pre-scheduling` is set in the scheduler settings, then
+
+          Luma''s scheduler UI will require the patient to answer those form template questions,
+
+          store the answers in a `patientForm` object, and then redirect them to another page
+
+          listing the availabilities to be scheduled. Once the patient picks an availability
+
+          and books an appointment, Luma will update the availability with the `patientForm` ID.
+
+          '
+        in: query
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: patientFormTemplate
+        description: 'Filter scheduler availabilities that were booked after patients answered the questions of this template ID.
+
+          The field `patientForm` will only bring *one availability* that was chosen by the patient who answered that form.
+
+          This field will bring *multiple availabilities*, because it does not refer to the form answers of a single patient,
+
+          but rather, to the form template. Multiple patients may have seen the questions of a template.
+
+          '
+        in: query
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: provider
+        description: Only display scheduler availabilities for the ID of the provider/doctor given on this query parameter.
+        in: query
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: status
+        description: Filter availabilities by status. It must be `available`, as other statuses were already booked or canceled.
+        in: query
+        schema:
+          type: string
+          enum:
+          - available
+      - $ref: '#/components/parameters/limitParam'
+      - $ref: '#/components/parameters/pageParam'
+      - name: populate
+        description: 'Determines if the facility and the provider IDs will be replaced with objects detailing some of their properties.
+
+          The populated IDs are the ones inside the response''s `response` array, not on the root level of the response.
+
+          - `facility` ID will be replaced by an object containing: `{ _id, name, address, city, state, postcode, phone }`, all strings.
+
+          - `provider` ID will be replaced by an object containing: `{ _id, name, lastname, firstname }`, all strings.
+
+          - `appointmentType` ID is never populated.
+
+          '
+        in: query
+        schema:
+          type: boolean
+      - name: sort
+        description: Determines which property will be used to order the response. Currently the only option available is `date`.
+        in: query
+        schema:
+          type: string
+          enum:
+          - date
+      - name: sortBy
+        description: 'Determines the direction in which the sorting will happen:
+
+          - ascending (earliest date to latest), or
+
+          - descending (latest date to earliest).
+
+          '
+        in: query
+        schema:
+          type: string
+          enum:
+          - asc
+          - desc
+      x-codeSamples:
+      - lang: cURL
+        source: 'curl ''https://api.lumahealth.io/api/v2/availabilities/scheduler?date=%3E2022-08-10T09%3A49%3A47-03%3A00&date=%3C2022-09-09T23%3A59%3A59-03%3A00&includeNullApptTypes=true&limit=1000&page=1&sort=date&sortBy=asc&status=available'' \
+
+          -H ''accept: application/json, text/plain, */*'' \
+
+          -H ''Authorization: Bearer <jwt token from luma>''
+
+          '
+      responses:
+        '200':
+          description: List of availabilities and other relevant data for scheduling
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  response:
+                    type: array
+                    minItems: 0
+                    items:
+                      $ref: '#/components/schemas/AvailabilitySchedulerResponse'
+                  facilities:
+                    description: All the places/facilities availabie to use as filters when listing scheduler availabilities.
+                    type: array
+                    minItems: 0
+                    items:
+                      type: string
+                      pattern: '[0-9a-f]'
+                      minLength: 24
+                      maxLength: 24
+                  providers:
+                    description: All the providers/doctors availabie to use as filters when listing scheduler availabilities.
+                    type: array
+                    minItems: 0
+                    items:
+                      type: string
+                      pattern: '[0-9a-f]'
+                      minLength: 24
+                      maxLength: 24
+                  appointmentTypes:
+                    description: All the appointment types availabie to use as filters when listing scheduler availabilities.
+                    type: array
+                    minItems: 0
+                    items:
+                      type: string
+                      pattern: '[0-9a-f]'
+                      minLength: 24
+                      maxLength: 24
+                  page:
+                    type: integer
+                    format: int32
+                    minimum: 1
+                  size:
+                    type: integer
+                    format: int32
+                    minimum: 0
+  /availabilities:
+    get:
+      summary: List availability
+      operationId: availabilityList
+      tags:
+      - availabilities
+      parameters:
+      - name: appointmentType
+        description: 'The ID of an `AppointmentType`. If given, only scheduler availabilities for that type of appointment will be listed.
+
+          '
+        in: query
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: includeNullApptTypes
+        description: 'Some appointments might not have a type at all, so this boolean flag determines
+
+          if scheduler availabilities for such appointments will be listed or not.
+
+          '
+        in: query
+        schema:
+          type: boolean
+      - name: date
+        description: 'The date/time to display scheduler availabilities, in ISO format, including timezone information.
+
+          See the request sample in `curl` displayed at the side.
+
+          This queryParameter should be passed twice, to specify a date/time range.
+
+          Example: `?date=>2022-08-10T09:49:47-07:00&date=<2022-09-09T23:59:59-03:00`
+
+          Notice the greater-than (`>`) and less-than (`<`) operators.
+
+          '
+        in: query
+        schema:
+          type: string
+          format: date-time
+      - name: facility
+        description: Filter the availabilities by the ID of a `Facility` where the doctor/provider may be seen by a patient.
+        in: query
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: patientForm
+        description: 'Only display the availability that was chosen by the patient who answered this form.
+
+          If a form template with type `pre-scheduling` is set in the scheduler settings, then
+
+          Luma''s scheduler UI will require the patient to answer those form template questions,
+
+          store the answers in a `patientForm` object, and then redirect them to another page
+
+          listing the availabilities to be scheduled. Once the patient picks an availability
+
+          and books an appointment, Luma will update the availability with the `patientForm` ID.
+
+          '
+        in: query
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: patientFormTemplate
+        description: 'Filter scheduler availabilities that were booked after patients answered the questions of this template ID.
+
+          The field `patientForm` will only bring *one availability* that was chosen by the patient who answered that form.
+
+          This field will bring *multiple availabilities*, because it does not refer to the form answers of a single patient,
+
+          but rather, to the form template. Multiple patients may have seen the questions of a template.
+
+          '
+        in: query
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: provider
+        description: Only display scheduler availabilities for the ID of the provider/doctor given on this query parameter.
+        in: query
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      - name: status
+        description: Filter availabilities by status. It must be `available`, as other statuses were already booked or canceled.
+        in: query
+        schema:
+          type: string
+          enum:
+          - available
+      - name: sort
+        description: Determines which property will be used to order the response. Currently the only option available is `date`.
+        in: query
+        schema:
+          type: string
+          enum:
+          - date
+      - name: sortBy
+        description: 'Determines the direction in which the sorting will happen:
+
+          - ascending (earliest date to latest), or
+
+          - descending (latest date to earliest).
+
+          '
+        in: query
+        schema:
+          type: string
+          enum:
+          - asc
+          - desc
+      - $ref: '#/components/parameters/userParam'
+      - $ref: '#/components/parameters/deletedParam'
+      - $ref: '#/components/parameters/createdByParam'
+      - $ref: '#/components/parameters/updatedByParam'
+      - $ref: '#/components/parameters/createdAtParam'
+      - $ref: '#/components/parameters/updatedAtParam'
+      - $ref: '#/components/parameters/pageParam'
+      - $ref: '#/components/parameters/limitParam'
+      - $ref: '#/components/parameters/populateParam'
+      - $ref: '#/components/parameters/selectParam'
+      responses:
+        '200':
+          description: List of availabilities
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - response
+                - page
+                - size
+                properties:
+                  response:
+                    type: array
+                    minItems: 0
+                    items:
+                      $ref: '#/components/schemas/AvailabilitySchedulerResponse'
+                  page:
+                    type: integer
+                    format: int32
+                    minimum: 1
+                  size:
+                    type: integer
+                    format: int32
+                    minimum: 0
+                additionalProperties: false
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+  /availabilities/{availabilitiesId}:
+    get:
+      summary: Get availability by id
+      operationId: availabilityGet
+      tags:
+      - availabilities
+      parameters:
+      - name: availabilityId
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      responses:
+        '200':
+          description: Availability
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AvailabilitySchedulerResponse'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+    put:
+      summary: Update a availability
+      operationId: availabilityUpdate
+      tags:
+      - availabilities
+      parameters:
+      - name: availabilityId
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+      requestBody:
+        description: A availability (full or partial) to be published
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AvailabilityRequestUpdate'
+      responses:
+        '200':
+          description: Availability updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AvailabilitySchedulerResponse'
+        '401':
+          description: Not authenticated
+        '403':
+          description: Access token does not have the required scope
+components:
+  parameters:
+    pageParam:
+      in: query
+      name: page
+      required: false
+      type: integer
+      format: int32
+      default: 1
+      minimum: 1
+      schema:
+        type: integer
+        format: int32
+        default: 1
+        minimum: 1
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
+    updatedByParam:
+      in: query
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+    populateParam:
+      name: _populate
+      in: query
+      description: Response properties which will be replaced by the referenced objects, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    selectParam:
+      name: _select
+      in: query
+      description: Response properties that should be returned, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+    limitParam:
+      name: limit
+      in: query
+      description: How many items to fetch per page
+      required: false
+      type: integer
+      format: int32
+      default: 500
+      minimum: 1
+      maximum: 1000
+      schema:
+        type: integer
+        format: int32
+        default: 500
+        minimum: 1
+        maximum: 1000
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+  schemas:
+    AvailabilityRequestUpdate:
+      type: object
+      properties:
+        booked:
+          type: boolean
+          description: 'Determines if the availability is being booked or not.
+
+            If it is set to true, the system will book the availability.
+
+            '
+        notes:
+          type: string
+          description: 'Optional freeform text to append to the appointment reason when booking (status: booked).
+
+            If a patientForm or lumabotFlow is also provided, this value is appended after the
+
+            patient-form or Lumabot notes (separated by "; "). The combined string is forwarded to the EHR
+
+            as part of the appointment reason (e.g. prepended to the eClinicalWorks SQL reason field).
+
+            '
+        filters:
+          $ref: '#/components/schemas/Filters'
+        provider:
+          description: 'Either the ID or a populated object referring to the provider/doctor for whom this scheduler availability is.
+
+            Depending on the queryParameter `populate`, the ID might become an object containing: `{ _id, name, lastname, firstname }`, all strings.
+
+            '
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        facility:
+          description: 'Either the ID or a populated object referring to the place/facility where a scheduler availability should take place.
+
+            Depending on the queryParameter `populate`, the ID might become an object containing: `{ _id, name, address, city, state, postcode, phone }`, all strings.
+
+            '
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        appointmentType:
+          description: The ID of an `appointmentType` describing the kind of appointment that might be scheduled for this availability.
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        date:
+          description: 'The exact *start* date/time of the availability, in ISO format, including timezone information. Example: `2022-09-09T23:59:59-03:00`.
+
+            '
+          type: string
+          format: date-time
+        duration:
+          description: The duration of the availability, in minutes. Added to the `date`, you reach the `endDate`.
+          type: integer
+          format: int32
+          default: 15
+        endDate:
+          description: 'The exact *end* date/time of the availability, in ISO format, including timezone information. Example: `2022-09-09T23:59:59-03:00`.
+
+            Calculated by adding the `duration` (in minutes) to the start `date`.
+
+            '
+          type: string
+          format: date-time
+        externalId:
+          $ref: '#/components/schemas/ExternalId'
+        status:
+          type: object
+          description: The status of the availability.
+          enum:
+          - available
+          - booked-pending
+          - offered
+          - booked
+          - booked-by-integrator
+          - booked-by-offer
+          - expired
+        offer:
+          description: "The ID of an `offer` made to a patient to schedule an appointment at an available date/time.\nIf the patient scheduled the appointment themselves, through a scheduler page on the web, then\nthe `availability` is marked as `booked-pending`. An `offer` is created behind the scenes \nas the bridge between Luma and the clinic's EHR system. It serves as a pre-scheduling request.\nOnce the EHR confirms that such date/time is available, then the `appointment` is confirmed/booked,\nthe `availability` is marked as booked, and the `offer` ID is stored on the availability.\n"
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        locked:
+          description: 'If `true`, then the availability cannot be booked by patients. It is still available for the clinic to book it.
+
+            This is useful for the clinic to reserve a date/time for a patient who is not yet registered on Luma.
+
+            '
+          type: boolean
+          default: false
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+    idParam:
+      in: query
+      name: _id
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      required: false
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: Luma's internal ID of an object.
+    Filters:
+      type: object
+      description: Object containing the filters with appointmentTypes, facilities, providers
+      required: []
+      properties:
+        appointmentTypes:
+          type: array
+          description: List of appointmentTypes' IDs
+          items:
+            type: string
+            pattern: '[0-9a-f]'
+            minLength: 24
+            maxLength: 24
+        facilities:
+          type: array
+          description: List of facilities' IDs
+          items:
+            type: string
+            pattern: '[0-9a-f]'
+            minLength: 24
+            maxLength: 24
+        providers:
+          type: array
+          description: List of providers' IDs
+          items:
+            type: string
+            pattern: '[0-9a-f]'
+            minLength: 24
+            maxLength: 24
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
+    updatedByParam:
+      in: query
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
+    ExternalId:
+      type: object
+      properties:
+        source:
+          description: externalId.source
+          type: string
+          enum:
+          - gcalendar
+          - successehs
+          - drchrono
+          - dentrix
+          - webpt
+          - theraoffice
+          - mi7
+          - practicefusion
+          - advancedmd
+          - acomrapidpm
+          - kareo
+          - nextech
+          - mwtherapy
+          - clinicient
+          - carecloud
+          - eclinicalmobile
+          - duxware
+          - labretriever
+          - optimispt
+          - referral
+          - recall
+          - allscriptspm
+          - lytec
+          - brightree
+          - fullslate
+          - nuemd
+          - centricityps
+          - officeally
+          - greenwayintergy
+          - compulink
+          - adspm
+          - dsnpm
+          - lumamock
+          - medicalmastermind
+          - meditouch
+          - healthnautica
+          - ezemrx
+          - hl7
+          - amazingcharts
+          - greenwayprimesuite
+          - raintree
+          - athenahealth
+          - revflow
+          - eclinicalworks10e
+          - hl7pickup
+          - mindbody
+          - eclinicalworkssql
+          - nextgen
+          - practiceperfect
+          - avimark
+          - clinix
+          - keymedical
+          - mdoffice
+          - webedoctor
+          - emapm
+          - medinformatix
+          - imsgo
+          - emds
+          - allscriptsunity
+          - medevolve
+          - caretracker
+          - clearpractice
+          - valant
+          - micromd
+          - systemedx
+          - medicalmaster
+          - athenamdp
+          - gmed
+          - roche
+          - onetouch
+          - somnoware
+          - managementplus
+          - lumacare
+          - nextechfhir
+          - curemd
+          - epic
+          - phoenixortho
+          - ezderm
+          - ggastromobile
+          - epicconfirmationpickup
+          - cerner
+          - allmeds
+          - oncoemrfilepickup
+          - imedicware
+          - modmedfhir
+          - clinux
+          - acuityscheduling
+          - medstreaming
+          - isalus
+          - meditechexpanse
+          - openemr
+          - genericfhir
+          - nextechpracticeplus
+          - sms
+          - voice
+          - email
+          - none
+        value:
+          description: externalId.value
+          type: string
+    AvailabilitySchedulerResponse:
+      type: object
+      description: An Availability represents an open time slot for a provider, facility, or appointment type that a patient can book through Luma's self-scheduling pages. It tracks the slot's date, duration, and status (such as available, offered, booked-pending, or booked) as it moves through the offer and booking workflow, and links to related records like the provider, facility, appointment type, and any resulting offer or appointment.
+      properties:
+        _id:
+          $ref: '#/components/schemas/idParam'
+        user:
+          $ref: '#/components/schemas/userParam'
+        deleted:
+          $ref: '#/components/schemas/deletedParam'
+        createdBy:
+          $ref: '#/components/schemas/createdByParam'
+        updatedBy:
+          $ref: '#/components/schemas/updatedByParam'
+        createdAt:
+          $ref: '#/components/schemas/createdAtParam'
+        updatedAt:
+          $ref: '#/components/schemas/updatedAtParam'
+        filters:
+          $ref: '#/components/schemas/Filters'
+        provider:
+          description: 'Either the ID or a populated object referring to the provider/doctor for whom this scheduler availability is.
+
+            Depending on the queryParameter `populate`, the ID might become an object containing: `{ _id, name, lastname, firstname }`, all strings.
+
+            '
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        facility:
+          description: 'Either the ID or a populated object referring to the place/facility where a scheduler availability should take place.
+
+            Depending on the queryParameter `populate`, the ID might become an object containing: `{ _id, name, address, city, state, postcode, phone }`, all strings.
+
+            '
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        appointmentType:
+          description: The ID of an `appointmentType` describing the kind of appointment that might be scheduled for this availability.
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        date:
+          description: 'The exact *start* date/time of the availability, in ISO format, including timezone information. Example: `2022-09-09T23:59:59-03:00`.
+
+            '
+          type: string
+          format: date-time
+        duration:
+          description: The duration of the availability, in minutes. Added to the `date`, you reach the `endDate`.
+          type: integer
+          format: int32
+          default: 15
+        endDate:
+          description: 'The exact *end* date/time of the availability, in ISO format, including timezone information. Example: `2022-09-09T23:59:59-03:00`.
+
+            Calculated by adding the `duration` (in minutes) to the start `date`.
+
+            '
+          type: string
+          format: date-time
+        externalId:
+          $ref: '#/components/schemas/ExternalId'
+        status:
+          type: object
+          description: The status of the availability.
+          enum:
+          - available
+          - booked-pending
+          - offered
+          - booked
+          - booked-by-integrator
+          - booked-by-offer
+          - expired
+        offer:
+          description: "The ID of an `offer` made to a patient to schedule an appointment at an available date/time.\nIf the patient scheduled the appointment themselves, through a scheduler page on the web, then\nthe `availability` is marked as `booked-pending`. An `offer` is created behind the scenes \nas the bridge between Luma and the clinic's EHR system. It serves as a pre-scheduling request.\nOnce the EHR confirms that such date/time is available, then the `appointment` is confirmed/booked,\nthe `availability` is marked as booked, and the `offer` ID is stored on the availability.\n"
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        locked:
+          description: 'If `true`, then the availability cannot be booked by patients. It is still available for the clinic to book it.
+
+            This is useful for the clinic to reserve a date/time for a patient who is not yet registered on Luma.
+
+            '
+          type: boolean
+          default: false
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+  securitySchemes:
+    Bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
