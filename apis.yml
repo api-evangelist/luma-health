@@ -2256,7 +2256,7 @@ apis:
   humanURL: https://apidocs.lumahealth.io/#tag/appointments
   baseURL: https://api.lumahealth.io/api/v2
   tags:
-  - Specialties
+  - specialties
   tags_raw:
   - specialties
   properties:
