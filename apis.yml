@@ -100,51 +100,10 @@ apis:
     url: https://apidocs.lumahealth.io/#tag/reports
   - type: APIReference
     url: https://apidocs.lumahealth.io/#tag/auth
-- aid: luma-health:luma-health-appointmenttypes-api
-  name: Luma Health Appointment Types API
-  description: EHR appointment types
-  humanURL: https://apidocs.lumahealth.io/#tag/appointments
-  baseURL: https://api.lumahealth.io/api/v2
-  tags:
-  - Appointment Types
-  tags_raw:
-  - appointmentTypes
-  properties:
-  - type: OpenAPI
-    url: openapi/luma-health-appointmenttypes-api-openapi.yml
-  - type: Documentation
-    url: https://apidocs.lumahealth.io
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/appointments
-  - type: Authentication
-    url: https://apidocs.lumahealth.io/#tag/auth
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/patients
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/providers
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/messages
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/broadcastFlows
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/checklists
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/billingCharges
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/insurances
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/referrals
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/feedbackResponses
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/assistantInstances
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/reports
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/auth
 - aid: luma-health:luma-health-assistantactions-api
   name: Luma Health Assistant Actions API
-  description: Audit log of individual tool calls made by the Navigator AI assistant during a conversation
+  description: >-
+    Audit log of individual tool calls made by the Navigator AI assistant during a conversation
   humanURL: https://apidocs.lumahealth.io/#tag/appointments
   baseURL: https://api.lumahealth.io/api/v2
   tags: []
@@ -392,8 +351,8 @@ apis:
     url: https://apidocs.lumahealth.io/#tag/auth
 - aid: luma-health:luma-health-billingcopays-api
   name: Luma Health Billing Copays API
-  description: Copay amounts configured per source (system, EHR, or manual) and referenced by patient
-    form templates
+  description: >-
+    Copay amounts configured per source (system, EHR, or manual) and referenced by patient form templates
   humanURL: https://apidocs.lumahealth.io/#tag/appointments
   baseURL: https://api.lumahealth.io/api/v2
   tags: []
@@ -556,8 +515,9 @@ apis:
     url: https://apidocs.lumahealth.io/#tag/auth
 - aid: luma-health:luma-health-campaigns-api
   name: Luma Health Campaigns API
-  description: Contact preference campaigns that determine how and in what order a patient, facility,
-    or user is contacted
+  description: >-
+    Contact preference campaigns that determine how and in what order a patient, facility, or user is
+    contacted
   humanURL: https://apidocs.lumahealth.io/#tag/appointments
   baseURL: https://api.lumahealth.io/api/v2
   tags:
@@ -722,8 +682,8 @@ apis:
     url: https://apidocs.lumahealth.io/#tag/auth
 - aid: luma-health:luma-health-checklists-api
   name: Luma Health Checklists API
-  description: Per-appointment, per-patient instances of required pre-visit tasks generated from a checklist
-    template
+  description: >-
+    Per-appointment, per-patient instances of required pre-visit tasks generated from a checklist template
   humanURL: https://apidocs.lumahealth.io/#tag/appointments
   baseURL: https://api.lumahealth.io/api/v2
   tags:
@@ -733,48 +693,6 @@ apis:
   properties:
   - type: OpenAPI
     url: openapi/luma-health-checklists-api-openapi.yml
-  - type: Documentation
-    url: https://apidocs.lumahealth.io
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/appointments
-  - type: Authentication
-    url: https://apidocs.lumahealth.io/#tag/auth
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/patients
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/providers
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/messages
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/broadcastFlows
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/checklists
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/billingCharges
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/insurances
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/referrals
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/feedbackResponses
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/assistantInstances
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/reports
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/auth
-- aid: luma-health:luma-health-checklisttemplates-api
-  name: Luma Health Checklist Templates API
-  description: Reusable definitions of required pre-visit tasks used to build checklists
-  humanURL: https://apidocs.lumahealth.io/#tag/appointments
-  baseURL: https://api.lumahealth.io/api/v2
-  tags:
-  - Checklist Templates
-  tags_raw:
-  - checklistTemplates
-  properties:
-  - type: OpenAPI
-    url: openapi/luma-health-checklisttemplates-api-openapi.yml
   - type: Documentation
     url: https://apidocs.lumahealth.io
   - type: APIReference
@@ -846,51 +764,10 @@ apis:
     url: https://apidocs.lumahealth.io/#tag/reports
   - type: APIReference
     url: https://apidocs.lumahealth.io/#tag/auth
-- aid: luma-health:luma-health-engagementevents-api
-  name: Luma Health Engagement Events API
-  description: Append-only history of events that occurred during an engagement
-  humanURL: https://apidocs.lumahealth.io/#tag/appointments
-  baseURL: https://api.lumahealth.io/api/v2
-  tags:
-  - Engagement Events
-  tags_raw:
-  - engagementEvents
-  properties:
-  - type: OpenAPI
-    url: openapi/luma-health-engagementevents-api-openapi.yml
-  - type: Documentation
-    url: https://apidocs.lumahealth.io
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/appointments
-  - type: Authentication
-    url: https://apidocs.lumahealth.io/#tag/auth
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/patients
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/providers
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/messages
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/broadcastFlows
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/checklists
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/billingCharges
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/insurances
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/referrals
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/feedbackResponses
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/assistantInstances
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/reports
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/auth
 - aid: luma-health:luma-health-engagements-api
   name: Luma Health Engagements API
-  description: Conversation sessions between the system and a recipient, driven by one or more AI agents
+  description: >-
+    Conversation sessions between the system and a recipient, driven by one or more AI agents
   humanURL: https://apidocs.lumahealth.io/#tag/appointments
   baseURL: https://api.lumahealth.io/api/v2
   tags:
@@ -900,48 +777,6 @@ apis:
   properties:
   - type: OpenAPI
     url: openapi/luma-health-engagements-api-openapi.yml
-  - type: Documentation
-    url: https://apidocs.lumahealth.io
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/appointments
-  - type: Authentication
-    url: https://apidocs.lumahealth.io/#tag/auth
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/patients
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/providers
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/messages
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/broadcastFlows
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/checklists
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/billingCharges
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/insurances
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/referrals
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/feedbackResponses
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/assistantInstances
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/reports
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/auth
-- aid: luma-health:luma-health-engagementsettings-api
-  name: Luma Health Engagement Settings API
-  description: Reusable voice and language presets that can be attached to an engagement
-  humanURL: https://apidocs.lumahealth.io/#tag/appointments
-  baseURL: https://api.lumahealth.io/api/v2
-  tags:
-  - Engagement Settings
-  tags_raw:
-  - engagementSettings
-  properties:
-  - type: OpenAPI
-    url: openapi/luma-health-engagementsettings-api-openapi.yml
   - type: Documentation
     url: https://apidocs.lumahealth.io
   - type: APIReference
@@ -1190,48 +1025,6 @@ apis:
   properties:
   - type: OpenAPI
     url: openapi/luma-health-feedbackresponsespromoterhistories-api-openapi.yml
-  - type: Documentation
-    url: https://apidocs.lumahealth.io
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/appointments
-  - type: Authentication
-    url: https://apidocs.lumahealth.io/#tag/auth
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/patients
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/providers
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/messages
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/broadcastFlows
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/checklists
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/billingCharges
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/insurances
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/referrals
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/feedbackResponses
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/assistantInstances
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/reports
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/auth
-- aid: luma-health:luma-health-fileuploads-api
-  name: Luma Health File Uploads API
-  description: File Uploads
-  humanURL: https://apidocs.lumahealth.io/#tag/appointments
-  baseURL: https://api.lumahealth.io/api/v2
-  tags:
-  - File Uploads
-  tags_raw:
-  - fileUploads
-  properties:
-  - type: OpenAPI
-    url: openapi/luma-health-fileuploads-api-openapi.yml
   - type: Documentation
     url: https://apidocs.lumahealth.io
   - type: APIReference
@@ -1715,48 +1508,6 @@ apis:
     url: https://apidocs.lumahealth.io/#tag/reports
   - type: APIReference
     url: https://apidocs.lumahealth.io/#tag/auth
-- aid: luma-health:luma-health-patientforms-api
-  name: Luma Health Patient Forms API
-  description: Patient forms answered by patients
-  humanURL: https://apidocs.lumahealth.io/#tag/appointments
-  baseURL: https://api.lumahealth.io/api/v2
-  tags:
-  - Patient Forms
-  tags_raw:
-  - patientForms
-  properties:
-  - type: OpenAPI
-    url: openapi/luma-health-patientforms-api-openapi.yml
-  - type: Documentation
-    url: https://apidocs.lumahealth.io
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/appointments
-  - type: Authentication
-    url: https://apidocs.lumahealth.io/#tag/auth
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/patients
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/providers
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/messages
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/broadcastFlows
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/checklists
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/billingCharges
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/insurances
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/referrals
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/feedbackResponses
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/assistantInstances
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/reports
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/auth
 - aid: luma-health:luma-health-patientformtemplates-api
   name: Luma Health Patient Form Templates API
   description: Templates from patient forms
@@ -1925,8 +1676,8 @@ apis:
     url: https://apidocs.lumahealth.io/#tag/auth
 - aid: luma-health:luma-health-providerschedulinggroups-api
   name: Luma Health Provider Scheduling Groups API
-  description: Groups of providers configured for shared scheduling behavior, such as round-robin or waterfall
-    assignment
+  description: >-
+    Groups of providers configured for shared scheduling behavior, such as round-robin or waterfall assignment
   humanURL: https://apidocs.lumahealth.io/#tag/appointments
   baseURL: https://api.lumahealth.io/api/v2
   tags: []
@@ -2340,47 +2091,6 @@ apis:
     url: https://apidocs.lumahealth.io/#tag/reports
   - type: APIReference
     url: https://apidocs.lumahealth.io/#tag/auth
-- aid: luma-health:luma-health-systemaudits-api
-  name: Luma Health System Audits API
-  description: Audit logs for certain system events in a given account
-  humanURL: https://apidocs.lumahealth.io/#tag/appointments
-  baseURL: https://api.lumahealth.io/api/v2
-  tags: []
-  tags_raw:
-  - systemAudits
-  properties:
-  - type: OpenAPI
-    url: openapi/luma-health-systemaudits-api-openapi.yml
-  - type: Documentation
-    url: https://apidocs.lumahealth.io
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/appointments
-  - type: Authentication
-    url: https://apidocs.lumahealth.io/#tag/auth
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/patients
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/providers
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/messages
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/broadcastFlows
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/checklists
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/billingCharges
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/insurances
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/referrals
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/feedbackResponses
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/assistantInstances
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/reports
-  - type: APIReference
-    url: https://apidocs.lumahealth.io/#tag/auth
 - aid: luma-health:luma-health-users-api
   name: Luma Health Users API
   description: Staff users
@@ -2435,6 +2145,286 @@ apis:
   properties:
   - type: OpenAPI
     url: openapi/luma-health-waitlists-api-openapi.yml
+  - type: Documentation
+    url: https://apidocs.lumahealth.io
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/appointments
+  - type: Authentication
+    url: https://apidocs.lumahealth.io/#tag/auth
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/patients
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/providers
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/messages
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/broadcastFlows
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/checklists
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/billingCharges
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/insurances
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/referrals
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/feedbackResponses
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/assistantInstances
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/reports
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/auth
+- aid: luma-health:luma-health-appointment-types-api
+  name: Luma Health Appointment Types API
+  description: EHR appointment types
+  humanURL: https://apidocs.lumahealth.io/#tag/appointments
+  baseURL: https://api.lumahealth.io/api/v2
+  tags:
+  - Appointment Types
+  properties:
+  - type: OpenAPI
+    url: openapi/luma-health-appointment-types-api-openapi.yml
+  - type: Documentation
+    url: https://apidocs.lumahealth.io
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/appointments
+  - type: Authentication
+    url: https://apidocs.lumahealth.io/#tag/auth
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/patients
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/providers
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/messages
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/broadcastFlows
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/checklists
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/billingCharges
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/insurances
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/referrals
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/feedbackResponses
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/assistantInstances
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/reports
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/auth
+- aid: luma-health:luma-health-checklist-templates-api
+  name: Luma Health Checklist Templates API
+  description: Reusable definitions of required pre-visit tasks used to build checklists
+  humanURL: https://apidocs.lumahealth.io/#tag/appointments
+  baseURL: https://api.lumahealth.io/api/v2
+  tags:
+  - Checklist Templates
+  properties:
+  - type: OpenAPI
+    url: openapi/luma-health-checklist-templates-api-openapi.yml
+  - type: Documentation
+    url: https://apidocs.lumahealth.io
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/appointments
+  - type: Authentication
+    url: https://apidocs.lumahealth.io/#tag/auth
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/patients
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/providers
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/messages
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/broadcastFlows
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/checklists
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/billingCharges
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/insurances
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/referrals
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/feedbackResponses
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/assistantInstances
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/reports
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/auth
+- aid: luma-health:luma-health-engagement-events-api
+  name: Luma Health Engagement Events API
+  description: Append-only history of events that occurred during an engagement
+  humanURL: https://apidocs.lumahealth.io/#tag/appointments
+  baseURL: https://api.lumahealth.io/api/v2
+  tags:
+  - Engagement Events
+  properties:
+  - type: OpenAPI
+    url: openapi/luma-health-engagement-events-api-openapi.yml
+  - type: Documentation
+    url: https://apidocs.lumahealth.io
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/appointments
+  - type: Authentication
+    url: https://apidocs.lumahealth.io/#tag/auth
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/patients
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/providers
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/messages
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/broadcastFlows
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/checklists
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/billingCharges
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/insurances
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/referrals
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/feedbackResponses
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/assistantInstances
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/reports
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/auth
+- aid: luma-health:luma-health-engagement-settings-api
+  name: Luma Health Engagement Settings API
+  description: Reusable voice and language presets that can be attached to an engagement
+  humanURL: https://apidocs.lumahealth.io/#tag/appointments
+  baseURL: https://api.lumahealth.io/api/v2
+  tags:
+  - Engagement Settings
+  properties:
+  - type: OpenAPI
+    url: openapi/luma-health-engagement-settings-api-openapi.yml
+  - type: Documentation
+    url: https://apidocs.lumahealth.io
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/appointments
+  - type: Authentication
+    url: https://apidocs.lumahealth.io/#tag/auth
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/patients
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/providers
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/messages
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/broadcastFlows
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/checklists
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/billingCharges
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/insurances
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/referrals
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/feedbackResponses
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/assistantInstances
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/reports
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/auth
+- aid: luma-health:luma-health-file-uploads-api
+  name: Luma Health File Uploads API
+  description: File Uploads
+  humanURL: https://apidocs.lumahealth.io/#tag/appointments
+  baseURL: https://api.lumahealth.io/api/v2
+  tags:
+  - File Uploads
+  properties:
+  - type: OpenAPI
+    url: openapi/luma-health-file-uploads-api-openapi.yml
+  - type: Documentation
+    url: https://apidocs.lumahealth.io
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/appointments
+  - type: Authentication
+    url: https://apidocs.lumahealth.io/#tag/auth
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/patients
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/providers
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/messages
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/broadcastFlows
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/checklists
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/billingCharges
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/insurances
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/referrals
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/feedbackResponses
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/assistantInstances
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/reports
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/auth
+- aid: luma-health:luma-health-patient-forms-api
+  name: Luma Health Patient Forms API
+  description: Patient forms answered by patients
+  humanURL: https://apidocs.lumahealth.io/#tag/appointments
+  baseURL: https://api.lumahealth.io/api/v2
+  tags:
+  - Patient Forms
+  properties:
+  - type: OpenAPI
+    url: openapi/luma-health-patient-forms-api-openapi.yml
+  - type: Documentation
+    url: https://apidocs.lumahealth.io
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/appointments
+  - type: Authentication
+    url: https://apidocs.lumahealth.io/#tag/auth
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/patients
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/providers
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/messages
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/broadcastFlows
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/checklists
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/billingCharges
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/insurances
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/referrals
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/feedbackResponses
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/assistantInstances
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/reports
+  - type: APIReference
+    url: https://apidocs.lumahealth.io/#tag/auth
+- aid: luma-health:luma-health-system-audits-api
+  name: Luma Health system Audits API
+  description: Audit logs for certain system events in a given account
+  humanURL: https://apidocs.lumahealth.io/#tag/appointments
+  baseURL: https://api.lumahealth.io/api/v2
+  tags:
+  - system Audits
+  properties:
+  - type: OpenAPI
+    url: openapi/luma-health-system-audits-api-openapi.yml
   - type: Documentation
     url: https://apidocs.lumahealth.io
   - type: APIReference
