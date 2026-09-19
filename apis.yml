@@ -1144,6 +1144,8 @@ apis:
   humanURL: https://apidocs.lumahealth.io/#tag/appointments
   baseURL: https://api.lumahealth.io/api/v2
   tags:
+  - Insurances
+  tags_raw:
   - insurances
   properties:
   - type: OpenAPI
@@ -2139,7 +2141,7 @@ apis:
   humanURL: https://apidocs.lumahealth.io/#tag/appointments
   baseURL: https://api.lumahealth.io/api/v2
   tags:
-  - Waitlists
+  - Waitlist
   tags_raw:
   - waitlists
   properties:
