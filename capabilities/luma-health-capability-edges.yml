@@ -1,0 +1,233 @@
+slug: luma-health
+provider: Luma Health
+generated_by: planning/capability-mapping/scripts/classify_capabilities.py
+model: claude-opus-5
+frame:
+- Telecommunications
+min_confidence: 0.7
+capability_model:
+  source: https://github.com/vincentmakes/turbo-ea-capabilities
+  license: CC-BY-4.0
+  attribution: Turbo EA Capabilities by Vincent Verdet — Turbo EA, https://github.com/vincentmakes/turbo-ea-capabilities,
+    CC BY 4.0
+  notice: NOTICE
+edge_count: 20
+edges:
+- tag: appointments
+  spec_file: luma-health-appointments-api-openapi.yml
+  capability_id: BC-2800.10
+  capability_id_l1: BC-2800
+  capability_name: Scheduling & Appointment Management
+  confidence: 0.92
+  evidence: GET /appointments appointmentsList "List appointments"; POST /appointments "Create appointment";
+    schema Appointment
+  reason: Straight CRUD over patient appointments on a patient-engagement/self-scheduling platform — appointment
+    booking and management, i.e. Scheduling & Appointment Management.
+  recovered_from: healthcare-vertical-edges.json
+- tag: insurances
+  spec_file: luma-health-insurances-api-openapi.yml
+  capability_id: BC-2800.30
+  capability_id_l1: BC-2800
+  capability_name: Eligibility & Benefits Verification
+  confidence: 0.92
+  evidence: POST /insurances/eligibility/verification/{insuranceId} insuranceCheckEligibility Check eligibility
+    for a single insurance
+  reason: Operations explicitly perform insurance eligibility verification and staff review/writeback
+    of insurance records, which is precisely eligibility & benefits verification in patient access.
+  recovered_from: vertical-healthcare-providers-edges.json
+- tag: referrals
+  spec_file: luma-health-referrals-api-openapi.yml
+  capability_id: BC-2820.10
+  capability_id_l1: BC-2820
+  capability_name: Referral Management
+  confidence: 0.9
+  evidence: POST /referrals  referralCreate  Create referral; POST /referrals/inbound  Get a list of referrals;
+    schemas Referral, PatientResponse, FacilityResponse
+  reason: Operations manage the lifecycle of patient referrals including inbound referrals, with patient
+    and facility schemas — squarely referral management, consistent with the vendor's stated 'referral
+    and waitlist management'.
+  recovered_from: vertical-healthcare-providers-edges.json
+- tag: waitlists
+  spec_file: luma-health-waitlists-api-openapi.yml
+  capability_id: BC-2800.10
+  capability_id_l1: BC-2800
+  capability_name: Scheduling & Appointment Management
+  confidence: 0.88
+  evidence: '''Show a list of waitlists'', ''Create waitlists'', schema ''Waitlist''; capability text
+    names ''waitlist management'''
+  reason: Direct waitlist lifecycle management on a patient scheduling/engagement platform, which is explicitly
+    part of Scheduling & Appointment Management (appointment booking, waitlist management, reminders).
+  recovered_from: healthcare-vertical-edges.json
+- tag: appointmentTypes
+  spec_file: luma-health-appointment-types-api-openapi.yml
+  capability_id: BC-2800.10
+  capability_id_l1: BC-2800
+  capability_name: Scheduling & Appointment Management
+  confidence: 0.85
+  evidence: POST /appointmentTypes  appointmentTypeCreate  Create appointment type
+  reason: Appointment type configuration underpins self-service scheduling and appointment management
+    on a patient-access platform — scheduling & appointment management.
+  recovered_from: healthcare-vertical-edges.json
+  reanchored_from: luma-health-appointmenttypes-api-openapi.yml
+- tag: outboundReferrals
+  spec_file: luma-health-outboundreferrals-api-openapi.yml
+  capability_id: BC-2820.10
+  capability_id_l1: BC-2820
+  capability_name: Referral Management
+  confidence: 0.85
+  evidence: Create OutboundReferrals / OutboundReferralsResponse, and vendor description 'referral and
+    waitlist management'
+  reason: Explicitly manages outbound patient referrals end-to-end, which is Referral Management under
+    Care Coordination.
+  recovered_from: vertical-healthcare-providers-edges.json
+- tag: availabilities
+  spec_file: luma-health-availabilities-api-openapi.yml
+  capability_id: BC-2800.10
+  capability_id_l1: BC-2800
+  capability_name: Scheduling & Appointment Management
+  confidence: 0.82
+  evidence: GET /availabilities/scheduler  listSchedulerAvailabilities  "List scheduler availabilities";
+    schema AvailabilitySchedulerResponse
+  reason: Exposes provider/resource availability slots consumed by the scheduler — provider and resource
+    scheduling underpinning appointment booking.
+  recovered_from: healthcare-vertical-edges.json
+- tag: providerSchedulingGroups
+  spec_file: luma-health-providerschedulinggroups-api-openapi.yml
+  capability_id: BC-2800.10
+  capability_id_l1: BC-2800
+  capability_name: Scheduling & Appointment Management
+  confidence: 0.82
+  evidence: Create a provider scheduling group / ProviderSchedulingGroupRequestCreate
+  reason: Configuration of provider scheduling groupings directly serves provider/resource scheduling
+    and appointment booking on this patient-access platform.
+  recovered_from: vertical-healthcare-providers-edges.json
+- tag: Broadcast Templates
+  spec_file: luma-health-broadcast-templates-api-openapi.yml
+  capability_id: BC-2910.10
+  capability_id_l1: BC-2910
+  capability_name: Patient Engagement & Communication
+  confidence: 0.78
+  evidence: 'POST /broadcastTemplates createBroadcastTemplate ''Create a broadcast template''; vendor:
+    ''omnichannel two-way messaging and broadcast'''
+  reason: CRUD over message templates used for outbound patient broadcast campaigns on a patient-engagement
+    platform, matching multi-channel communication with patients.
+  recovered_from: vertical-healthcare-providers-edges.json
+- tag: broadcastFlows
+  spec_file: luma-health-broadcastflows-api-openapi.yml
+  capability_id: BC-2910.10
+  capability_id_l1: BC-2910
+  capability_name: Patient Engagement & Communication
+  confidence: 0.78
+  evidence: GET /broadcastFlows/{broadcastFlowId}/recipients  "List recipients for a broadcast flow";
+    POST .../review/approve  "Approve broadcast flow"
+  reason: Authoring, review and recipient management of outbound broadcast messaging flows to patients
+    — patient engagement and communication.
+  recovered_from: healthcare-vertical-edges.json
+- tag: reminders
+  spec_file: luma-health-reminders-api-openapi.yml
+  capability_id: BC-2800.10
+  capability_id_l1: BC-2800
+  capability_name: Scheduling & Appointment Management
+  confidence: 0.78
+  evidence: 'POST /reminders  reminderCreate  Create reminder; vendor: "appointment reminders"'
+  reason: Reminder records on a scheduling platform correspond to the proactive appointment reminders
+    named in the Scheduling & Appointment Management sub-capability.
+  recovered_from: healthcare-vertical-edges.json
+- tag: broadcastEvents
+  spec_file: luma-health-broadcastevents-api-openapi.yml
+  capability_id: BC-2910.10
+  capability_id_l1: BC-2910
+  capability_name: Patient Engagement & Communication
+  confidence: 0.75
+  evidence: POST /broadcastEvents  broadcastEventsCreate  "Create broadcast event"; schema BroadcastEvent
+  reason: Broadcast messaging events on a platform whose stated function is 'omnichannel two-way messaging
+    and broadcast' to patients — multi-channel patient communication.
+  recovered_from: healthcare-vertical-edges.json
+- tag: feedbackResponses
+  spec_file: luma-health-feedbackresponses-api-openapi.yml
+  capability_id: BC-430.50
+  capability_id_l1: BC-430
+  capability_name: Customer Feedback Management
+  confidence: 0.75
+  evidence: GET /feedbackResponses  feedbackResponsesList  List feedback responses
+  reason: Retrieval of collected feedback/survey responses from patients, which is voice-of-customer /
+    feedback programme data; sub-capability Customer Feedback Management fits directly, though the spec
+    detail is thin.
+- tag: messages
+  spec_file: luma-health-messages-api-openapi.yml
+  capability_id: BC-2910.10
+  capability_id_l1: BC-2910
+  capability_name: Patient Engagement & Communication
+  confidence: 0.75
+  evidence: POST /messages "Create message"; PUT /messages/{messageId} "Update message visibility"; schemas
+    MessageRequest, Language
+  reason: Creation and retrieval of messages on a patient-engagement platform whose stated purpose is
+    "omnichannel two-way messaging" with patients; the Language schema reinforces patient-facing communication.
+  recovered_from: healthcare-vertical-edges.json
+- tag: patientMessageTemplates
+  spec_file: luma-health-patientmessagetemplates-api-openapi.yml
+  capability_id: BC-2910.10
+  capability_id_l1: BC-2910
+  capability_name: Patient Engagement & Communication
+  confidence: 0.75
+  evidence: POST /patientMessageTemplates  patientMessageTemplateCreate  Create PatientMessageTemplate
+  reason: Templates for outbound patient messaging on an omnichannel patient-communication platform realise
+    multi-channel patient engagement and communication.
+  recovered_from: healthcare-vertical-edges.json
+- tag: billingCharges
+  spec_file: luma-health-billingcharges-api-openapi.yml
+  capability_id: BC-2870
+  capability_id_l1: BC-2870
+  capability_name: Healthcare Revenue Cycle Management
+  confidence: 0.72
+  evidence: PUT /billingCharges billingChargesUpsert 'Bulk upsert billing charges for an appointment';
+    POST /billingCharges/balance 'Create a balance charge for a patient'
+  reason: Handles patient/appointment charges and balances within a provider revenue cycle; evidence spans
+    both charge capture and patient balance handling, so only the L1 is asserted.
+  recovered_from: vertical-healthcare-providers-edges.json
+- tag: feedbackResponsesPromoterHistories
+  spec_file: luma-health-feedbackresponsespromoterhistories-api-openapi.yml
+  capability_id: BC-430.50
+  capability_id_l1: BC-430
+  capability_name: Customer Feedback Management
+  confidence: 0.72
+  evidence: '"List promoter platform histories" / feedbackResponsesPromoterHistoriesList'
+  reason: '"Promoter" in a feedbackResponses namespace is the NPS promoter classification derived from
+    patient satisfaction surveys, which is squarely survey/NPS voice-of-customer management. No marketing-promotion
+    reading fits since the operations only read historical feedback records.'
+  recovered_from: sweep-20260829T005356Z-edges.json
+- tag: chatActivities
+  spec_file: luma-health-chatactivities-api-openapi.yml
+  capability_id: BC-430.10
+  capability_id_l1: BC-430
+  capability_name: Customer Inquiry Management
+  confidence: 0.7
+  evidence: PUT /chatActivities/{chatActivityId} chatActivityUpdate "Assign or Close"; GET /chatActivities/unread
+    "Get unread chats count per user"
+  reason: Assigning, closing and tracking unread inbound chat conversations per agent is inbound contact
+    handling and routing — Customer Inquiry Management. Reading is unambiguous even though the counterparty
+    is a patient.
+- tag: lumabotFlows
+  spec_file: luma-health-lumabotflows-api-openapi.yml
+  capability_id: BC-430.40
+  capability_id_l1: BC-430
+  capability_name: Self-Service Management
+  confidence: 0.7
+  evidence: GET /lumabotFlows/{lumabotFlowId}/currentQuestion — "Get current question(s) of a lumabotFlow";
+    POST .../answer — "Answer the current question of a lumabot flow"
+  reason: Runtime execution of chatbot question/answer sessions with patients, including sessions, responses
+    and snapshots — this is automated self-service conversational handling rather than agent-based inquiry
+    handling.
+  recovered_from: sweep-20260829T005356Z-edges.json
+- tag: patients
+  spec_file: luma-health-patients-api-openapi.yml
+  capability_id: BC-2800.20
+  capability_id_l1: BC-2800
+  capability_name: Patient Registration Management
+  confidence: 0.7
+  evidence: Create patients / Update a patient / Get patient contact preferences, with PatientRequestCreate,
+    PatientResponse, Language
+  reason: CRUD stewardship of patient demographic records and contact preferences is registration-level
+    patient data capture; could alternatively be read as master patient index stewardship, hence not maximal
+    confidence.
+  recovered_from: vertical-healthcare-providers-edges.json
