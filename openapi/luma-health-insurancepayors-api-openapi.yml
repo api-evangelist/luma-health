@@ -6,7 +6,7 @@ info:
     url: https://lumahealth-assets.s3.us-west-2.amazonaws.com/new_luma_logo_black.png
     backgroundColor: '#FFFFFF'
     altText: Luma Health
-  description: OpenAPI [Basic Structure](https://swagger.io/docs/specification/basic-structure/)
+  description: OpenAPI Basic Structure
 servers:
 - url: https://api.lumahealth.io/api/v2
 security:
@@ -306,169 +306,100 @@ paths:
         '403':
           description: Access token does not have the required scope
 components:
-  schemas:
-    InsurancePayorRequestUpdate:
-      type: object
-      properties:
-        _id:
-          $ref: '#/components/schemas/idParam'
-        user:
-          $ref: '#/components/schemas/userParam'
-        deleted:
-          $ref: '#/components/schemas/deletedParam'
-        createdBy:
-          $ref: '#/components/schemas/createdByParam'
-        updatedBy:
-          $ref: '#/components/schemas/updatedByParam'
-        createdAt:
-          $ref: '#/components/schemas/createdAtParam'
-        updatedAt:
-          $ref: '#/components/schemas/updatedAtParam'
-        name:
-          type: string
-          description: The payor's legal/system name.
-        friendlyName:
-          type: string
-          description: Patient-facing display name, preferred over `name` when present.
-        externalId:
-          type: object
-          description: The payor's identifier in the practice's EHR.
-          properties:
-            source:
-              type: string
-            value:
-              type: string
-        externalIdentifiers:
-          type: array
-          description: Identifiers used to match and write back claims and eligibility data to third-party clearinghouses, such as NextGen Transaction Hub, Change Healthcare, or Waystar.
-          items:
-            type: object
-            properties:
-              source:
-                type: string
-                description: The clearinghouse or vendor this identifier is for.
-                enum:
-                - nextgentransactionhub
-                - changehealthcare
-                - waystar
-              value:
-                type: string
-                description: The opaque identifier value used by that vendor.
-              status:
-                type: string
-                enum:
-                - inactive
-                - testing
-                - live
-              pin:
-                type: string
-                description: Waystar-specific identifier for this payor.
-        address:
-          type: string
-        address2:
-          type: string
-        city:
-          type: string
-        state:
-          type: string
-        country:
-          type: string
-        postcode:
-          type: string
-        phone:
-          type: string
-        source:
-          type: string
-          description: Who owns this payor's fields. If `integrator`, the integrator owns all fields and overwrites Luma edits on every sync. If `manual`, the integrator only owns `name` and `externalId`; `friendlyName` and `externalIdentifiers` can be freely edited in Luma.
-          enum:
-          - integrator
-          - manual
-        isHiddenFromPatients:
-          type: boolean
-          description: Whether this payor is excluded from patient-facing payor search.
-          default: false
-    InsurancePayorRequestCreate:
-      type: object
-      required:
-      - name
-      properties:
-        _id:
-          $ref: '#/components/schemas/idParam'
-        user:
-          $ref: '#/components/schemas/userParam'
-        deleted:
-          $ref: '#/components/schemas/deletedParam'
-        createdBy:
-          $ref: '#/components/schemas/createdByParam'
-        updatedBy:
-          $ref: '#/components/schemas/updatedByParam'
-        createdAt:
-          $ref: '#/components/schemas/createdAtParam'
-        updatedAt:
-          $ref: '#/components/schemas/updatedAtParam'
-        name:
-          type: string
-          description: The payor's legal/system name.
-        friendlyName:
-          type: string
-          description: Patient-facing display name, preferred over `name` when present.
-        externalId:
-          type: object
-          description: The payor's identifier in the practice's EHR.
-          properties:
-            source:
-              type: string
-            value:
-              type: string
-        externalIdentifiers:
-          type: array
-          description: Identifiers used to match and write back claims and eligibility data to third-party clearinghouses, such as NextGen Transaction Hub, Change Healthcare, or Waystar.
-          items:
-            type: object
-            properties:
-              source:
-                type: string
-                description: The clearinghouse or vendor this identifier is for.
-                enum:
-                - nextgentransactionhub
-                - changehealthcare
-                - waystar
-              value:
-                type: string
-                description: The opaque identifier value used by that vendor.
-              status:
-                type: string
-                enum:
-                - inactive
-                - testing
-                - live
-              pin:
-                type: string
-                description: Waystar-specific identifier for this payor.
-        address:
-          type: string
-        address2:
-          type: string
-        city:
-          type: string
-        state:
-          type: string
-        country:
-          type: string
-        postcode:
-          type: string
-        phone:
-          type: string
-        source:
-          type: string
-          description: Who owns this payor's fields. If `integrator`, the integrator owns all fields and overwrites Luma edits on every sync. If `manual`, the integrator only owns `name` and `externalId`; `friendlyName` and `externalIdentifiers` can be freely edited in Luma.
-          enum:
-          - integrator
-          - manual
-        isHiddenFromPatients:
-          type: boolean
-          description: Whether this payor is excluded from patient-facing payor search.
-          default: false
+  parameters:
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
+    limitParam:
+      name: limit
+      in: query
+      description: How many items to fetch per page
+      required: false
+      type: integer
+      format: int32
+      default: 500
+      minimum: 1
+      maximum: 1000
+      schema:
+        type: integer
+        format: int32
+        default: 500
+        minimum: 1
+        maximum: 1000
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+    populateParam:
+      name: _populate
+      in: query
+      description: Response properties which will be replaced by the referenced objects, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    selectParam:
+      name: _select
+      in: query
+      description: Response properties that should be returned, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    updatedByParam:
+      in: query
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
+    pageParam:
+      in: query
+      name: page
+      required: false
+      type: integer
+      format: int32
+      default: 1
+      minimum: 1
+      schema:
+        type: integer
+        format: int32
+        default: 1
+        minimum: 1
     userParam:
       in: query
       name: user
@@ -483,6 +414,35 @@ components:
         minLength: 24
         maxLength: 24
       description: The ID of the root account user.
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+  schemas:
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
     InsurancePayorResponse:
       type: object
       description: 'Represents an insurance payor/carrier maintained in Luma''s payor directory: its name, address, and phone, plus one or more external identifiers used to match and write back claims and eligibility data to third-party clearinghouses or the practice''s EHR. Payors can be marked as integrator-managed or manually managed, and optionally hidden from patient-facing payor search.'
@@ -578,26 +538,86 @@ components:
         minLength: 24
         maxLength: 24
       description: Luma's internal ID of an object.
-    updatedAtParam:
-      in: query
-      name: updatedAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was updated.
-    createdAtParam:
-      in: query
-      name: createdAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was created.
+    InsurancePayorRequestUpdate:
+      type: object
+      properties:
+        _id:
+          $ref: '#/components/schemas/idParam'
+        user:
+          $ref: '#/components/schemas/userParam'
+        deleted:
+          $ref: '#/components/schemas/deletedParam'
+        createdBy:
+          $ref: '#/components/schemas/createdByParam'
+        updatedBy:
+          $ref: '#/components/schemas/updatedByParam'
+        createdAt:
+          $ref: '#/components/schemas/createdAtParam'
+        updatedAt:
+          $ref: '#/components/schemas/updatedAtParam'
+        name:
+          type: string
+          description: The payor's legal/system name.
+        friendlyName:
+          type: string
+          description: Patient-facing display name, preferred over `name` when present.
+        externalId:
+          type: object
+          description: The payor's identifier in the practice's EHR.
+          properties:
+            source:
+              type: string
+            value:
+              type: string
+        externalIdentifiers:
+          type: array
+          description: Identifiers used to match and write back claims and eligibility data to third-party clearinghouses, such as NextGen Transaction Hub, Change Healthcare, or Waystar.
+          items:
+            type: object
+            properties:
+              source:
+                type: string
+                description: The clearinghouse or vendor this identifier is for.
+                enum:
+                - nextgentransactionhub
+                - changehealthcare
+                - waystar
+              value:
+                type: string
+                description: The opaque identifier value used by that vendor.
+              status:
+                type: string
+                enum:
+                - inactive
+                - testing
+                - live
+              pin:
+                type: string
+                description: Waystar-specific identifier for this payor.
+        address:
+          type: string
+        address2:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        country:
+          type: string
+        postcode:
+          type: string
+        phone:
+          type: string
+        source:
+          type: string
+          description: Who owns this payor's fields. If `integrator`, the integrator owns all fields and overwrites Luma edits on every sync. If `manual`, the integrator only owns `name` and `externalId`; `friendlyName` and `externalIdentifiers` can be freely edited in Luma.
+          enum:
+          - integrator
+          - manual
+        isHiddenFromPatients:
+          type: boolean
+          description: Whether this payor is excluded from patient-facing payor search.
+          default: false
     updatedByParam:
       in: query
       name: updatedBy
@@ -612,6 +632,88 @@ components:
         minLength: 24
         maxLength: 24
       description: The ID of the user who updated this object.
+    InsurancePayorRequestCreate:
+      type: object
+      required:
+      - name
+      properties:
+        _id:
+          $ref: '#/components/schemas/idParam'
+        user:
+          $ref: '#/components/schemas/userParam'
+        deleted:
+          $ref: '#/components/schemas/deletedParam'
+        createdBy:
+          $ref: '#/components/schemas/createdByParam'
+        updatedBy:
+          $ref: '#/components/schemas/updatedByParam'
+        createdAt:
+          $ref: '#/components/schemas/createdAtParam'
+        updatedAt:
+          $ref: '#/components/schemas/updatedAtParam'
+        name:
+          type: string
+          description: The payor's legal/system name.
+        friendlyName:
+          type: string
+          description: Patient-facing display name, preferred over `name` when present.
+        externalId:
+          type: object
+          description: The payor's identifier in the practice's EHR.
+          properties:
+            source:
+              type: string
+            value:
+              type: string
+        externalIdentifiers:
+          type: array
+          description: Identifiers used to match and write back claims and eligibility data to third-party clearinghouses, such as NextGen Transaction Hub, Change Healthcare, or Waystar.
+          items:
+            type: object
+            properties:
+              source:
+                type: string
+                description: The clearinghouse or vendor this identifier is for.
+                enum:
+                - nextgentransactionhub
+                - changehealthcare
+                - waystar
+              value:
+                type: string
+                description: The opaque identifier value used by that vendor.
+              status:
+                type: string
+                enum:
+                - inactive
+                - testing
+                - live
+              pin:
+                type: string
+                description: Waystar-specific identifier for this payor.
+        address:
+          type: string
+        address2:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        country:
+          type: string
+        postcode:
+          type: string
+        phone:
+          type: string
+        source:
+          type: string
+          description: Who owns this payor's fields. If `integrator`, the integrator owns all fields and overwrites Luma edits on every sync. If `manual`, the integrator only owns `name` and `externalId`; `friendlyName` and `externalIdentifiers` can be freely edited in Luma.
+          enum:
+          - integrator
+          - manual
+        isHiddenFromPatients:
+          type: boolean
+          description: Whether this payor is excluded from patient-facing payor search.
+          default: false
     deletedParam:
       in: query
       name: deleted
@@ -626,34 +728,6 @@ components:
         - 0
         - 1
       description: Flag for logical deletion where 1 means deleted.
-    createdByParam:
-      in: query
-      name: createdBy
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      required: false
-      description: The ID of the user who created this object.
-  parameters:
-    pageParam:
-      in: query
-      name: page
-      required: false
-      type: integer
-      format: int32
-      default: 1
-      minimum: 1
-      schema:
-        type: integer
-        format: int32
-        default: 1
-        minimum: 1
     createdAtParam:
       in: query
       name: createdAt
@@ -674,80 +748,6 @@ components:
         format: date-time
       required: false
       description: The date/time when this object was updated.
-    updatedByParam:
-      in: query
-      name: updatedBy
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the user who updated this object.
-    createdByParam:
-      in: query
-      name: createdBy
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      required: false
-      description: The ID of the user who created this object.
-    populateParam:
-      name: _populate
-      in: query
-      description: Response properties which will be replaced by the referenced objects, separated by commas.
-      required: false
-      type: string
-      schema:
-        type: string
-    selectParam:
-      name: _select
-      in: query
-      description: Response properties that should be returned, separated by commas.
-      required: false
-      type: string
-      schema:
-        type: string
-    deletedParam:
-      in: query
-      name: deleted
-      required: false
-      type: number
-      enum:
-      - 0
-      - 1
-      schema:
-        type: number
-        enum:
-        - 0
-        - 1
-      description: Flag for logical deletion where 1 means deleted.
-    limitParam:
-      name: limit
-      in: query
-      description: How many items to fetch per page
-      required: false
-      type: integer
-      format: int32
-      default: 500
-      minimum: 1
-      maximum: 1000
-      schema:
-        type: integer
-        format: int32
-        default: 500
-        minimum: 1
-        maximum: 1000
     userParam:
       in: query
       name: user

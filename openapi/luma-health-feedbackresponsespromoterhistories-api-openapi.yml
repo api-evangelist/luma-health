@@ -6,7 +6,7 @@ info:
     url: https://lumahealth-assets.s3.us-west-2.amazonaws.com/new_luma_logo_black.png
     backgroundColor: '#FFFFFF'
     altText: Luma Health
-  description: OpenAPI [Basic Structure](https://swagger.io/docs/specification/basic-structure/)
+  description: OpenAPI Basic Structure
 servers:
 - url: https://api.lumahealth.io/api/v2
 security:
@@ -27,9 +27,7 @@ paths:
 
         One document per patient per account. `platformsAsked` grows with each feedback send;
 
-        once all configured platforms are exhausted the history is cleared and rotation restarts.
-
-        '
+        once all configured platforms are exhausted the history is cleared and rotation restarts.'
       operationId: feedbackResponsesPromoterHistoriesList
       tags:
       - feedbackResponsesPromoterHistories
@@ -94,9 +92,7 @@ paths:
       summary: Get promoter platform history by id
       description: 'Returns a single per-patient record tracking which review platforms a promoter
 
-        (NPS >= 9) has been directed to.
-
-        '
+        (NPS >= 9) has been directed to.'
       operationId: feedbackResponsesPromoterHistoryGet
       tags:
       - feedbackResponsesPromoterHistories
@@ -148,19 +144,6 @@ paths:
           description: Internal server error
 components:
   parameters:
-    pageParam:
-      in: query
-      name: page
-      required: false
-      type: integer
-      format: int32
-      default: 1
-      minimum: 1
-      schema:
-        type: integer
-        format: int32
-        default: 1
-        minimum: 1
     selectParam:
       name: _select
       in: query
@@ -169,20 +152,20 @@ components:
       type: string
       schema:
         type: string
-    deletedParam:
+    userParam:
       in: query
-      name: deleted
+      name: user
       required: false
-      type: number
-      enum:
-      - 0
-      - 1
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
       schema:
-        type: number
-        enum:
-        - 0
-        - 1
-      description: Flag for logical deletion where 1 means deleted.
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
     limitParam:
       name: limit
       in: query
@@ -199,20 +182,33 @@ components:
         default: 500
         minimum: 1
         maximum: 1000
-    userParam:
+    deletedParam:
       in: query
-      name: user
+      name: deleted
       required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
+      type: number
+      enum:
+      - 0
+      - 1
       schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the root account user.
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+    pageParam:
+      in: query
+      name: page
+      required: false
+      type: integer
+      format: int32
+      default: 1
+      minimum: 1
+      schema:
+        type: integer
+        format: int32
+        default: 1
+        minimum: 1
   securitySchemes:
     Bearer:
       type: http

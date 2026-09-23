@@ -6,13 +6,13 @@ info:
     url: https://lumahealth-assets.s3.us-west-2.amazonaws.com/new_luma_logo_black.png
     backgroundColor: '#FFFFFF'
     altText: Luma Health
-  description: OpenAPI [Basic Structure](https://swagger.io/docs/specification/basic-structure/)
+  description: OpenAPI Basic Structure
 servers:
 - url: https://api.lumahealth.io/api/v2
 security:
 - Bearer: []
 tags:
-- name: patients
+- name: Patients
   description: Customer patients
 paths:
   /patients:
@@ -20,7 +20,7 @@ paths:
       summary: Show a list of patients
       operationId: listPatients
       tags:
-      - patients
+      - Patients
       parameters:
       - name: culture
         in: query
@@ -425,7 +425,7 @@ paths:
       summary: Create patients
       operationId: createPatients
       tags:
-      - patients
+      - Patients
       requestBody:
         description: Patients to create
         required: true
@@ -455,7 +455,7 @@ paths:
       summary: Show a single patient
       operationId: getPatientById
       tags:
-      - patients
+      - Patients
       parameters:
       - name: patientId
         in: path
@@ -486,7 +486,7 @@ paths:
       summary: Update a patient
       operationId: patientUpdate
       tags:
-      - patients
+      - Patients
       parameters:
       - name: patientId
         in: path
@@ -518,7 +518,7 @@ paths:
       summary: Delete a patient
       operationId: deletePatient
       tags:
-      - patients
+      - Patients
       parameters:
       - name: patientId
         in: path
@@ -542,7 +542,7 @@ paths:
       description: Returns the valid contacts for a patient as messenger would use them (after doNotContact, enabled channels, template support, etc.)
       operationId: getPatientContactPreferences
       tags:
-      - patients
+      - Patients
       parameters:
       - name: patientId
         in: path
@@ -583,51 +583,6 @@ paths:
           description: Patient or campaign (when campaignId provided) not found
 components:
   parameters:
-    pageParam:
-      in: query
-      name: page
-      required: false
-      type: integer
-      format: int32
-      default: 1
-      minimum: 1
-      schema:
-        type: integer
-        format: int32
-        default: 1
-        minimum: 1
-    createdAtParam:
-      in: query
-      name: createdAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was created.
-    patientGlobalSearch:
-      in: query
-      name: patientGlobalSearch
-      type: string
-      required: false
-      schema:
-        type: string
-      description: 'Search for a patient within the resource using the current parameters
-
-        Luma Patient ID (patient._id),
-
-        MRN (patient.medicalRecordNumber),
-
-        Name combos(patient.firstname, patient.lastname) OR (patient.lastname,patient.firstname),
-
-        All contact method (phone number and email - active OR not),
-
-        ExternalID (patient.externalId.value),
-
-        Date of Birth.
-
-        '
     updatedAtParam:
       in: query
       name: updatedAt
@@ -638,20 +593,32 @@ components:
         format: date-time
       required: false
       description: The date/time when this object was updated.
-    updatedByParam:
+    limitParam:
+      name: limit
       in: query
-      name: updatedBy
+      description: How many items to fetch per page
       required: false
+      type: integer
+      format: int32
+      default: 500
+      minimum: 1
+      maximum: 1000
+      schema:
+        type: integer
+        format: int32
+        default: 500
+        minimum: 1
+        maximum: 1000
+    createdAtParam:
+      in: query
+      name: createdAt
       type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
+      format: date-time
       schema:
         type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the user who updated this object.
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
     createdByParam:
       in: query
       name: createdBy
@@ -682,141 +649,6 @@ components:
       type: string
       schema:
         type: string
-    deletedParam:
-      in: query
-      name: deleted
-      required: false
-      type: number
-      enum:
-      - 0
-      - 1
-      schema:
-        type: number
-        enum:
-        - 0
-        - 1
-      description: Flag for logical deletion where 1 means deleted.
-    limitParam:
-      name: limit
-      in: query
-      description: How many items to fetch per page
-      required: false
-      type: integer
-      format: int32
-      default: 500
-      minimum: 1
-      maximum: 1000
-      schema:
-        type: integer
-        format: int32
-        default: 500
-        minimum: 1
-        maximum: 1000
-    userParam:
-      in: query
-      name: user
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the root account user.
-  schemas:
-    userParam:
-      in: query
-      name: user
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the root account user.
-    Error:
-      type: object
-      required:
-      - code
-      - message
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
-    PatientContactPreferencesResponse:
-      type: object
-      description: This resource represents the set of contact methods Luma Health can currently use to reach a given patient, such as phone numbers and email addresses, along with whether each one is active or archived. It is built from the patient's outbound and external contact records, taking into account do-not-contact status and reasons like the patient being deceased or having asked not to be contacted, so that messaging only targets channels that are currently valid and permitted. It is used by messaging and reminder workflows to decide which contact to use before sending a communication.
-      required:
-      - validContacts
-      properties:
-        validContacts:
-          type: array
-          description: List of valid contacts as messenger would use them
-          items:
-            type: object
-            properties:
-              type:
-                type: string
-              value:
-                type: string
-              active:
-                type: boolean
-              archived:
-                type: boolean
-    idParam:
-      in: query
-      name: _id
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      required: false
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: Luma's internal ID of an object.
-    updatedAtParam:
-      in: query
-      name: updatedAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was updated.
-    RolesByUser:
-      type: object
-      description: Object containing 2 keys, referringProvider and renderingProvider. The value for each key is an array. The content of the array should be the root account ids under the same organization, where this user has the role with the same name of the key.
-      required: []
-      properties:
-        referringProvider:
-          type: array
-          description: List of root account IDs under an organization where the user has the role referringProvider
-          items:
-            type: string
-            pattern: '[0-9a-f]'
-            minLength: 24
-            maxLength: 24
-        renderingProvider:
-          type: array
-          description: List of root account IDs under an organization where the user has the role renderingProvider
-          items:
-            type: string
-            pattern: '[0-9a-f]'
-            minLength: 24
-            maxLength: 24
     updatedByParam:
       in: query
       name: updatedBy
@@ -831,1107 +663,84 @@ components:
         minLength: 24
         maxLength: 24
       description: The ID of the user who updated this object.
-    createdAtParam:
+    pageParam:
       in: query
-      name: createdAt
+      name: page
+      required: false
+      type: integer
+      format: int32
+      default: 1
+      minimum: 1
+      schema:
+        type: integer
+        format: int32
+        default: 1
+        minimum: 1
+    patientGlobalSearch:
+      in: query
+      name: patientGlobalSearch
       type: string
-      format: date-time
+      required: false
       schema:
         type: string
-        format: date-time
+      description: 'Search for a patient within the resource using the current parameters
+
+        Luma Patient ID (patient._id),
+
+        MRN (patient.medicalRecordNumber),
+
+        Name combos(patient.firstname, patient.lastname) OR (patient.lastname,patient.firstname),
+
+        All contact method (phone number and email - active OR not),
+
+        ExternalID (patient.externalId.value),
+
+        Date of Birth.
+
+        '
+    userParam:
+      in: query
+      name: user
       required: false
-      description: The date/time when this object was created.
-    PatientRequestCreate:
-      type: object
-      required:
-      - name
-      - type
-      - doNotContact
-      - active
-      - country
-      - gender
-      properties:
-        culture:
-          description: culture
-          type: string
-          enum:
-          - cn
-          - hk
-        birthSex:
-          description: birthSex
-          type: string
-          enum:
-          - M
-          - F
-          - UNK
-        race:
-          description: race
-          type: string
-          enum:
-          - american-indian-or-alaska-native
-          - asian
-          - black-or-african-american
-          - native-hawaiian-or-other-pacific-islander
-          - white
-          - other-race
-        ethnicityGroup:
-          description: ethnicityGroup
-          type: string
-          enum:
-          - hispanic-or-latino
-          - not-hispanic-or-latino
-        suffix:
-          description: suffix
-          type: string
-          enum:
-          - II
-          - III
-          - IV
-          - Jr.
-          - Sr.
-        previousAddress:
-          description: previousAddress
-          type: string
-        stats:
-          type: object
-          properties:
-            counters:
-              type: object
-              properties:
-                messagesSentToPatient:
-                  description: stats.counters.messagesSentToPatient
-                  type: number
-                confirmedAppointments:
-                  description: stats.counters.confirmedAppointments
-                  type: number
-                cancelledAppointments:
-                  description: stats.counters.cancelledAppointments
-                  type: number
-                offersSent:
-                  description: stats.counters.offersSent
-                  type: number
-                offersAccepted:
-                  description: stats.counters.offersAccepted
-                  type: number
-                appointmentOffersReplied:
-                  description: stats.counters.appointmentOffersReplied
-                  type: number
-            average:
-              type: object
-              properties:
-                appointmentOfferReplyTime:
-                  description: stats.average.appointmentOfferReplyTime
-                  type: number
-            metadata:
-              type: object
-              properties:
-                lastAppointmentAt:
-                  description: stats.metadata.lastAppointmentAt
-                  type: string
-                  format: date-time
-            oldestAppointment:
-              description: stats.oldestAppointment
-              type: string
-              format: date-time
-        lastProcessedAt:
-          description: lastProcessedAt
-          type: string
-          format: date-time
-          default: '2022-03-31T12:01:59.227Z'
-        source:
-          description: source
-          type: string
-          enum:
-          - widget
-          - integrator
-          - ui
-          - referring-provider
-          - hub
-        widget:
-          description: widget
-          type: string
-          enum:
-          - lumabot
-        mergedInto:
-          description: ID of Patient
-          type: string
-          pattern: '[0-9a-f]'
-          minLength: 24
-          maxLength: 24
-        subscribers:
-          description: subscribers
-          type: array
-          items:
-            type: object
-            properties:
-              subscribed:
-                description: subscribed
-                type: boolean
-              user:
-                description: ID of User
-                type: string
-                pattern: '[0-9a-f]'
-                minLength: 24
-                maxLength: 24
-              _id:
-                description: _id
-                type: string
-                pattern: '[0-9a-f]'
-                minLength: 24
-                maxLength: 24
-        outboundContact:
-          description: outboundContact
-          type: array
-          items:
-            type: object
-            properties:
-              provider:
-                description: provider
-                type: string
-                enum:
-                - mandrill
-                - twilio
-                - nexmo
-                - sendgrid
-                - plivo
-                - bandwidth
-                - ringcentral
-                - awsses
-                - interfax
-              channel:
-                description: channel
-                type: string
-                enum:
-                - sms
-                - voice
-                - fax
-                - email
-                - whatsapp
-              value:
-                description: value
-                type: string
-              active:
-                description: active
-                type: boolean
-              _id:
-                description: _id
-                type: string
-                pattern: '[0-9a-f]'
-                minLength: 24
-                maxLength: 24
-        primaryCareProvider:
-          description: ID of Provider
-          type: string
-          pattern: '[0-9a-f]'
-          minLength: 24
-          maxLength: 24
-        recommendations:
-          type: object
-          properties:
-            reminderTime:
-              description: recommendations.reminderTime
-              type: number
-        balance:
-          description: balance
-          type: number
-        balanceUpdatedAt:
-          description: balanceUpdatedAt
-          type: string
-          format: date-time
-        searchIds:
-          description: searchIds
-          type: array
-          items:
-            type: string
-        randomName:
-          description: randomName
-          type: boolean
-        name:
-          description: name
-          type: string
-        normalizedName:
-          description: normalizedName
-          type: string
-        firstname:
-          description: firstname
-          type: string
-        lastname:
-          description: lastname
-          type: string
-        middlename:
-          description: middlename
-          type: string
-        displayPhone:
-          description: displayPhone
-          type: string
-        displayStatus:
-          description: displayStatus
-          type: string
-          default: pending
-          enum:
-          - active
-          - pending
-          - suspended
-        email:
-          description: email
-          type: string
-        safeId:
-          description: safeId
-          type: string
-        type:
-          description: type
-          type: string
-          enum:
-          - patient
-          - guest
-        roles:
-          description: roles
-          type: array
-          items:
-            type: string
-        rolesByUser:
-          $ref: '#/components/schemas/RolesByUser'
-        organization:
-          description: ID of Organization
-          type: string
-          pattern: '[0-9a-f]'
-          minLength: 24
-          maxLength: 24
-        contact:
-          description: contact
-          type: array
-          items:
-            type: object
-            properties:
-              type:
-                description: type
-                type: string
-                default: email
-                enum:
-                - inapp
-                - sms
-                - voice
-                - email
-                - fax
-                - whatsapp
-              value:
-                description: value
-                type: string
-              active:
-                description: active
-                type: boolean
-              archived:
-                description: archived
-                type: boolean
-              archivedReason:
-                description: archivedReason
-                type: string
-                default: none
-                enum:
-                - none
-                - unreachable
-                - do-not-contact
-              archivedMessage:
-                description: ID of Message
-                type: string
-                pattern: '[0-9a-f]'
-                minLength: 24
-                maxLength: 24
-        doNotContact:
-          description: doNotContact
-          type: boolean
-        doNotContactMessage:
-          description: ID of Message
-          type: string
-          pattern: '[0-9a-f]'
-          minLength: 24
-          maxLength: 24
-        groups:
-          description: groups
-          type: array
-          items:
-            type: string
-            pattern: '[0-9a-f]'
-            minLength: 24
-            maxLength: 24
-        stripeCustomerId:
-          description: stripeCustomerId
-          type: string
-        twoFactorAuthSecret:
-          type: object
-          properties:
-            enabled:
-              description: twoFactorAuthSecret.enabled
-              type: boolean
-        stripeSubscriptionId:
-          description: stripeSubscriptionId
-          type: string
-        salesforceId:
-          description: salesforceId
-          type: string
-        lastLogin:
-          description: lastLogin
-          type: string
-          format: date-time
-        active:
-          description: active
-          type: number
-        master:
-          description: master
-          type: boolean
-        language:
-          description: language
-          type: string
-          default: en
-        address:
-          description: address
-          type: string
-        city:
-          description: city
-          type: string
-        state:
-          description: state
-          type: string
-        country:
-          description: country
-          type: string
-          default: US
-        postcode:
-          description: postcode
-          type: string
-        gender:
-          description: gender
-          type: string
-          default: unknown
-          enum:
-          - male
-          - female
-          - unknown
-          - nonbinary
-        allowedIps:
-          description: allowedIps
-          type: array
-          items:
-            type: string
-        avatar:
-          description: ID of FileUpload
-          type: string
-          pattern: '[0-9a-f]'
-          minLength: 24
-          maxLength: 24
-        publicKey:
-          description: publicKey
-          type: string
-        directMessagingEmail:
-          description: directMessagingEmail
-          type: string
-        demoConfiguration:
-          type: object
-          properties:
-            type:
-              type: string
-              enum:
-              - default
-        website:
-          description: website
-          type: string
-        salesforceData:
-          $ref: '#/components/schemas/SalesforceData'
-        externalId:
-          $ref: '#/components/schemas/ExternalId'
-        secondaryExternalId:
-          $ref: '#/components/schemas/ExternalId'
-        dateOfBirth:
-          type: object
-          properties:
-            year:
-              description: dateOfBirth.year
-              type: number
-            month:
-              description: dateOfBirth.month
-              type: number
-            day:
-              description: dateOfBirth.day
-              type: number
-    PatientRequestUpdate:
-      type: object
-      properties:
-        culture:
-          description: culture
-          type: string
-          enum:
-          - cn
-          - hk
-        birthSex:
-          description: birthSex
-          type: string
-          enum:
-          - M
-          - F
-          - UNK
-        race:
-          description: race
-          type: string
-          enum:
-          - american-indian-or-alaska-native
-          - asian
-          - black-or-african-american
-          - native-hawaiian-or-other-pacific-islander
-          - white
-          - other-race
-        ethnicityGroup:
-          description: ethnicityGroup
-          type: string
-          enum:
-          - hispanic-or-latino
-          - not-hispanic-or-latino
-        suffix:
-          description: suffix
-          type: string
-          enum:
-          - II
-          - III
-          - IV
-          - Jr.
-          - Sr.
-        previousAddress:
-          description: previousAddress
-          type: string
-        stats:
-          type: object
-          properties:
-            counters:
-              type: object
-              properties:
-                messagesSentToPatient:
-                  description: stats.counters.messagesSentToPatient
-                  type: number
-                confirmedAppointments:
-                  description: stats.counters.confirmedAppointments
-                  type: number
-                cancelledAppointments:
-                  description: stats.counters.cancelledAppointments
-                  type: number
-                offersSent:
-                  description: stats.counters.offersSent
-                  type: number
-                offersAccepted:
-                  description: stats.counters.offersAccepted
-                  type: number
-                appointmentOffersReplied:
-                  description: stats.counters.appointmentOffersReplied
-                  type: number
-            average:
-              type: object
-              properties:
-                appointmentOfferReplyTime:
-                  description: stats.average.appointmentOfferReplyTime
-                  type: number
-            metadata:
-              type: object
-              properties:
-                lastAppointmentAt:
-                  description: stats.metadata.lastAppointmentAt
-                  type: string
-                  format: date-time
-            oldestAppointment:
-              description: stats.oldestAppointment
-              type: string
-              format: date-time
-        lastProcessedAt:
-          description: lastProcessedAt
-          type: string
-          format: date-time
-          default: '2022-03-31T12:01:59.227Z'
-        source:
-          description: source
-          type: string
-          enum:
-          - widget
-          - integrator
-          - ui
-          - referring-provider
-          - hub
-        widget:
-          description: widget
-          type: string
-          enum:
-          - lumabot
-        mergedInto:
-          description: ID of Patient
-          type: string
-          pattern: '[0-9a-f]'
-          minLength: 24
-          maxLength: 24
-        subscribers:
-          description: subscribers
-          type: array
-          items:
-            type: object
-            properties:
-              subscribed:
-                description: subscribed
-                type: boolean
-              user:
-                description: ID of User
-                type: string
-                pattern: '[0-9a-f]'
-                minLength: 24
-                maxLength: 24
-              _id:
-                description: _id
-                type: string
-                pattern: '[0-9a-f]'
-                minLength: 24
-                maxLength: 24
-        outboundContact:
-          description: outboundContact
-          type: array
-          items:
-            type: object
-            properties:
-              provider:
-                description: provider
-                type: string
-                enum:
-                - mandrill
-                - twilio
-                - nexmo
-                - sendgrid
-                - plivo
-                - bandwidth
-                - ringcentral
-                - awsses
-                - interfax
-              channel:
-                description: channel
-                type: string
-                enum:
-                - sms
-                - voice
-                - fax
-                - email
-                - whatsapp
-              value:
-                description: value
-                type: string
-              active:
-                description: active
-                type: boolean
-              _id:
-                description: _id
-                type: string
-                pattern: '[0-9a-f]'
-                minLength: 24
-                maxLength: 24
-        primaryCareProvider:
-          description: ID of Provider
-          type: string
-          pattern: '[0-9a-f]'
-          minLength: 24
-          maxLength: 24
-        recommendations:
-          type: object
-          properties:
-            reminderTime:
-              description: recommendations.reminderTime
-              type: number
-        balance:
-          description: balance
-          type: number
-        balanceUpdatedAt:
-          description: balanceUpdatedAt
-          type: string
-          format: date-time
-        searchIds:
-          description: searchIds
-          type: array
-          items:
-            type: string
-        randomName:
-          description: randomName
-          type: boolean
-        name:
-          description: name
-          type: string
-        normalizedName:
-          description: normalizedName
-          type: string
-        firstname:
-          description: firstname
-          type: string
-        lastname:
-          description: lastname
-          type: string
-        middlename:
-          description: middlename
-          type: string
-        displayPhone:
-          description: displayPhone
-          type: string
-        displayStatus:
-          description: displayStatus
-          type: string
-          default: pending
-          enum:
-          - active
-          - pending
-          - suspended
-        email:
-          description: email
-          type: string
-        safeId:
-          description: safeId
-          type: string
-        type:
-          description: type
-          type: string
-          enum:
-          - patient
-          - guest
-        roles:
-          description: roles
-          type: array
-          items:
-            type: string
-        rolesByUser:
-          $ref: '#/components/schemas/RolesByUser'
-        organization:
-          description: ID of Organization
-          type: string
-          pattern: '[0-9a-f]'
-          minLength: 24
-          maxLength: 24
-        contact:
-          description: contact
-          type: array
-          items:
-            type: object
-            properties:
-              type:
-                description: type
-                type: string
-                default: email
-                enum:
-                - inapp
-                - sms
-                - voice
-                - email
-                - fax
-                - whatsapp
-              value:
-                description: value
-                type: string
-              active:
-                description: active
-                type: boolean
-              archived:
-                description: archived
-                type: boolean
-              archivedReason:
-                description: archivedReason
-                type: string
-                default: none
-                enum:
-                - none
-                - unreachable
-                - do-not-contact
-              archivedMessage:
-                description: ID of Message
-                type: string
-                pattern: '[0-9a-f]'
-                minLength: 24
-                maxLength: 24
-        doNotContact:
-          description: doNotContact
-          type: boolean
-        doNotContactMessage:
-          description: ID of Message
-          type: string
-          pattern: '[0-9a-f]'
-          minLength: 24
-          maxLength: 24
-        groups:
-          description: groups
-          type: array
-          items:
-            type: string
-            pattern: '[0-9a-f]'
-            minLength: 24
-            maxLength: 24
-        stripeCustomerId:
-          description: stripeCustomerId
-          type: string
-        twoFactorAuthSecret:
-          type: object
-          properties:
-            enabled:
-              description: twoFactorAuthSecret.enabled
-              type: boolean
-        stripeSubscriptionId:
-          description: stripeSubscriptionId
-          type: string
-        salesforceId:
-          description: salesforceId
-          type: string
-        lastLogin:
-          description: lastLogin
-          type: string
-          format: date-time
-        active:
-          description: active
-          type: number
-        master:
-          description: master
-          type: boolean
-        language:
-          description: language
-          type: string
-          default: en
-        address:
-          description: address
-          type: string
-        city:
-          description: city
-          type: string
-        state:
-          description: state
-          type: string
-        country:
-          description: country
-          type: string
-          default: US
-        postcode:
-          description: postcode
-          type: string
-        gender:
-          description: gender
-          type: string
-          default: unknown
-          enum:
-          - male
-          - female
-          - unknown
-          - nonbinary
-        allowedIps:
-          description: allowedIps
-          type: array
-          items:
-            type: string
-        avatar:
-          description: ID of FileUpload
-          type: string
-          pattern: '[0-9a-f]'
-          minLength: 24
-          maxLength: 24
-        publicKey:
-          description: publicKey
-          type: string
-        directMessagingEmail:
-          description: directMessagingEmail
-          type: string
-        demoConfiguration:
-          type: object
-          properties:
-            type:
-              type: string
-              enum:
-              - default
-        website:
-          description: website
-          type: string
-        salesforceData:
-          $ref: '#/components/schemas/SalesforceData'
-        externalId:
-          $ref: '#/components/schemas/ExternalId'
-        secondaryExternalId:
-          $ref: '#/components/schemas/ExternalId'
-        dateOfBirth:
-          type: object
-          properties:
-            year:
-              description: dateOfBirth.year
-              type: number
-            month:
-              description: dateOfBirth.month
-              type: number
-            day:
-              description: dateOfBirth.day
-              type: number
-    SalesforceData:
-      type: object
-      description: Salesforce internal meta data for this account.
-      required:
-      - respectProvisioning
-      properties:
-        customerSuccessManager:
-          type: object
-          properties:
-            name:
-              type: string
-            email:
-              type: string
-            phone:
-              type: string
-        provisioning:
-          type: array
-          items:
-            type: string
-            enum:
-            - reminder
-            - waitlist
-            - feedback
-            - followup
-            - referral
-            - outbound-referral
-            - chat
-            - scheduler
-            - recall
-            - insurance
-            - broadcast
-            - form
-            - intake-form
-            - prequal-form
-            - branding
-            - upload
-            - telehealth
-            - waiting-room
-            - luma-pay
-            - insurance-verification
-        respectProvisioning:
-          type: boolean
-          default: true
-        lifeline:
-          type: string
-          enum:
-          - trial
-          - converted
-          - active
-          - churn
-        mrr:
-          type: number
-        arr:
-          type: number
-        renewalDate:
-          type: string
-          format: date-time
-        providers:
-          type: number
-        specialty:
-          type: string
-        referralTrialLimit:
-          type: number
-        recordType:
-          type: string
-        domesticAccessRequired:
-          type: boolean
-        goLiveAt:
-          type: string
-          format: date-time
-        fullyImplementedAt:
-          type: string
-          format: date-time
-        contractSignedAt:
-          type: string
-          format: date-time
-        contractLength:
-          type: number
-        healthStatus:
-          type: string
-          default: green
-          enum:
-          - green
-          - yellow
-          - red
-          - poor fit
-          - Healthy
-          - Neutral
-          - Churn Risk
-          - Advocate
-        boardSegment:
-          type: string
-          default: Unknown
-          enum:
-          - Reseller
-          - Strategic
-          - Majors
-          - Core
-          - Sub 20
-          - Unknown
-        onboardingState:
-          type: string
-          default: Customer Success Introduction
-          enum:
-          - Customer Success Introduction
-          - Kickoff
-          - Integration
-          - Discovery Call
-          - Customization
-          - Testing
-          - Staff Training
-          - Ready To Launch
-          - Go-Live
-          - Fully Implemented
-        accountLifeline:
-          type: string
-          default: Active
-          enum:
-          - Unassigned
-          - Assigned
-          - Sales Accepted
-          - Working
-          - Sales Qualified
-          - Open Opportunity
-          - Nurture
-          - Disqualified
-          - Trial
-          - Converted
-          - Active
-          - Churned
-          - Partnered
-          - Trial Ended (No Conversion)
-    ExternalId:
-      type: object
-      properties:
-        source:
-          description: externalId.source
-          type: string
-          enum:
-          - gcalendar
-          - successehs
-          - drchrono
-          - dentrix
-          - webpt
-          - theraoffice
-          - mi7
-          - practicefusion
-          - advancedmd
-          - acomrapidpm
-          - kareo
-          - nextech
-          - mwtherapy
-          - clinicient
-          - carecloud
-          - eclinicalmobile
-          - duxware
-          - labretriever
-          - optimispt
-          - referral
-          - recall
-          - allscriptspm
-          - lytec
-          - brightree
-          - fullslate
-          - nuemd
-          - centricityps
-          - officeally
-          - greenwayintergy
-          - compulink
-          - adspm
-          - dsnpm
-          - lumamock
-          - medicalmastermind
-          - meditouch
-          - healthnautica
-          - ezemrx
-          - hl7
-          - amazingcharts
-          - greenwayprimesuite
-          - raintree
-          - athenahealth
-          - revflow
-          - eclinicalworks10e
-          - hl7pickup
-          - mindbody
-          - eclinicalworkssql
-          - nextgen
-          - practiceperfect
-          - avimark
-          - clinix
-          - keymedical
-          - mdoffice
-          - webedoctor
-          - emapm
-          - medinformatix
-          - imsgo
-          - emds
-          - allscriptsunity
-          - medevolve
-          - caretracker
-          - clearpractice
-          - valant
-          - micromd
-          - systemedx
-          - medicalmaster
-          - athenamdp
-          - gmed
-          - roche
-          - onetouch
-          - somnoware
-          - managementplus
-          - lumacare
-          - nextechfhir
-          - curemd
-          - epic
-          - phoenixortho
-          - ezderm
-          - ggastromobile
-          - epicconfirmationpickup
-          - cerner
-          - allmeds
-          - oncoemrfilepickup
-          - imedicware
-          - modmedfhir
-          - clinux
-          - acuityscheduling
-          - medstreaming
-          - isalus
-          - meditechexpanse
-          - openemr
-          - genericfhir
-          - nextechpracticeplus
-          - sms
-          - voice
-          - email
-          - none
-        value:
-          description: externalId.value
-          type: string
-    Language:
-      description: Language
       type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
       enum:
-      - ar
-      - bn
-      - cn
-      - de
-      - en
-      - es
-      - fa
-      - fl
-      - fr
-      - gr
-      - gu
-      - hi
-      - ht
-      - hy
-      - it
-      - ja
-      - km
-      - ko
-      - mr
-      - my
-      - pa
-      - pl
-      - pt
-      - ru
-      - so
-      - th
-      - ti
-      - ur
-      - vi
-      - zh-t
-      - zh
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+  schemas:
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
     PatientResponse:
       type: object
       description: A Patient represents an individual receiving care through a Luma Health customer's practice. It stores demographic and contact information, communication preferences and history, EHR sync identifiers, billing balances, and engagement stats used to power scheduling, messaging, and referral workflows.
@@ -2364,34 +1173,41 @@ components:
           description: __t
           type: string
           default: Patient
-    deletedParam:
-      in: query
-      name: deleted
-      required: false
-      type: number
-      enum:
-      - 0
-      - 1
-      schema:
-        type: number
-        enum:
-        - 0
-        - 1
-      description: Flag for logical deletion where 1 means deleted.
-    createdByParam:
-      in: query
-      name: createdBy
+    Language:
+      description: Language
       type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      required: false
-      description: The ID of the user who created this object.
+      enum:
+      - ar
+      - bn
+      - cn
+      - de
+      - en
+      - es
+      - fa
+      - fl
+      - fr
+      - gr
+      - gu
+      - hi
+      - ht
+      - hy
+      - it
+      - ja
+      - km
+      - ko
+      - mr
+      - my
+      - pa
+      - pl
+      - pt
+      - ru
+      - so
+      - th
+      - ti
+      - ur
+      - vi
+      - zh-t
+      - zh
     SettingProperty:
       type: object
       properties:
@@ -4521,6 +3337,1190 @@ components:
               description: Determines if the file upload document linked to an estimate document must be updated with the patient ID and the estimate ID.
               type: boolean
               default: false
+    idParam:
+      in: query
+      name: _id
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      required: false
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: Luma's internal ID of an object.
+    updatedByParam:
+      in: query
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
+    SalesforceData:
+      type: object
+      description: Salesforce internal meta data for this account.
+      required:
+      - respectProvisioning
+      properties:
+        customerSuccessManager:
+          type: object
+          properties:
+            name:
+              type: string
+            email:
+              type: string
+            phone:
+              type: string
+        provisioning:
+          type: array
+          items:
+            type: string
+            enum:
+            - reminder
+            - waitlist
+            - feedback
+            - followup
+            - referral
+            - outbound-referral
+            - chat
+            - scheduler
+            - recall
+            - insurance
+            - broadcast
+            - form
+            - intake-form
+            - prequal-form
+            - branding
+            - upload
+            - telehealth
+            - waiting-room
+            - luma-pay
+            - insurance-verification
+        respectProvisioning:
+          type: boolean
+          default: true
+        lifeline:
+          type: string
+          enum:
+          - trial
+          - converted
+          - active
+          - churn
+        mrr:
+          type: number
+        arr:
+          type: number
+        renewalDate:
+          type: string
+          format: date-time
+        providers:
+          type: number
+        specialty:
+          type: string
+        referralTrialLimit:
+          type: number
+        recordType:
+          type: string
+        domesticAccessRequired:
+          type: boolean
+        goLiveAt:
+          type: string
+          format: date-time
+        fullyImplementedAt:
+          type: string
+          format: date-time
+        contractSignedAt:
+          type: string
+          format: date-time
+        contractLength:
+          type: number
+        healthStatus:
+          type: string
+          default: green
+          enum:
+          - green
+          - yellow
+          - red
+          - poor fit
+          - Healthy
+          - Neutral
+          - Churn Risk
+          - Advocate
+        boardSegment:
+          type: string
+          default: Unknown
+          enum:
+          - Reseller
+          - Strategic
+          - Majors
+          - Core
+          - Sub 20
+          - Unknown
+        onboardingState:
+          type: string
+          default: Customer Success Introduction
+          enum:
+          - Customer Success Introduction
+          - Kickoff
+          - Integration
+          - Discovery Call
+          - Customization
+          - Testing
+          - Staff Training
+          - Ready To Launch
+          - Go-Live
+          - Fully Implemented
+        accountLifeline:
+          type: string
+          default: Active
+          enum:
+          - Unassigned
+          - Assigned
+          - Sales Accepted
+          - Working
+          - Sales Qualified
+          - Open Opportunity
+          - Nurture
+          - Disqualified
+          - Trial
+          - Converted
+          - Active
+          - Churned
+          - Partnered
+          - Trial Ended (No Conversion)
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
+    PatientRequestCreate:
+      type: object
+      required:
+      - name
+      - type
+      - doNotContact
+      - active
+      - country
+      - gender
+      properties:
+        culture:
+          description: culture
+          type: string
+          enum:
+          - cn
+          - hk
+        birthSex:
+          description: birthSex
+          type: string
+          enum:
+          - M
+          - F
+          - UNK
+        race:
+          description: race
+          type: string
+          enum:
+          - american-indian-or-alaska-native
+          - asian
+          - black-or-african-american
+          - native-hawaiian-or-other-pacific-islander
+          - white
+          - other-race
+        ethnicityGroup:
+          description: ethnicityGroup
+          type: string
+          enum:
+          - hispanic-or-latino
+          - not-hispanic-or-latino
+        suffix:
+          description: suffix
+          type: string
+          enum:
+          - II
+          - III
+          - IV
+          - Jr.
+          - Sr.
+        previousAddress:
+          description: previousAddress
+          type: string
+        stats:
+          type: object
+          properties:
+            counters:
+              type: object
+              properties:
+                messagesSentToPatient:
+                  description: stats.counters.messagesSentToPatient
+                  type: number
+                confirmedAppointments:
+                  description: stats.counters.confirmedAppointments
+                  type: number
+                cancelledAppointments:
+                  description: stats.counters.cancelledAppointments
+                  type: number
+                offersSent:
+                  description: stats.counters.offersSent
+                  type: number
+                offersAccepted:
+                  description: stats.counters.offersAccepted
+                  type: number
+                appointmentOffersReplied:
+                  description: stats.counters.appointmentOffersReplied
+                  type: number
+            average:
+              type: object
+              properties:
+                appointmentOfferReplyTime:
+                  description: stats.average.appointmentOfferReplyTime
+                  type: number
+            metadata:
+              type: object
+              properties:
+                lastAppointmentAt:
+                  description: stats.metadata.lastAppointmentAt
+                  type: string
+                  format: date-time
+            oldestAppointment:
+              description: stats.oldestAppointment
+              type: string
+              format: date-time
+        lastProcessedAt:
+          description: lastProcessedAt
+          type: string
+          format: date-time
+          default: '2022-03-31T12:01:59.227Z'
+        source:
+          description: source
+          type: string
+          enum:
+          - widget
+          - integrator
+          - ui
+          - referring-provider
+          - hub
+        widget:
+          description: widget
+          type: string
+          enum:
+          - lumabot
+        mergedInto:
+          description: ID of Patient
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        subscribers:
+          description: subscribers
+          type: array
+          items:
+            type: object
+            properties:
+              subscribed:
+                description: subscribed
+                type: boolean
+              user:
+                description: ID of User
+                type: string
+                pattern: '[0-9a-f]'
+                minLength: 24
+                maxLength: 24
+              _id:
+                description: _id
+                type: string
+                pattern: '[0-9a-f]'
+                minLength: 24
+                maxLength: 24
+        outboundContact:
+          description: outboundContact
+          type: array
+          items:
+            type: object
+            properties:
+              provider:
+                description: provider
+                type: string
+                enum:
+                - mandrill
+                - twilio
+                - nexmo
+                - sendgrid
+                - plivo
+                - bandwidth
+                - ringcentral
+                - awsses
+                - interfax
+              channel:
+                description: channel
+                type: string
+                enum:
+                - sms
+                - voice
+                - fax
+                - email
+                - whatsapp
+              value:
+                description: value
+                type: string
+              active:
+                description: active
+                type: boolean
+              _id:
+                description: _id
+                type: string
+                pattern: '[0-9a-f]'
+                minLength: 24
+                maxLength: 24
+        primaryCareProvider:
+          description: ID of Provider
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        recommendations:
+          type: object
+          properties:
+            reminderTime:
+              description: recommendations.reminderTime
+              type: number
+        balance:
+          description: balance
+          type: number
+        balanceUpdatedAt:
+          description: balanceUpdatedAt
+          type: string
+          format: date-time
+        searchIds:
+          description: searchIds
+          type: array
+          items:
+            type: string
+        randomName:
+          description: randomName
+          type: boolean
+        name:
+          description: name
+          type: string
+        normalizedName:
+          description: normalizedName
+          type: string
+        firstname:
+          description: firstname
+          type: string
+        lastname:
+          description: lastname
+          type: string
+        middlename:
+          description: middlename
+          type: string
+        displayPhone:
+          description: displayPhone
+          type: string
+        displayStatus:
+          description: displayStatus
+          type: string
+          default: pending
+          enum:
+          - active
+          - pending
+          - suspended
+        email:
+          description: email
+          type: string
+        safeId:
+          description: safeId
+          type: string
+        type:
+          description: type
+          type: string
+          enum:
+          - patient
+          - guest
+        roles:
+          description: roles
+          type: array
+          items:
+            type: string
+        rolesByUser:
+          $ref: '#/components/schemas/RolesByUser'
+        organization:
+          description: ID of Organization
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        contact:
+          description: contact
+          type: array
+          items:
+            type: object
+            properties:
+              type:
+                description: type
+                type: string
+                default: email
+                enum:
+                - inapp
+                - sms
+                - voice
+                - email
+                - fax
+                - whatsapp
+              value:
+                description: value
+                type: string
+              active:
+                description: active
+                type: boolean
+              archived:
+                description: archived
+                type: boolean
+              archivedReason:
+                description: archivedReason
+                type: string
+                default: none
+                enum:
+                - none
+                - unreachable
+                - do-not-contact
+              archivedMessage:
+                description: ID of Message
+                type: string
+                pattern: '[0-9a-f]'
+                minLength: 24
+                maxLength: 24
+        doNotContact:
+          description: doNotContact
+          type: boolean
+        doNotContactMessage:
+          description: ID of Message
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        groups:
+          description: groups
+          type: array
+          items:
+            type: string
+            pattern: '[0-9a-f]'
+            minLength: 24
+            maxLength: 24
+        stripeCustomerId:
+          description: stripeCustomerId
+          type: string
+        twoFactorAuthSecret:
+          type: object
+          properties:
+            enabled:
+              description: twoFactorAuthSecret.enabled
+              type: boolean
+        stripeSubscriptionId:
+          description: stripeSubscriptionId
+          type: string
+        salesforceId:
+          description: salesforceId
+          type: string
+        lastLogin:
+          description: lastLogin
+          type: string
+          format: date-time
+        active:
+          description: active
+          type: number
+        master:
+          description: master
+          type: boolean
+        language:
+          description: language
+          type: string
+          default: en
+        address:
+          description: address
+          type: string
+        city:
+          description: city
+          type: string
+        state:
+          description: state
+          type: string
+        country:
+          description: country
+          type: string
+          default: US
+        postcode:
+          description: postcode
+          type: string
+        gender:
+          description: gender
+          type: string
+          default: unknown
+          enum:
+          - male
+          - female
+          - unknown
+          - nonbinary
+        allowedIps:
+          description: allowedIps
+          type: array
+          items:
+            type: string
+        avatar:
+          description: ID of FileUpload
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        publicKey:
+          description: publicKey
+          type: string
+        directMessagingEmail:
+          description: directMessagingEmail
+          type: string
+        demoConfiguration:
+          type: object
+          properties:
+            type:
+              type: string
+              enum:
+              - default
+        website:
+          description: website
+          type: string
+        salesforceData:
+          $ref: '#/components/schemas/SalesforceData'
+        externalId:
+          $ref: '#/components/schemas/ExternalId'
+        secondaryExternalId:
+          $ref: '#/components/schemas/ExternalId'
+        dateOfBirth:
+          type: object
+          properties:
+            year:
+              description: dateOfBirth.year
+              type: number
+            month:
+              description: dateOfBirth.month
+              type: number
+            day:
+              description: dateOfBirth.day
+              type: number
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
+    RolesByUser:
+      type: object
+      description: Object containing 2 keys, referringProvider and renderingProvider. The value for each key is an array. The content of the array should be the root account ids under the same organization, where this user has the role with the same name of the key.
+      required: []
+      properties:
+        referringProvider:
+          type: array
+          description: List of root account IDs under an organization where the user has the role referringProvider
+          items:
+            type: string
+            pattern: '[0-9a-f]'
+            minLength: 24
+            maxLength: 24
+        renderingProvider:
+          type: array
+          description: List of root account IDs under an organization where the user has the role renderingProvider
+          items:
+            type: string
+            pattern: '[0-9a-f]'
+            minLength: 24
+            maxLength: 24
+    PatientContactPreferencesResponse:
+      type: object
+      description: This resource represents the set of contact methods Luma Health can currently use to reach a given patient, such as phone numbers and email addresses, along with whether each one is active or archived. It is built from the patient's outbound and external contact records, taking into account do-not-contact status and reasons like the patient being deceased or having asked not to be contacted, so that messaging only targets channels that are currently valid and permitted. It is used by messaging and reminder workflows to decide which contact to use before sending a communication.
+      required:
+      - validContacts
+      properties:
+        validContacts:
+          type: array
+          description: List of valid contacts as messenger would use them
+          items:
+            type: object
+            properties:
+              type:
+                type: string
+              value:
+                type: string
+              active:
+                type: boolean
+              archived:
+                type: boolean
+    PatientRequestUpdate:
+      type: object
+      properties:
+        culture:
+          description: culture
+          type: string
+          enum:
+          - cn
+          - hk
+        birthSex:
+          description: birthSex
+          type: string
+          enum:
+          - M
+          - F
+          - UNK
+        race:
+          description: race
+          type: string
+          enum:
+          - american-indian-or-alaska-native
+          - asian
+          - black-or-african-american
+          - native-hawaiian-or-other-pacific-islander
+          - white
+          - other-race
+        ethnicityGroup:
+          description: ethnicityGroup
+          type: string
+          enum:
+          - hispanic-or-latino
+          - not-hispanic-or-latino
+        suffix:
+          description: suffix
+          type: string
+          enum:
+          - II
+          - III
+          - IV
+          - Jr.
+          - Sr.
+        previousAddress:
+          description: previousAddress
+          type: string
+        stats:
+          type: object
+          properties:
+            counters:
+              type: object
+              properties:
+                messagesSentToPatient:
+                  description: stats.counters.messagesSentToPatient
+                  type: number
+                confirmedAppointments:
+                  description: stats.counters.confirmedAppointments
+                  type: number
+                cancelledAppointments:
+                  description: stats.counters.cancelledAppointments
+                  type: number
+                offersSent:
+                  description: stats.counters.offersSent
+                  type: number
+                offersAccepted:
+                  description: stats.counters.offersAccepted
+                  type: number
+                appointmentOffersReplied:
+                  description: stats.counters.appointmentOffersReplied
+                  type: number
+            average:
+              type: object
+              properties:
+                appointmentOfferReplyTime:
+                  description: stats.average.appointmentOfferReplyTime
+                  type: number
+            metadata:
+              type: object
+              properties:
+                lastAppointmentAt:
+                  description: stats.metadata.lastAppointmentAt
+                  type: string
+                  format: date-time
+            oldestAppointment:
+              description: stats.oldestAppointment
+              type: string
+              format: date-time
+        lastProcessedAt:
+          description: lastProcessedAt
+          type: string
+          format: date-time
+          default: '2022-03-31T12:01:59.227Z'
+        source:
+          description: source
+          type: string
+          enum:
+          - widget
+          - integrator
+          - ui
+          - referring-provider
+          - hub
+        widget:
+          description: widget
+          type: string
+          enum:
+          - lumabot
+        mergedInto:
+          description: ID of Patient
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        subscribers:
+          description: subscribers
+          type: array
+          items:
+            type: object
+            properties:
+              subscribed:
+                description: subscribed
+                type: boolean
+              user:
+                description: ID of User
+                type: string
+                pattern: '[0-9a-f]'
+                minLength: 24
+                maxLength: 24
+              _id:
+                description: _id
+                type: string
+                pattern: '[0-9a-f]'
+                minLength: 24
+                maxLength: 24
+        outboundContact:
+          description: outboundContact
+          type: array
+          items:
+            type: object
+            properties:
+              provider:
+                description: provider
+                type: string
+                enum:
+                - mandrill
+                - twilio
+                - nexmo
+                - sendgrid
+                - plivo
+                - bandwidth
+                - ringcentral
+                - awsses
+                - interfax
+              channel:
+                description: channel
+                type: string
+                enum:
+                - sms
+                - voice
+                - fax
+                - email
+                - whatsapp
+              value:
+                description: value
+                type: string
+              active:
+                description: active
+                type: boolean
+              _id:
+                description: _id
+                type: string
+                pattern: '[0-9a-f]'
+                minLength: 24
+                maxLength: 24
+        primaryCareProvider:
+          description: ID of Provider
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        recommendations:
+          type: object
+          properties:
+            reminderTime:
+              description: recommendations.reminderTime
+              type: number
+        balance:
+          description: balance
+          type: number
+        balanceUpdatedAt:
+          description: balanceUpdatedAt
+          type: string
+          format: date-time
+        searchIds:
+          description: searchIds
+          type: array
+          items:
+            type: string
+        randomName:
+          description: randomName
+          type: boolean
+        name:
+          description: name
+          type: string
+        normalizedName:
+          description: normalizedName
+          type: string
+        firstname:
+          description: firstname
+          type: string
+        lastname:
+          description: lastname
+          type: string
+        middlename:
+          description: middlename
+          type: string
+        displayPhone:
+          description: displayPhone
+          type: string
+        displayStatus:
+          description: displayStatus
+          type: string
+          default: pending
+          enum:
+          - active
+          - pending
+          - suspended
+        email:
+          description: email
+          type: string
+        safeId:
+          description: safeId
+          type: string
+        type:
+          description: type
+          type: string
+          enum:
+          - patient
+          - guest
+        roles:
+          description: roles
+          type: array
+          items:
+            type: string
+        rolesByUser:
+          $ref: '#/components/schemas/RolesByUser'
+        organization:
+          description: ID of Organization
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        contact:
+          description: contact
+          type: array
+          items:
+            type: object
+            properties:
+              type:
+                description: type
+                type: string
+                default: email
+                enum:
+                - inapp
+                - sms
+                - voice
+                - email
+                - fax
+                - whatsapp
+              value:
+                description: value
+                type: string
+              active:
+                description: active
+                type: boolean
+              archived:
+                description: archived
+                type: boolean
+              archivedReason:
+                description: archivedReason
+                type: string
+                default: none
+                enum:
+                - none
+                - unreachable
+                - do-not-contact
+              archivedMessage:
+                description: ID of Message
+                type: string
+                pattern: '[0-9a-f]'
+                minLength: 24
+                maxLength: 24
+        doNotContact:
+          description: doNotContact
+          type: boolean
+        doNotContactMessage:
+          description: ID of Message
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        groups:
+          description: groups
+          type: array
+          items:
+            type: string
+            pattern: '[0-9a-f]'
+            minLength: 24
+            maxLength: 24
+        stripeCustomerId:
+          description: stripeCustomerId
+          type: string
+        twoFactorAuthSecret:
+          type: object
+          properties:
+            enabled:
+              description: twoFactorAuthSecret.enabled
+              type: boolean
+        stripeSubscriptionId:
+          description: stripeSubscriptionId
+          type: string
+        salesforceId:
+          description: salesforceId
+          type: string
+        lastLogin:
+          description: lastLogin
+          type: string
+          format: date-time
+        active:
+          description: active
+          type: number
+        master:
+          description: master
+          type: boolean
+        language:
+          description: language
+          type: string
+          default: en
+        address:
+          description: address
+          type: string
+        city:
+          description: city
+          type: string
+        state:
+          description: state
+          type: string
+        country:
+          description: country
+          type: string
+          default: US
+        postcode:
+          description: postcode
+          type: string
+        gender:
+          description: gender
+          type: string
+          default: unknown
+          enum:
+          - male
+          - female
+          - unknown
+          - nonbinary
+        allowedIps:
+          description: allowedIps
+          type: array
+          items:
+            type: string
+        avatar:
+          description: ID of FileUpload
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        publicKey:
+          description: publicKey
+          type: string
+        directMessagingEmail:
+          description: directMessagingEmail
+          type: string
+        demoConfiguration:
+          type: object
+          properties:
+            type:
+              type: string
+              enum:
+              - default
+        website:
+          description: website
+          type: string
+        salesforceData:
+          $ref: '#/components/schemas/SalesforceData'
+        externalId:
+          $ref: '#/components/schemas/ExternalId'
+        secondaryExternalId:
+          $ref: '#/components/schemas/ExternalId'
+        dateOfBirth:
+          type: object
+          properties:
+            year:
+              description: dateOfBirth.year
+              type: number
+            month:
+              description: dateOfBirth.month
+              type: number
+            day:
+              description: dateOfBirth.day
+              type: number
+    ExternalId:
+      type: object
+      properties:
+        source:
+          description: externalId.source
+          type: string
+          enum:
+          - gcalendar
+          - successehs
+          - drchrono
+          - dentrix
+          - webpt
+          - theraoffice
+          - mi7
+          - practicefusion
+          - advancedmd
+          - acomrapidpm
+          - kareo
+          - nextech
+          - mwtherapy
+          - clinicient
+          - carecloud
+          - eclinicalmobile
+          - duxware
+          - labretriever
+          - optimispt
+          - referral
+          - recall
+          - allscriptspm
+          - lytec
+          - brightree
+          - fullslate
+          - nuemd
+          - centricityps
+          - officeally
+          - greenwayintergy
+          - compulink
+          - adspm
+          - dsnpm
+          - lumamock
+          - medicalmastermind
+          - meditouch
+          - healthnautica
+          - ezemrx
+          - hl7
+          - amazingcharts
+          - greenwayprimesuite
+          - raintree
+          - athenahealth
+          - revflow
+          - eclinicalworks10e
+          - hl7pickup
+          - mindbody
+          - eclinicalworkssql
+          - nextgen
+          - practiceperfect
+          - avimark
+          - clinix
+          - keymedical
+          - mdoffice
+          - webedoctor
+          - emapm
+          - medinformatix
+          - imsgo
+          - emds
+          - allscriptsunity
+          - medevolve
+          - caretracker
+          - clearpractice
+          - valant
+          - micromd
+          - systemedx
+          - medicalmaster
+          - athenamdp
+          - gmed
+          - roche
+          - onetouch
+          - somnoware
+          - managementplus
+          - lumacare
+          - nextechfhir
+          - curemd
+          - epic
+          - phoenixortho
+          - ezderm
+          - ggastromobile
+          - epicconfirmationpickup
+          - cerner
+          - allmeds
+          - oncoemrfilepickup
+          - imedicware
+          - modmedfhir
+          - clinux
+          - acuityscheduling
+          - medstreaming
+          - isalus
+          - meditechexpanse
+          - openemr
+          - genericfhir
+          - nextechpracticeplus
+          - sms
+          - voice
+          - email
+          - none
+        value:
+          description: externalId.value
+          type: string
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
   securitySchemes:
     Bearer:
       type: http

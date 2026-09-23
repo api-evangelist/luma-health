@@ -6,13 +6,13 @@ info:
     url: https://lumahealth-assets.s3.us-west-2.amazonaws.com/new_luma_logo_black.png
     backgroundColor: '#FFFFFF'
     altText: Luma Health
-  description: OpenAPI [Basic Structure](https://swagger.io/docs/specification/basic-structure/)
+  description: OpenAPI Basic Structure
 servers:
 - url: https://api.lumahealth.io/api/v2
 security:
 - Bearer: []
 tags:
-- name: appointments
+- name: Appointments
   description: Patient's appointments to see a doctor
 paths:
   /appointments/{appointmentId}:
@@ -20,7 +20,7 @@ paths:
       summary: Get appointment by id
       operationId: appointmentGet
       tags:
-      - appointments
+      - Appointments
       parameters:
       - name: appointmentId
         in: path
@@ -45,7 +45,7 @@ paths:
       summary: Update an appointment
       operationId: appointmentUpdate
       tags:
-      - appointments
+      - Appointments
       parameters:
       - name: appointmentId
         in: path
@@ -77,7 +77,7 @@ paths:
       summary: Delete an appointment
       operationId: appointmentDelete
       tags:
-      - appointments
+      - Appointments
       parameters:
       - name: appointmentId
         in: path
@@ -103,7 +103,7 @@ paths:
       summary: List appointments
       operationId: appointmentsList
       tags:
-      - appointments
+      - Appointments
       parameters:
       - name: patient
         in: query
@@ -206,7 +206,7 @@ paths:
       summary: Create appointment
       operationId: appointmentCreate
       tags:
-      - appointments
+      - Appointments
       requestBody:
         description: Optional description in *Markdown*
         required: true
@@ -233,29 +233,6 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   parameters:
-    pageParam:
-      in: query
-      name: page
-      required: false
-      type: integer
-      format: int32
-      default: 1
-      minimum: 1
-      schema:
-        type: integer
-        format: int32
-        default: 1
-        minimum: 1
-    createdAtParam:
-      in: query
-      name: createdAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was created.
     updatedAtParam:
       in: query
       name: updatedAt
@@ -266,20 +243,32 @@ components:
         format: date-time
       required: false
       description: The date/time when this object was updated.
-    updatedByParam:
+    limitParam:
+      name: limit
       in: query
-      name: updatedBy
+      description: How many items to fetch per page
       required: false
+      type: integer
+      format: int32
+      default: 500
+      minimum: 1
+      maximum: 1000
+      schema:
+        type: integer
+        format: int32
+        default: 500
+        minimum: 1
+        maximum: 1000
+    createdAtParam:
+      in: query
+      name: createdAt
       type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
+      format: date-time
       schema:
         type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the user who updated this object.
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
     createdByParam:
       in: query
       name: createdBy
@@ -310,6 +299,47 @@ components:
       type: string
       schema:
         type: string
+    updatedByParam:
+      in: query
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
+    pageParam:
+      in: query
+      name: page
+      required: false
+      type: integer
+      format: int32
+      default: 1
+      minimum: 1
+      schema:
+        type: integer
+        format: int32
+        default: 1
+        minimum: 1
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
     deletedParam:
       in: query
       name: deleted
@@ -324,41 +354,10 @@ components:
         - 0
         - 1
       description: Flag for logical deletion where 1 means deleted.
-    limitParam:
-      name: limit
-      in: query
-      description: How many items to fetch per page
-      required: false
-      type: integer
-      format: int32
-      default: 500
-      minimum: 1
-      maximum: 1000
-      schema:
-        type: integer
-        format: int32
-        default: 500
-        minimum: 1
-        maximum: 1000
-    userParam:
-      in: query
-      name: user
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the root account user.
   schemas:
-    userParam:
+    createdByParam:
       in: query
-      name: user
-      required: false
+      name: createdBy
       type: string
       pattern: '[0-9a-f]'
       minLength: 24
@@ -368,18 +367,8 @@ components:
         pattern: '[0-9a-f]'
         minLength: 24
         maxLength: 24
-      description: The ID of the root account user.
-    Error:
-      type: object
-      required:
-      - code
-      - message
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
+      required: false
+      description: The ID of the user who created this object.
     idParam:
       in: query
       name: _id
@@ -394,16 +383,34 @@ components:
         minLength: 24
         maxLength: 24
       description: Luma's internal ID of an object.
-    updatedAtParam:
+    updatedByParam:
       in: query
-      name: updatedAt
+      name: updatedBy
+      required: false
       type: string
-      format: date-time
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
       schema:
         type: string
-        format: date-time
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
+    deletedParam:
+      in: query
+      name: deleted
       required: false
-      description: The date/time when this object was updated.
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
     createdAtParam:
       in: query
       name: createdAt
@@ -414,6 +421,27 @@ components:
         format: date-time
       required: false
       description: The date/time when this object was created.
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
     Appointment:
       type: object
       description: An Appointment represents a scheduled visit between a patient and a provider at a facility, including the date, duration, appointment type, and status (unconfirmed, confirmed, or cancelled). It tracks how the appointment was created or updated, for example through an EHR integration sync, the scheduling UI, telehealth, or a patient rescheduling via text, and is the core object driving Luma Health's scheduling, reminders, and check-in workflows.
@@ -474,9 +502,9 @@ components:
           - unconfirmed
           - confirmed
           - cancelled
-    updatedByParam:
+    userParam:
       in: query
-      name: updatedBy
+      name: user
       required: false
       type: string
       pattern: '[0-9a-f]'
@@ -487,35 +515,7 @@ components:
         pattern: '[0-9a-f]'
         minLength: 24
         maxLength: 24
-      description: The ID of the user who updated this object.
-    deletedParam:
-      in: query
-      name: deleted
-      required: false
-      type: number
-      enum:
-      - 0
-      - 1
-      schema:
-        type: number
-        enum:
-        - 0
-        - 1
-      description: Flag for logical deletion where 1 means deleted.
-    createdByParam:
-      in: query
-      name: createdBy
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      required: false
-      description: The ID of the user who created this object.
+      description: The ID of the root account user.
   securitySchemes:
     Bearer:
       type: http

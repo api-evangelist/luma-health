@@ -6,7 +6,7 @@ info:
     url: https://lumahealth-assets.s3.us-west-2.amazonaws.com/new_luma_logo_black.png
     backgroundColor: '#FFFFFF'
     altText: Luma Health
-  description: OpenAPI [Basic Structure](https://swagger.io/docs/specification/basic-structure/)
+  description: OpenAPI Basic Structure
 servers:
 - url: https://api.lumahealth.io/api/v2
 security:
@@ -18,7 +18,25 @@ paths:
   /feedbackResponses:
     get:
       summary: List feedback responses
-      description: "Returns patient responses to NPS feedback surveys, along with clicks on the\npositive/negative feedback links sent after an appointment.\n\nRead-only: feedback responses are recorded by the NPS survey / feedback-link flow,\nnot created or edited through the API.\n\n`response.type` is one of:\n  - `npsscore`: the patient submitted a numeric NPS score (`response.value` is the score,\n    also copied to `npsscore` for convenience).\n  - `positive-click` / `negative-click`: the patient clicked the positive or negative link\n    sent in the feedback message, before any score was collected.\n"
+      description: 'Returns patient responses to NPS feedback surveys, along with clicks on the
+
+        positive/negative feedback links sent after an appointment.
+
+
+        Read-only: feedback responses are recorded by the NPS survey / feedback-link flow,
+
+        not created or edited through the API.
+
+
+        `response.type` is one of:
+
+        - `npsscore`: the patient submitted a numeric NPS score (`response.value` is the score,
+
+        also copied to `npsscore` for convenience).
+
+        - `positive-click` / `negative-click`: the patient clicked the positive or negative link
+
+        sent in the feedback message, before any score was collected.'
       operationId: feedbackResponsesList
       tags:
       - feedbackResponses
@@ -140,9 +158,7 @@ paths:
       summary: Get feedback response by id
       description: 'Read-only: feedback responses are recorded by the NPS survey / feedback-link flow,
 
-        not created or edited through the API.
-
-        '
+        not created or edited through the API.'
       operationId: feedbackResponseGet
       tags:
       - feedbackResponses
@@ -200,22 +216,16 @@ paths:
           description: Internal server error
 components:
   parameters:
-    populateParam:
-      name: _populate
+    updatedAtParam:
       in: query
-      description: Response properties which will be replaced by the referenced objects, separated by commas.
-      required: false
+      name: updatedAt
       type: string
+      format: date-time
       schema:
         type: string
-    selectParam:
-      name: _select
-      in: query
-      description: Response properties that should be returned, separated by commas.
+        format: date-time
       required: false
-      type: string
-      schema:
-        type: string
+      description: The date/time when this object was updated.
     pageParam:
       in: query
       name: page
@@ -229,44 +239,16 @@ components:
         format: int32
         default: 1
         minimum: 1
-    updatedByParam:
+    createdAtParam:
       in: query
-      name: updatedBy
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the user who updated this object.
-    deletedParam:
-      in: query
-      name: deleted
-      required: false
-      type: number
-      enum:
-      - 0
-      - 1
-      schema:
-        type: number
-        enum:
-        - 0
-        - 1
-      description: Flag for logical deletion where 1 means deleted.
-    updatedAtParam:
-      in: query
-      name: updatedAt
+      name: createdAt
       type: string
       format: date-time
       schema:
         type: string
         format: date-time
       required: false
-      description: The date/time when this object was updated.
+      description: The date/time when this object was created.
     createdByParam:
       in: query
       name: createdBy
@@ -281,16 +263,42 @@ components:
         maxLength: 24
       required: false
       description: The ID of the user who created this object.
-    createdAtParam:
+    selectParam:
+      name: _select
       in: query
-      name: createdAt
+      description: Response properties that should be returned, separated by commas.
+      required: false
       type: string
-      format: date-time
       schema:
         type: string
-        format: date-time
+    updatedByParam:
+      in: query
+      name: updatedBy
       required: false
-      description: The date/time when this object was created.
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
     limitParam:
       name: limit
       in: query
@@ -307,20 +315,28 @@ components:
         default: 500
         minimum: 1
         maximum: 1000
-    userParam:
+    deletedParam:
       in: query
-      name: user
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+    populateParam:
+      name: _populate
+      in: query
+      description: Response properties which will be replaced by the referenced objects, separated by commas.
       required: false
       type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
       schema:
         type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the root account user.
   securitySchemes:
     Bearer:
       type: http

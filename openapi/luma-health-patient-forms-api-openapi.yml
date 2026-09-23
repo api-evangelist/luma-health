@@ -6,13 +6,13 @@ info:
     url: https://lumahealth-assets.s3.us-west-2.amazonaws.com/new_luma_logo_black.png
     backgroundColor: '#FFFFFF'
     altText: Luma Health
-  description: OpenAPI [Basic Structure](https://swagger.io/docs/specification/basic-structure/)
+  description: OpenAPI Basic Structure
 servers:
 - url: https://api.lumahealth.io/api/v2
 security:
 - Bearer: []
 tags:
-- name: patientForms
+- name: Patient Forms
   description: Patient forms answered by patients
 paths:
   /patientForms:
@@ -20,7 +20,7 @@ paths:
       summary: Show a list of patientForms
       operationId: listPatientForms
       tags:
-      - patientForms
+      - Patient Forms
       parameters:
       - name: patient
         in: query
@@ -270,7 +270,7 @@ paths:
       summary: Get patientForm by id
       operationId: patientFormGet
       tags:
-      - patientForms
+      - Patient Forms
       parameters:
       - name: patientFormId
         in: path
@@ -296,7 +296,7 @@ paths:
       summary: Update a patientForm
       operationId: patientFormUpdate
       tags:
-      - patientForms
+      - Patient Forms
       parameters:
       - name: patientFormId
         in: path
@@ -329,7 +329,7 @@ paths:
       summary: Delete a patientForm
       operationId: patientFormDelete
       tags:
-      - patientForms
+      - Patient Forms
       parameters:
       - name: patientFormId
         in: path
@@ -353,22 +353,16 @@ paths:
           description: Access token does not have the required scope
 components:
   parameters:
-    populateParam:
-      name: _populate
+    updatedAtParam:
       in: query
-      description: Response properties which will be replaced by the referenced objects, separated by commas.
-      required: false
+      name: updatedAt
       type: string
+      format: date-time
       schema:
         type: string
-    selectParam:
-      name: _select
-      in: query
-      description: Response properties that should be returned, separated by commas.
+        format: date-time
       required: false
-      type: string
-      schema:
-        type: string
+      description: The date/time when this object was updated.
     pageParam:
       in: query
       name: page
@@ -382,44 +376,16 @@ components:
         format: int32
         default: 1
         minimum: 1
-    updatedByParam:
+    createdAtParam:
       in: query
-      name: updatedBy
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the user who updated this object.
-    deletedParam:
-      in: query
-      name: deleted
-      required: false
-      type: number
-      enum:
-      - 0
-      - 1
-      schema:
-        type: number
-        enum:
-        - 0
-        - 1
-      description: Flag for logical deletion where 1 means deleted.
-    updatedAtParam:
-      in: query
-      name: updatedAt
+      name: createdAt
       type: string
       format: date-time
       schema:
         type: string
         format: date-time
       required: false
-      description: The date/time when this object was updated.
+      description: The date/time when this object was created.
     createdByParam:
       in: query
       name: createdBy
@@ -434,16 +400,48 @@ components:
         maxLength: 24
       required: false
       description: The ID of the user who created this object.
-    createdAtParam:
+    selectParam:
+      name: _select
       in: query
-      name: createdAt
+      description: Response properties that should be returned, separated by commas.
+      required: false
       type: string
-      format: date-time
       schema:
         type: string
-        format: date-time
+    updatedByParam:
+      in: query
+      name: updatedBy
       required: false
-      description: The date/time when this object was created.
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+    refParam:
+      in: query
+      name: ref
+      description: Indicates what this is about. Depending on this value, you also know what the parameter `refId` refers to.
+      schema:
+        $ref: '#/components/schemas/Ref'
     limitParam:
       name: limit
       in: query
@@ -460,26 +458,28 @@ components:
         default: 500
         minimum: 1
         maximum: 1000
-    refParam:
+    populateParam:
+      name: _populate
       in: query
-      name: ref
-      description: Indicates what this is about. Depending on this value, you also know what the parameter `refId` refers to.
-      schema:
-        $ref: '#/components/schemas/Ref'
-    userParam:
-      in: query
-      name: user
+      description: Response properties which will be replaced by the referenced objects, separated by commas.
       required: false
       type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
       schema:
         type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the root account user.
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
   schemas:
     PatientFormRequest:
       type: object
@@ -502,6 +502,38 @@ components:
           - open
           - in-progress
           - closed
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    RolesByUser:
+      type: object
+      description: Object containing 2 keys, referringProvider and renderingProvider. The value for each key is an array. The content of the array should be the root account ids under the same organization, where this user has the role with the same name of the key.
+      required: []
+      properties:
+        referringProvider:
+          type: array
+          description: List of root account IDs under an organization where the user has the role referringProvider
+          items:
+            type: string
+            pattern: '[0-9a-f]'
+            minLength: 24
+            maxLength: 24
+        renderingProvider:
+          type: array
+          description: List of root account IDs under an organization where the user has the role renderingProvider
+          items:
+            type: string
+            pattern: '[0-9a-f]'
+            minLength: 24
+            maxLength: 24
     SalesforceData:
       type: object
       description: Salesforce internal meta data for this account.
@@ -740,17 +772,6 @@ components:
           - none
         value:
           description: externalId.value
-          type: string
-    Error:
-      type: object
-      required:
-      - code
-      - message
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
           type: string
     Ref:
       description: 'Indicates what this is about. Depending on this value, you also know what the parameter `refId` refers to.<br/>
@@ -2131,27 +2152,6 @@ components:
         querystring:
           description: querystring ReplaceAny
           type: object
-    RolesByUser:
-      type: object
-      description: Object containing 2 keys, referringProvider and renderingProvider. The value for each key is an array. The content of the array should be the root account ids under the same organization, where this user has the role with the same name of the key.
-      required: []
-      properties:
-        referringProvider:
-          type: array
-          description: List of root account IDs under an organization where the user has the role referringProvider
-          items:
-            type: string
-            pattern: '[0-9a-f]'
-            minLength: 24
-            maxLength: 24
-        renderingProvider:
-          type: array
-          description: List of root account IDs under an organization where the user has the role renderingProvider
-          items:
-            type: string
-            pattern: '[0-9a-f]'
-            minLength: 24
-            maxLength: 24
   securitySchemes:
     Bearer:
       type: http

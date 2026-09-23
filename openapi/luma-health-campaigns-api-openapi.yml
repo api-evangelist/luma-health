@@ -6,13 +6,13 @@ info:
     url: https://lumahealth-assets.s3.us-west-2.amazonaws.com/new_luma_logo_black.png
     backgroundColor: '#FFFFFF'
     altText: Luma Health
-  description: OpenAPI [Basic Structure](https://swagger.io/docs/specification/basic-structure/)
+  description: OpenAPI Basic Structure
 servers:
 - url: https://api.lumahealth.io/api/v2
 security:
 - Bearer: []
 tags:
-- name: campaigns
+- name: Campaigns
   description: Contact preference campaigns that determine how and in what order a patient, facility, or user is contacted
 paths:
   /campaigns:
@@ -20,7 +20,7 @@ paths:
       summary: List campaigns
       operationId: campaignsList
       tags:
-      - campaigns
+      - Campaigns
       parameters:
       - name: ref
         in: query
@@ -107,7 +107,7 @@ paths:
       summary: Create campaign
       operationId: campaignCreate
       tags:
-      - campaigns
+      - Campaigns
       requestBody:
         description: Optional description in *Markdown*
         required: true
@@ -137,7 +137,7 @@ paths:
       summary: Get campaign by id
       operationId: campaignGet
       tags:
-      - campaigns
+      - Campaigns
       parameters:
       - name: campaignId
         in: path
@@ -162,7 +162,7 @@ paths:
       summary: Update a campaign
       operationId: campaignUpdate
       tags:
-      - campaigns
+      - Campaigns
       parameters:
       - name: campaignId
         in: path
@@ -192,30 +192,17 @@ paths:
           description: Access token does not have the required scope
 components:
   schemas:
-    createdAtParam:
-      in: query
-      name: createdAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was created.
-    updatedByParam:
-      in: query
-      name: updatedBy
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the user who updated this object.
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
     createdByParam:
       in: query
       name: createdBy
@@ -230,34 +217,16 @@ components:
         maxLength: 24
       required: false
       description: The ID of the user who created this object.
-    userParam:
+    updatedAtParam:
       in: query
-      name: user
-      required: false
+      name: updatedAt
       type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
+      format: date-time
       schema:
         type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the root account user.
-    deletedParam:
-      in: query
-      name: deleted
+        format: date-time
       required: false
-      type: number
-      enum:
-      - 0
-      - 1
-      schema:
-        type: number
-        enum:
-        - 0
-        - 1
-      description: Flag for logical deletion where 1 means deleted.
+      description: The date/time when this object was updated.
     Campaign:
       type: object
       description: Represents an outreach campaign that targets a specific resource, such as a patient, facility, or user, and defines which contact channels like SMS, email, or voice should be attempted and in what order. It tracks whether the campaign is active, who last updated it, and optional external identifiers for syncing with third-party systems, and is used to drive automated patient engagement workflows like recall or referral outreach.
@@ -310,17 +279,20 @@ components:
         active:
           schema:
             type: boolean
-    Error:
-      type: object
-      required:
-      - code
-      - message
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
     idParam:
       in: query
       name: _id
@@ -335,16 +307,44 @@ components:
         minLength: 24
         maxLength: 24
       description: Luma's internal ID of an object.
-    updatedAtParam:
+    deletedParam:
       in: query
-      name: updatedAt
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+    updatedByParam:
+      in: query
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
+    createdAtParam:
+      in: query
+      name: createdAt
       type: string
       format: date-time
       schema:
         type: string
         format: date-time
       required: false
-      description: The date/time when this object was updated.
+      description: The date/time when this object was created.
   securitySchemes:
     Bearer:
       type: http

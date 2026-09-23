@@ -6,13 +6,13 @@ info:
     url: https://lumahealth-assets.s3.us-west-2.amazonaws.com/new_luma_logo_black.png
     backgroundColor: '#FFFFFF'
     altText: Luma Health
-  description: OpenAPI [Basic Structure](https://swagger.io/docs/specification/basic-structure/)
+  description: OpenAPI Basic Structure
 servers:
 - url: https://api.lumahealth.io/api/v2
 security:
 - Bearer: []
 tags:
-- name: settings
+- name: Settings
   description: Luma resource settings
 paths:
   /settings:
@@ -20,7 +20,7 @@ paths:
       summary: List settings
       operationId: settingsList
       tags:
-      - settings
+      - Settings
       parameters:
       - name: ref
         description: The name of the resource to which these settings apply (user, appointment type, facility, integrator). See also refId.
@@ -87,7 +87,7 @@ paths:
       summary: Get setting by id
       operationId: settingGet
       tags:
-      - settings
+      - Settings
       parameters:
       - name: settingId
         in: path
@@ -113,7 +113,7 @@ paths:
       summary: Update a setting
       operationId: settingUpdate
       tags:
-      - settings
+      - Settings
       parameters:
       - name: settingId
         in: path
@@ -143,7 +143,30 @@ paths:
         '403':
           description: Access token does not have the required scope
 components:
-  schemas:
+  parameters:
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
+    pageParam:
+      in: query
+      name: page
+      required: false
+      type: integer
+      format: int32
+      default: 1
+      minimum: 1
+      schema:
+        type: integer
+        format: int32
+        default: 1
+        minimum: 1
     createdAtParam:
       in: query
       name: createdAt
@@ -154,20 +177,6 @@ components:
         format: date-time
       required: false
       description: The date/time when this object was created.
-    updatedByParam:
-      in: query
-      name: updatedBy
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the user who updated this object.
     createdByParam:
       in: query
       name: createdBy
@@ -182,9 +191,17 @@ components:
         maxLength: 24
       required: false
       description: The ID of the user who created this object.
-    userParam:
+    selectParam:
+      name: _select
       in: query
-      name: user
+      description: Response properties that should be returned, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    updatedByParam:
+      in: query
+      name: updatedBy
       required: false
       type: string
       pattern: '[0-9a-f]'
@@ -195,7 +212,56 @@ components:
         pattern: '[0-9a-f]'
         minLength: 24
         maxLength: 24
-      description: The ID of the root account user.
+      description: The ID of the user who updated this object.
+    limitParam:
+      name: limit
+      in: query
+      description: How many items to fetch per page
+      required: false
+      type: integer
+      format: int32
+      default: 500
+      minimum: 1
+      maximum: 1000
+      schema:
+        type: integer
+        format: int32
+        default: 500
+        minimum: 1
+        maximum: 1000
+    populateParam:
+      name: _populate
+      in: query
+      description: Response properties which will be replaced by the referenced objects, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+  schemas:
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
     SettingRequest:
       type: object
       properties:
@@ -216,20 +282,6 @@ components:
           - integrator
         settings:
           $ref: '#/components/schemas/SettingProperty'
-    deletedParam:
-      in: query
-      name: deleted
-      required: false
-      type: number
-      enum:
-      - 0
-      - 1
-      schema:
-        type: number
-        enum:
-        - 0
-        - 1
-      description: Flag for logical deletion where 1 means deleted.
     SettingResponse:
       type: object
       description: Represents the configuration settings for a Luma Health account, covering areas such as session timeouts, telehealth behavior, kiosk flows, and data sync freshness windows. It is a large, flexible settings object used to control product behavior on a per-customer basis, and can be scoped to a user, provider, facility, appointment type, or integrator.
@@ -265,20 +317,20 @@ components:
           - integrator
         settings:
           $ref: '#/components/schemas/SettingProperty'
-    idParam:
+    userParam:
       in: query
-      name: _id
+      name: user
+      required: false
       type: string
       pattern: '[0-9a-f]'
       minLength: 24
       maxLength: 24
-      required: false
       schema:
         type: string
         pattern: '[0-9a-f]'
         minLength: 24
         maxLength: 24
-      description: Luma's internal ID of an object.
+      description: The ID of the root account user.
     SettingProperty:
       type: object
       properties:
@@ -2408,46 +2460,34 @@ components:
               description: Determines if the file upload document linked to an estimate document must be updated with the patient ID and the estimate ID.
               type: boolean
               default: false
-    updatedAtParam:
+    idParam:
       in: query
-      name: updatedAt
+      name: _id
       type: string
-      format: date-time
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      required: false
       schema:
         type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was updated.
-  parameters:
-    populateParam:
-      name: _populate
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: Luma's internal ID of an object.
+    deletedParam:
       in: query
-      description: Response properties which will be replaced by the referenced objects, separated by commas.
+      name: deleted
       required: false
-      type: string
+      type: number
+      enum:
+      - 0
+      - 1
       schema:
-        type: string
-    selectParam:
-      name: _select
-      in: query
-      description: Response properties that should be returned, separated by commas.
-      required: false
-      type: string
-      schema:
-        type: string
-    pageParam:
-      in: query
-      name: page
-      required: false
-      type: integer
-      format: int32
-      default: 1
-      minimum: 1
-      schema:
-        type: integer
-        format: int32
-        default: 1
-        minimum: 1
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
     updatedByParam:
       in: query
       name: updatedBy
@@ -2462,16 +2502,6 @@ components:
         minLength: 24
         maxLength: 24
       description: The ID of the user who updated this object.
-    updatedAtParam:
-      in: query
-      name: updatedAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was updated.
     createdAtParam:
       in: query
       name: createdAt
@@ -2482,36 +2512,6 @@ components:
         format: date-time
       required: false
       description: The date/time when this object was created.
-    createdByParam:
-      in: query
-      name: createdBy
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      required: false
-      description: The ID of the user who created this object.
-    limitParam:
-      name: limit
-      in: query
-      description: How many items to fetch per page
-      required: false
-      type: integer
-      format: int32
-      default: 500
-      minimum: 1
-      maximum: 1000
-      schema:
-        type: integer
-        format: int32
-        default: 500
-        minimum: 1
-        maximum: 1000
   securitySchemes:
     Bearer:
       type: http

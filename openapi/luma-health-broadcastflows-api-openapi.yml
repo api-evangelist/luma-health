@@ -6,7 +6,7 @@ info:
     url: https://lumahealth-assets.s3.us-west-2.amazonaws.com/new_luma_logo_black.png
     backgroundColor: '#FFFFFF'
     altText: Luma Health
-  description: OpenAPI [Basic Structure](https://swagger.io/docs/specification/basic-structure/)
+  description: OpenAPI Basic Structure
 servers:
 - url: https://api.lumahealth.io/api/v2
 security:
@@ -268,9 +268,7 @@ paths:
 
         - Updates the broadcast flow status to `pre-processing`
 
-        - Records the reviewer and review timestamp
-
-        '
+        - Records the reviewer and review timestamp'
       operationId: broadcastFlowsApprove
       tags:
       - broadcastFlows
@@ -353,9 +351,7 @@ paths:
 
         - Updates the broadcast flow status to `needs-edit`
 
-        - Records the reviewer, review timestamp, and required changes
-
-        '
+        - Records the reviewer, review timestamp, and required changes'
       operationId: broadcastFlowsDecline
       tags:
       - broadcastFlows
@@ -464,29 +460,6 @@ paths:
           description: Internal server error
 components:
   parameters:
-    pageParam:
-      in: query
-      name: page
-      required: false
-      type: integer
-      format: int32
-      default: 1
-      minimum: 1
-      schema:
-        type: integer
-        format: int32
-        default: 1
-        minimum: 1
-    createdAtParam:
-      in: query
-      name: createdAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was created.
     updatedAtParam:
       in: query
       name: updatedAt
@@ -497,20 +470,32 @@ components:
         format: date-time
       required: false
       description: The date/time when this object was updated.
-    updatedByParam:
+    limitParam:
+      name: limit
       in: query
-      name: updatedBy
+      description: How many items to fetch per page
       required: false
+      type: integer
+      format: int32
+      default: 500
+      minimum: 1
+      maximum: 1000
+      schema:
+        type: integer
+        format: int32
+        default: 500
+        minimum: 1
+        maximum: 1000
+    createdAtParam:
+      in: query
+      name: createdAt
       type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
+      format: date-time
       schema:
         type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the user who updated this object.
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
     createdByParam:
       in: query
       name: createdBy
@@ -541,99 +526,6 @@ components:
       type: string
       schema:
         type: string
-    deletedParam:
-      in: query
-      name: deleted
-      required: false
-      type: number
-      enum:
-      - 0
-      - 1
-      schema:
-        type: number
-        enum:
-        - 0
-        - 1
-      description: Flag for logical deletion where 1 means deleted.
-    limitParam:
-      name: limit
-      in: query
-      description: How many items to fetch per page
-      required: false
-      type: integer
-      format: int32
-      default: 500
-      minimum: 1
-      maximum: 1000
-      schema:
-        type: integer
-        format: int32
-        default: 500
-        minimum: 1
-        maximum: 1000
-    userParam:
-      in: query
-      name: user
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the root account user.
-  schemas:
-    userParam:
-      in: query
-      name: user
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the root account user.
-    idParam:
-      in: query
-      name: _id
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      required: false
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: Luma's internal ID of an object.
-    updatedAtParam:
-      in: query
-      name: updatedAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was updated.
-    createdAtParam:
-      in: query
-      name: createdAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was created.
     updatedByParam:
       in: query
       name: updatedBy
@@ -648,6 +540,198 @@ components:
         minLength: 24
         maxLength: 24
       description: The ID of the user who updated this object.
+    pageParam:
+      in: query
+      name: page
+      required: false
+      type: integer
+      format: int32
+      default: 1
+      minimum: 1
+      schema:
+        type: integer
+        format: int32
+        default: 1
+        minimum: 1
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+  schemas:
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+    idParam:
+      in: query
+      name: _id
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      required: false
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: Luma's internal ID of an object.
+    updatedByParam:
+      in: query
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
+    BroadcastEvent:
+      type: object
+      description: A BroadcastEvent records a single unit of work within a Luma broadcast flow, a bulk outbound messaging campaign sent to many patients at once (for example a recall or announcement uploaded as a spreadsheet). Each event tracks either a review action taken on the flow or the processing of one row or patient, including its current step (message queued, sent, failed, or skipped), any error encountered, and links to the associated patient and appointment.
+      properties:
+        _id:
+          $ref: '#/components/schemas/idParam'
+        user:
+          $ref: '#/components/schemas/userParam'
+        deleted:
+          $ref: '#/components/schemas/deletedParam'
+        createdBy:
+          $ref: '#/components/schemas/createdByParam'
+        updatedBy:
+          $ref: '#/components/schemas/updatedByParam'
+        createdAt:
+          $ref: '#/components/schemas/createdAtParam'
+        updatedAt:
+          $ref: '#/components/schemas/updatedAtParam'
+        broadcastFlow:
+          $ref: '#/components/schemas/idParam'
+          required: true
+        patient:
+          $ref: '#/components/schemas/idParam'
+        statuses:
+          type: array
+          items:
+            type: object
+            properties:
+              step:
+                type: string
+                required: true
+                enum:
+                - RowProcess
+                - MessageProcess
+              status:
+                type: string
+                required: true
+                enum:
+                - in-progress
+                - success
+                - failure
+                - skipped
+              stepCreatedAt:
+                type: string
+                format: date-time
+                required: true
+              stepUpdatedAt:
+                type: string
+                format: date-time
+                required: true
+              patient:
+                $ref: '#/components/schemas/idParam'
+              retryCount:
+                type: integer
+        row:
+          type: integer
+        rowRecord:
+          type: object
+          additionalProperties:
+            type: string
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
     BroadcastFlow:
       type: object
       description: A BroadcastFlow represents a bulk patient outreach campaign that sends the same message via SMS, email, or voice to a batch of patients, either from an uploaded contact file, an SFTP feed, or a filtered set of appointments. It tracks the full lifecycle of that campaign including upload and column mapping, optional approval review, scheduling, batched message sending, and per-row success and failure statistics, and can be organized into parent and child flows for large batches, commonly used for patient recall and other mass communications.
@@ -768,94 +852,6 @@ components:
               type: integer
             messagesSkipped:
               type: integer
-    BroadcastEvent:
-      type: object
-      description: A BroadcastEvent records a single unit of work within a Luma broadcast flow, a bulk outbound messaging campaign sent to many patients at once (for example a recall or announcement uploaded as a spreadsheet). Each event tracks either a review action taken on the flow or the processing of one row or patient, including its current step (message queued, sent, failed, or skipped), any error encountered, and links to the associated patient and appointment.
-      properties:
-        _id:
-          $ref: '#/components/schemas/idParam'
-        user:
-          $ref: '#/components/schemas/userParam'
-        deleted:
-          $ref: '#/components/schemas/deletedParam'
-        createdBy:
-          $ref: '#/components/schemas/createdByParam'
-        updatedBy:
-          $ref: '#/components/schemas/updatedByParam'
-        createdAt:
-          $ref: '#/components/schemas/createdAtParam'
-        updatedAt:
-          $ref: '#/components/schemas/updatedAtParam'
-        broadcastFlow:
-          $ref: '#/components/schemas/idParam'
-          required: true
-        patient:
-          $ref: '#/components/schemas/idParam'
-        statuses:
-          type: array
-          items:
-            type: object
-            properties:
-              step:
-                type: string
-                required: true
-                enum:
-                - RowProcess
-                - MessageProcess
-              status:
-                type: string
-                required: true
-                enum:
-                - in-progress
-                - success
-                - failure
-                - skipped
-              stepCreatedAt:
-                type: string
-                format: date-time
-                required: true
-              stepUpdatedAt:
-                type: string
-                format: date-time
-                required: true
-              patient:
-                $ref: '#/components/schemas/idParam'
-              retryCount:
-                type: integer
-        row:
-          type: integer
-        rowRecord:
-          type: object
-          additionalProperties:
-            type: string
-    deletedParam:
-      in: query
-      name: deleted
-      required: false
-      type: number
-      enum:
-      - 0
-      - 1
-      schema:
-        type: number
-        enum:
-        - 0
-        - 1
-      description: Flag for logical deletion where 1 means deleted.
-    createdByParam:
-      in: query
-      name: createdBy
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      required: false
-      description: The ID of the user who created this object.
   securitySchemes:
     Bearer:
       type: http

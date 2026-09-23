@@ -6,7 +6,7 @@ info:
     url: https://lumahealth-assets.s3.us-west-2.amazonaws.com/new_luma_logo_black.png
     backgroundColor: '#FFFFFF'
     altText: Luma Health
-  description: OpenAPI [Basic Structure](https://swagger.io/docs/specification/basic-structure/)
+  description: OpenAPI Basic Structure
 servers:
 - url: https://api.lumahealth.io/api/v2
 security:
@@ -448,7 +448,7 @@ paths:
           description: Access token does not have the required scope
   /lumabotFlows/{lumabotFlowId}/pdf:
     get:
-      summary: Get responses of a lumabotFlow in PDF format.
+      summary: Get responses of a lumabotFlow in PDF format
       operationId: lumabotFlowGetPdf
       tags:
       - lumabotFlows
@@ -477,7 +477,7 @@ paths:
           description: Access token does not have the required scope
   /lumabotFlows/{lumabotFlowId}/responses:
     get:
-      summary: Get responses of a lumabotFlow and its subsequent flows.
+      summary: Get responses of a lumabotFlow and its subsequent flows
       operationId: lumabotFlowGetResponses
       tags:
       - lumabotFlows
@@ -523,7 +523,7 @@ paths:
           description: Access token does not have the required scope
   /lumabotFlows/{lumabotFlowId}/snapshot:
     get:
-      summary: Get responses of a lumabotFlow and its subsequent flows in a question/answer format.
+      summary: Get responses of a lumabotFlow and its subsequent flows in a question/answer…
       operationId: lumabotFlowGetSnapshot
       tags:
       - lumabotFlows
@@ -617,29 +617,6 @@ paths:
           description: Access token does not have the required scope
 components:
   parameters:
-    pageParam:
-      in: query
-      name: page
-      required: false
-      type: integer
-      format: int32
-      default: 1
-      minimum: 1
-      schema:
-        type: integer
-        format: int32
-        default: 1
-        minimum: 1
-    createdAtParam:
-      in: query
-      name: createdAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was created.
     updatedAtParam:
       in: query
       name: updatedAt
@@ -650,64 +627,6 @@ components:
         format: date-time
       required: false
       description: The date/time when this object was updated.
-    updatedByParam:
-      in: query
-      name: updatedBy
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the user who updated this object.
-    createdByParam:
-      in: query
-      name: createdBy
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      required: false
-      description: The ID of the user who created this object.
-    populateParam:
-      name: _populate
-      in: query
-      description: Response properties which will be replaced by the referenced objects, separated by commas.
-      required: false
-      type: string
-      schema:
-        type: string
-    selectParam:
-      name: _select
-      in: query
-      description: Response properties that should be returned, separated by commas.
-      required: false
-      type: string
-      schema:
-        type: string
-    deletedParam:
-      in: query
-      name: deleted
-      required: false
-      type: number
-      enum:
-      - 0
-      - 1
-      schema:
-        type: number
-        enum:
-        - 0
-        - 1
-      description: Flag for logical deletion where 1 means deleted.
     limitParam:
       name: limit
       in: query
@@ -724,6 +643,73 @@ components:
         default: 500
         minimum: 1
         maximum: 1000
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
+    populateParam:
+      name: _populate
+      in: query
+      description: Response properties which will be replaced by the referenced objects, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    selectParam:
+      name: _select
+      in: query
+      description: Response properties that should be returned, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    updatedByParam:
+      in: query
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
+    pageParam:
+      in: query
+      name: page
+      required: false
+      type: integer
+      format: int32
+      default: 1
+      minimum: 1
+      schema:
+        type: integer
+        format: int32
+        default: 1
+        minimum: 1
     userParam:
       in: query
       name: user
@@ -738,11 +724,24 @@ components:
         minLength: 24
         maxLength: 24
       description: The ID of the root account user.
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
   schemas:
-    userParam:
+    createdByParam:
       in: query
-      name: user
-      required: false
+      name: createdBy
       type: string
       pattern: '[0-9a-f]'
       minLength: 24
@@ -752,30 +751,211 @@ components:
         pattern: '[0-9a-f]'
         minLength: 24
         maxLength: 24
-      description: The ID of the root account user.
-    Error:
+      required: false
+      description: The ID of the user who created this object.
+    LumabotFlowSnapshotResponse:
       type: object
-      required:
-      - code
-      - message
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
-    LumabotFlowAnswerRequest:
-      type: object
+      description: This resource is a read only, point in time snapshot of a completed or in progress Lumabot conversation, presented as a simple transcript of messages exchanged between the patient and the chatbot along with when the conversation started and ended. Unlike the editable flow template or the live flow object, this snapshot is a fixed record meant for display or auditing rather than further modification. It is used to let staff or systems review exactly what was said during a specific patient interaction such as an intake or screening session.
       properties:
         id:
-          description: itemId of the answer if selecting a multiple-choice option
           type: string
-        text:
-          description: Simple text answer or a summary of the answer (in case of complex answers) to show on reports and hub
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        title:
           type: string
-        details:
-          description: Complex object containing details of a complex answer, like appointment details or address, for example
+        startDate:
+          type: string
+          format: date-time
+        endDate:
+          type: string
+          format: date-time
+        messages:
+          type: array
+          items:
+            type: object
+            properties:
+              text:
+                type: string
+              createdAt:
+                type: string
+                format: date-time
+              source:
+                type: string
+                enum:
+                - patient
+                - lumabot
+    idParam:
+      in: query
+      name: _id
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      required: false
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: Luma's internal ID of an object.
+    updatedByParam:
+      in: query
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
+    LumabotFlowQuestionResponse:
+      type: object
+      description: This resource represents a single question within a Lumabot conversational flow, including its type such as text, date, multiple choice, phone number, or scheduler, along with its title, validation rules, answer options, and redirect logic that determines what question comes next. It also carries Spanish and Portuguese translations for the question text so the chatbot can present questions in the patient's preferred language. It is used to define and render one interactive step in an automated patient facing conversation such as an intake form or screening questionnaire.
+      properties:
+        id:
+          description: null
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        type:
+          type: string
+          enum:
+          - 2FA
+          - address
+          - availability_details
+          - date
+          - email
+          - jump
+          - manage_appointment
+          - medication_search
+          - multiple_choice
+          - pharmacy_search
+          - phone_number
+          - scheduler
+          - template_welcome
+          - template
+          - text
+          - yes_no
+          - zipcode
+        squiggly:
+          type: string
+        title:
+          type: string
+        redirectType:
+          type: string
+          enum:
+          - none
+          - goTo
+          - goToFlow
+          - goToPrevious
+          - isFinal
+          - externalUrl
+          - scheduler
+        redirectValue:
+          type: string
+        validations:
           type: object
+          properties:
+            required:
+              type: boolean
+        properties:
+          type: object
+          properties:
+            template:
+              type: string
+            visibility:
+              type: string
+            answers:
+              type: object
+              properties:
+                id:
+                  type: string
+                redirectType:
+                  type: string
+                  enum:
+                  - none
+                  - goTo
+                  - goToFlow
+                  - goToPrevious
+                  - isFinal
+                  - externalUrl
+                  - scheduler
+                redirectValue:
+                  type: string
+                label:
+                  type: string
+                locales:
+                  description: A map-object whose keys may be any of these language codes `es` or `pt`
+                  type: object
+                  properties:
+                    es:
+                      type: object
+                      properties:
+                        description:
+                          description: the translation of the description of the question into spanish
+                          type: string
+                        title:
+                          description: the translation of the title of the question into spanish
+                          type: string
+                        properties:
+                          type: object
+                    pt:
+                      type: object
+                      properties:
+                        description:
+                          description: the translation of the description of the question into portuguese
+                          type: string
+                        title:
+                          description: the translation of the title of the question into portuguese
+                          type: string
+                        properties:
+                          type: object
+                disable:
+                  type: boolean
+                properties:
+                  type: object
+                  properties:
+                    params:
+                      type: object
+        locales:
+          description: A map-object whose keys may be any of these language codes `es` or `pt`
+          type: object
+          properties:
+            es:
+              type: object
+              properties:
+                description:
+                  description: the translation of the description of the question into spanish
+                  type: string
+                title:
+                  description: the translation of the title of the question into spanish
+                  type: string
+                properties:
+                  description: same structure as `responses.pages[0].questions[i].properties`.
+                  type: object
+            pt:
+              type: object
+              properties:
+                description:
+                  description: the translation of the description of the question into portuguese
+                  type: string
+                title:
+                  description: the translation of the title of the question into portuguese
+                  type: string
+                properties:
+                  description: same structure as `responses.pages[0].properties`.
+                  type: object
+        lumabotFlowId:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
     LumabotFlowRequest:
       type: object
       properties:
@@ -985,229 +1165,6 @@ components:
             pattern: '[0-9a-f]'
             minLength: 24
             maxLength: 24
-    idParam:
-      in: query
-      name: _id
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      required: false
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: Luma's internal ID of an object.
-    LumabotFlowSnapshotResponse:
-      type: object
-      description: This resource is a read only, point in time snapshot of a completed or in progress Lumabot conversation, presented as a simple transcript of messages exchanged between the patient and the chatbot along with when the conversation started and ended. Unlike the editable flow template or the live flow object, this snapshot is a fixed record meant for display or auditing rather than further modification. It is used to let staff or systems review exactly what was said during a specific patient interaction such as an intake or screening session.
-      properties:
-        id:
-          type: string
-          pattern: '[0-9a-f]'
-          minLength: 24
-          maxLength: 24
-        title:
-          type: string
-        startDate:
-          type: string
-          format: date-time
-        endDate:
-          type: string
-          format: date-time
-        messages:
-          type: array
-          items:
-            type: object
-            properties:
-              text:
-                type: string
-              createdAt:
-                type: string
-                format: date-time
-              source:
-                type: string
-                enum:
-                - patient
-                - lumabot
-    LumabotFlowQuestionResponse:
-      type: object
-      description: This resource represents a single question within a Lumabot conversational flow, including its type such as text, date, multiple choice, phone number, or scheduler, along with its title, validation rules, answer options, and redirect logic that determines what question comes next. It also carries Spanish and Portuguese translations for the question text so the chatbot can present questions in the patient's preferred language. It is used to define and render one interactive step in an automated patient facing conversation such as an intake form or screening questionnaire.
-      properties:
-        id:
-          description: null
-          type: string
-          pattern: '[0-9a-f]'
-          minLength: 24
-          maxLength: 24
-        type:
-          type: string
-          enum:
-          - 2FA
-          - address
-          - availability_details
-          - date
-          - email
-          - jump
-          - manage_appointment
-          - medication_search
-          - multiple_choice
-          - pharmacy_search
-          - phone_number
-          - scheduler
-          - template_welcome
-          - template
-          - text
-          - yes_no
-          - zipcode
-        squiggly:
-          type: string
-        title:
-          type: string
-        redirectType:
-          type: string
-          enum:
-          - none
-          - goTo
-          - goToFlow
-          - goToPrevious
-          - isFinal
-          - externalUrl
-          - scheduler
-        redirectValue:
-          type: string
-        validations:
-          type: object
-          properties:
-            required:
-              type: boolean
-        properties:
-          type: object
-          properties:
-            template:
-              type: string
-            visibility:
-              type: string
-            answers:
-              type: object
-              properties:
-                id:
-                  type: string
-                redirectType:
-                  type: string
-                  enum:
-                  - none
-                  - goTo
-                  - goToFlow
-                  - goToPrevious
-                  - isFinal
-                  - externalUrl
-                  - scheduler
-                redirectValue:
-                  type: string
-                label:
-                  type: string
-                locales:
-                  description: A map-object whose keys may be any of these language codes `es` or `pt`
-                  type: object
-                  properties:
-                    es:
-                      type: object
-                      properties:
-                        description:
-                          description: the translation of the description of the question into spanish
-                          type: string
-                        title:
-                          description: the translation of the title of the question into spanish
-                          type: string
-                        properties:
-                          type: object
-                    pt:
-                      type: object
-                      properties:
-                        description:
-                          description: the translation of the description of the question into portuguese
-                          type: string
-                        title:
-                          description: the translation of the title of the question into portuguese
-                          type: string
-                        properties:
-                          type: object
-                disable:
-                  type: boolean
-                properties:
-                  type: object
-                  properties:
-                    params:
-                      type: object
-        locales:
-          description: A map-object whose keys may be any of these language codes `es` or `pt`
-          type: object
-          properties:
-            es:
-              type: object
-              properties:
-                description:
-                  description: the translation of the description of the question into spanish
-                  type: string
-                title:
-                  description: the translation of the title of the question into spanish
-                  type: string
-                properties:
-                  description: same structure as `responses.pages[0].questions[i].properties`.
-                  type: object
-            pt:
-              type: object
-              properties:
-                description:
-                  description: the translation of the description of the question into portuguese
-                  type: string
-                title:
-                  description: the translation of the title of the question into portuguese
-                  type: string
-                properties:
-                  description: same structure as `responses.pages[0].properties`.
-                  type: object
-        lumabotFlowId:
-          type: string
-          pattern: '[0-9a-f]'
-          minLength: 24
-          maxLength: 24
-    updatedAtParam:
-      in: query
-      name: updatedAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was updated.
-    createdAtParam:
-      in: query
-      name: createdAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was created.
-    updatedByParam:
-      in: query
-      name: updatedBy
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the user who updated this object.
     LumabotFlowResponsesResponse:
       type: object
       description: This resource captures a single question and answer pair that a patient submitted while completing a Lumabot flow, recording the question text, the patient's answer, the question type, and the order in which it was answered. Each record links back to the parent flow and its template, so a full set of these responses reconstructs everything a patient said during one chatbot interaction. It is used to review or report on patient answers collected through automated intake, reminder, or screening conversations.
@@ -1245,6 +1202,49 @@ components:
         - 0
         - 1
       description: Flag for logical deletion where 1 means deleted.
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
+    LumabotFlowAnswerRequest:
+      type: object
+      properties:
+        id:
+          description: itemId of the answer if selecting a multiple-choice option
+          type: string
+        text:
+          description: Simple text answer or a summary of the answer (in case of complex answers) to show on reports and hub
+          type: string
+        details:
+          description: Complex object containing details of a complex answer, like appointment details or address, for example
+          type: object
     LumabotFlowResponse:
       type: object
       description: A LumabotFlow represents a single running or completed instance of a Lumabot conversational flow that a patient goes through, such as an intake form, appointment related questionnaire, or screening flow, generated from a LumabotFlowTemplate. It tracks the patient, the questions asked and answers given, current progress, completion status, and links to related records like appointments, offers, or availabilities produced as a result of the flow. It also supports chaining flows together and lets staff track a separate processing status for follow up after the patient completes the automated interaction.
@@ -1469,9 +1469,10 @@ components:
             pattern: '[0-9a-f]'
             minLength: 24
             maxLength: 24
-    createdByParam:
+    userParam:
       in: query
-      name: createdBy
+      name: user
+      required: false
       type: string
       pattern: '[0-9a-f]'
       minLength: 24
@@ -1481,8 +1482,7 @@ components:
         pattern: '[0-9a-f]'
         minLength: 24
         maxLength: 24
-      required: false
-      description: The ID of the user who created this object.
+      description: The ID of the root account user.
   securitySchemes:
     Bearer:
       type: http

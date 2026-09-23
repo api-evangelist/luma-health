@@ -6,13 +6,13 @@ info:
     url: https://lumahealth-assets.s3.us-west-2.amazonaws.com/new_luma_logo_black.png
     backgroundColor: '#FFFFFF'
     altText: Luma Health
-  description: OpenAPI [Basic Structure](https://swagger.io/docs/specification/basic-structure/)
+  description: OpenAPI Basic Structure
 servers:
 - url: https://api.lumahealth.io/api/v2
 security:
 - Bearer: []
 tags:
-- name: checklistTemplates
+- name: Checklist Templates
   description: Reusable definitions of required pre-visit tasks used to build checklists
 paths:
   /checklistTemplates:
@@ -20,7 +20,7 @@ paths:
       summary: List checklist templates
       operationId: checklistTemplatesList
       tags:
-      - checklistTemplates
+      - Checklist Templates
       parameters:
       - name: enabled
         in: query
@@ -81,7 +81,7 @@ paths:
       summary: Create a checklist template
       operationId: checklistTemplateCreate
       tags:
-      - checklistTemplates
+      - Checklist Templates
       requestBody:
         description: Create a checklist template
         required: true
@@ -105,7 +105,7 @@ paths:
       summary: Get checklist template by id
       operationId: checklistTemplateGet
       tags:
-      - checklistTemplates
+      - Checklist Templates
       parameters:
       - name: checklistTemplateId
         in: path
@@ -132,7 +132,7 @@ paths:
       description: Updates a checklist template. If `enabled` is toggled, or `recreate` is passed, a background job is dispatched to resync already-created checklists derived from this template. `recreate` is accepted in the request but is not itself persisted on the template.
       operationId: checklistTemplateUpdate
       tags:
-      - checklistTemplates
+      - Checklist Templates
       parameters:
       - name: checklistTemplateId
         in: path
@@ -171,7 +171,7 @@ paths:
       summary: Delete a checklist template
       operationId: checklistTemplateDelete
       tags:
-      - checklistTemplates
+      - Checklist Templates
       parameters:
       - name: checklistTemplateId
         in: path
@@ -199,7 +199,7 @@ paths:
       description: 'Creates a copy of the given checklist template, named "{original} - (Copy)". The duplicate is always created with `enabled: false`.'
       operationId: checklistTemplateDuplicate
       tags:
-      - checklistTemplates
+      - Checklist Templates
       parameters:
       - name: checklistTemplateId
         in: path
@@ -226,7 +226,7 @@ paths:
       summary: Get the default system checklist template
       operationId: checklistTemplateGetSystem
       tags:
-      - checklistTemplates
+      - Checklist Templates
       responses:
         '200':
           description: The default system checklist template
@@ -245,7 +245,7 @@ paths:
       description: Idempotently creates the account's default system checklist templates if they do not already exist.
       operationId: checklistTemplateCreateSystem
       tags:
-      - checklistTemplates
+      - Checklist Templates
       responses:
         '200':
           description: The default system checklist template(s)
@@ -261,29 +261,6 @@ paths:
           description: Access token does not have the required scope
 components:
   parameters:
-    pageParam:
-      in: query
-      name: page
-      required: false
-      type: integer
-      format: int32
-      default: 1
-      minimum: 1
-      schema:
-        type: integer
-        format: int32
-        default: 1
-        minimum: 1
-    createdAtParam:
-      in: query
-      name: createdAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was created.
     updatedAtParam:
       in: query
       name: updatedAt
@@ -294,20 +271,32 @@ components:
         format: date-time
       required: false
       description: The date/time when this object was updated.
-    updatedByParam:
+    limitParam:
+      name: limit
       in: query
-      name: updatedBy
+      description: How many items to fetch per page
       required: false
+      type: integer
+      format: int32
+      default: 500
+      minimum: 1
+      maximum: 1000
+      schema:
+        type: integer
+        format: int32
+        default: 500
+        minimum: 1
+        maximum: 1000
+    createdAtParam:
+      in: query
+      name: createdAt
       type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
+      format: date-time
       schema:
         type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the user who updated this object.
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
     createdByParam:
       in: query
       name: createdBy
@@ -338,6 +327,47 @@ components:
       type: string
       schema:
         type: string
+    updatedByParam:
+      in: query
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
+    pageParam:
+      in: query
+      name: page
+      required: false
+      type: integer
+      format: int32
+      default: 1
+      minimum: 1
+      schema:
+        type: integer
+        format: int32
+        default: 1
+        minimum: 1
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
     deletedParam:
       in: query
       name: deleted
@@ -352,41 +382,10 @@ components:
         - 0
         - 1
       description: Flag for logical deletion where 1 means deleted.
-    limitParam:
-      name: limit
-      in: query
-      description: How many items to fetch per page
-      required: false
-      type: integer
-      format: int32
-      default: 500
-      minimum: 1
-      maximum: 1000
-      schema:
-        type: integer
-        format: int32
-        default: 500
-        minimum: 1
-        maximum: 1000
-    userParam:
-      in: query
-      name: user
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the root account user.
   schemas:
-    userParam:
+    createdByParam:
       in: query
-      name: user
-      required: false
+      name: createdBy
       type: string
       pattern: '[0-9a-f]'
       minLength: 24
@@ -396,7 +395,22 @@ components:
         pattern: '[0-9a-f]'
         minLength: 24
         maxLength: 24
-      description: The ID of the root account user.
+      required: false
+      description: The ID of the user who created this object.
+    idParam:
+      in: query
+      name: _id
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      required: false
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: Luma's internal ID of an object.
     ChecklistTemplateResponse:
       type: object
       description: A ChecklistTemplate is the reusable, staff-configured blueprint defining required pre-visit tasks, their category and expiration rules, and the conditions under which they apply (such as a specific appointment type, facility, or provider). Checklists are built from a template, but the resulting checklist is a snapshot copy; changes to the template require an explicit recreation job to resync already-created checklists.
@@ -524,40 +538,6 @@ components:
             options:
               type: string
               description: Additional options for the comparison, such as regex flags.
-    idParam:
-      in: query
-      name: _id
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      required: false
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: Luma's internal ID of an object.
-    updatedAtParam:
-      in: query
-      name: updatedAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was updated.
-    createdAtParam:
-      in: query
-      name: createdAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was created.
     updatedByParam:
       in: query
       name: updatedBy
@@ -572,31 +552,6 @@ components:
         minLength: 24
         maxLength: 24
       description: The ID of the user who updated this object.
-    checklistTemplateFilter:
-      type: object
-      properties:
-        path:
-          type: string
-          description: The field path being compared, for example a facility, provider, or appointment type identifier.
-        value:
-          type: string
-          description: The value to compare the field at `path` against.
-        comparision:
-          type: string
-          description: How `path` and `value` are compared.
-          default: eq
-          enum:
-          - eq
-          - gt
-          - gte
-          - lt
-          - lte
-          - ne
-          - regex
-          - js
-        options:
-          type: string
-          description: Additional options for the comparison, such as regex flags.
     ChecklistTemplateRequestUpdate:
       type: object
       properties:
@@ -723,6 +678,40 @@ components:
             options:
               type: string
               description: Additional options for the comparison, such as regex flags.
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
     ChecklistTemplateRequestCreate:
       type: object
       required:
@@ -852,23 +841,10 @@ components:
             options:
               type: string
               description: Additional options for the comparison, such as regex flags.
-    deletedParam:
+    userParam:
       in: query
-      name: deleted
+      name: user
       required: false
-      type: number
-      enum:
-      - 0
-      - 1
-      schema:
-        type: number
-        enum:
-        - 0
-        - 1
-      description: Flag for logical deletion where 1 means deleted.
-    createdByParam:
-      in: query
-      name: createdBy
       type: string
       pattern: '[0-9a-f]'
       minLength: 24
@@ -878,8 +854,32 @@ components:
         pattern: '[0-9a-f]'
         minLength: 24
         maxLength: 24
-      required: false
-      description: The ID of the user who created this object.
+      description: The ID of the root account user.
+    checklistTemplateFilter:
+      type: object
+      properties:
+        path:
+          type: string
+          description: The field path being compared, for example a facility, provider, or appointment type identifier.
+        value:
+          type: string
+          description: The value to compare the field at `path` against.
+        comparision:
+          type: string
+          description: How `path` and `value` are compared.
+          default: eq
+          enum:
+          - eq
+          - gt
+          - gte
+          - lt
+          - lte
+          - ne
+          - regex
+          - js
+        options:
+          type: string
+          description: Additional options for the comparison, such as regex flags.
   securitySchemes:
     Bearer:
       type: http

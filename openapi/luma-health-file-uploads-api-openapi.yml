@@ -6,13 +6,13 @@ info:
     url: https://lumahealth-assets.s3.us-west-2.amazonaws.com/new_luma_logo_black.png
     backgroundColor: '#FFFFFF'
     altText: Luma Health
-  description: OpenAPI [Basic Structure](https://swagger.io/docs/specification/basic-structure/)
+  description: OpenAPI Basic Structure
 servers:
 - url: https://api.lumahealth.io/api/v2
 security:
 - Bearer: []
 tags:
-- name: fileUploads
+- name: File Uploads
   description: File Uploads
 paths:
   /fileUploads:
@@ -20,7 +20,7 @@ paths:
       summary: List file uploads
       operationId: fileUploadsList
       tags:
-      - fileUploads
+      - File Uploads
       parameters:
       - name: bucket
         in: query
@@ -197,16 +197,16 @@ paths:
           description: Access token does not have the required scope
     post:
       summary: Create fileUpload
-      description: 'There are two ways to upload a file, base64 and multipart. <br/>
+      description: 'There are two ways to upload a file, base64 and multipart.
 
-        For base64, you will need to describe the fields name, extension, patient, content-type, type and the image converted to base64. You can see a request example on the right side. <br/>
 
-        For multipart: you will have to create an HTML form, with an input field type "file" named "file", as well as the other required fields, and submit the form <br/>
+        For base64, you will need to describe the fields name, extension, patient, content-type, type and the image converted to base64. You can see a request example on the right side.
 
-        '
+
+        For multipart: you will have to create an HTML form, with an input field type "file" named "file", as well as the other required fields, and submit the form'
       operationId: fileUploadCreate
       tags:
-      - fileUploads
+      - File Uploads
       requestBody:
         description: Optional description in *Markdown*
         required: true
@@ -254,7 +254,7 @@ paths:
       summary: Get file upload by id
       operationId: fileUploadGet
       tags:
-      - fileUploads
+      - File Uploads
       parameters:
       - name: fileUploadId
         in: path
@@ -280,7 +280,7 @@ paths:
       summary: Update a fileUpload
       operationId: fileUploadUpdate
       tags:
-      - fileUploads
+      - File Uploads
       parameters:
       - name: fileUploadId
         in: path
@@ -313,7 +313,7 @@ paths:
       summary: Delete a fileUpload
       operationId: fileUploadDelete
       tags:
-      - fileUploads
+      - File Uploads
       parameters:
       - name: fileUploadId
         in: path
@@ -337,29 +337,6 @@ paths:
           description: Access token does not have the required scope
 components:
   parameters:
-    pageParam:
-      in: query
-      name: page
-      required: false
-      type: integer
-      format: int32
-      default: 1
-      minimum: 1
-      schema:
-        type: integer
-        format: int32
-        default: 1
-        minimum: 1
-    createdAtParam:
-      in: query
-      name: createdAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was created.
     updatedAtParam:
       in: query
       name: updatedAt
@@ -370,6 +347,62 @@ components:
         format: date-time
       required: false
       description: The date/time when this object was updated.
+    limitParam:
+      name: limit
+      in: query
+      description: How many items to fetch per page
+      required: false
+      type: integer
+      format: int32
+      default: 500
+      minimum: 1
+      maximum: 1000
+      schema:
+        type: integer
+        format: int32
+        default: 500
+        minimum: 1
+        maximum: 1000
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+    populateParam:
+      name: _populate
+      in: query
+      description: Response properties which will be replaced by the referenced objects, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    selectParam:
+      name: _select
+      in: query
+      description: Response properties that should be returned, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
     updatedByParam:
       in: query
       name: updatedBy
@@ -384,6 +417,19 @@ components:
         minLength: 24
         maxLength: 24
       description: The ID of the user who updated this object.
+    pageParam:
+      in: query
+      name: page
+      required: false
+      type: integer
+      format: int32
+      default: 1
+      minimum: 1
+      schema:
+        type: integer
+        format: int32
+        default: 1
+        minimum: 1
     languageParam:
       in: query
       name: language
@@ -423,6 +469,7 @@ components:
         - zh-t
         - zh
       description: Language code.
+  schemas:
     createdByParam:
       in: query
       name: createdBy
@@ -437,42 +484,23 @@ components:
         maxLength: 24
       required: false
       description: The ID of the user who created this object.
-    populateParam:
-      name: _populate
+    idParam:
       in: query
-      description: Response properties which will be replaced by the referenced objects, separated by commas.
-      required: false
+      name: _id
       type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      required: false
       schema:
         type: string
-    selectParam:
-      name: _select
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: Luma's internal ID of an object.
+    updatedByParam:
       in: query
-      description: Response properties that should be returned, separated by commas.
-      required: false
-      type: string
-      schema:
-        type: string
-    limitParam:
-      name: limit
-      in: query
-      description: How many items to fetch per page
-      required: false
-      type: integer
-      format: int32
-      default: 500
-      minimum: 1
-      maximum: 1000
-      schema:
-        type: integer
-        format: int32
-        default: 500
-        minimum: 1
-        maximum: 1000
-  schemas:
-    userParam:
-      in: query
-      name: user
+      name: updatedBy
       required: false
       type: string
       pattern: '[0-9a-f]'
@@ -483,7 +511,7 @@ components:
         pattern: '[0-9a-f]'
         minLength: 24
         maxLength: 24
-      description: The ID of the root account user.
+      description: The ID of the user who updated this object.
     FileUploadResponse:
       type: object
       description: A FileUpload represents a file uploaded to the Luma Health platform, such as a patient insurance card image, a referral fax, a form attachment, a chat attachment, or a provider headshot. It stores metadata about the file including its storage location, name, extension, content type, upload type, and processing status, and it can link back to related records like a patient, insurance, referral, patient form, message, or estimate. Staff and integrations use this resource to check on an uploaded file's metadata and confirm whether processing completed successfully or failed.
@@ -605,6 +633,30 @@ components:
           pattern: '[0-9a-f]'
           minLength: 24
           maxLength: 24
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
     Error:
       type: object
       required:
@@ -616,6 +668,16 @@ components:
           format: int32
         message:
           type: string
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
     FileUploadRequest:
       type: object
       required:
@@ -725,43 +787,9 @@ components:
           pattern: '[0-9a-f]'
           minLength: 24
           maxLength: 24
-    idParam:
+    userParam:
       in: query
-      name: _id
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      required: false
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: Luma's internal ID of an object.
-    updatedAtParam:
-      in: query
-      name: updatedAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was updated.
-    createdAtParam:
-      in: query
-      name: createdAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was created.
-    updatedByParam:
-      in: query
-      name: updatedBy
+      name: user
       required: false
       type: string
       pattern: '[0-9a-f]'
@@ -772,35 +800,7 @@ components:
         pattern: '[0-9a-f]'
         minLength: 24
         maxLength: 24
-      description: The ID of the user who updated this object.
-    deletedParam:
-      in: query
-      name: deleted
-      required: false
-      type: number
-      enum:
-      - 0
-      - 1
-      schema:
-        type: number
-        enum:
-        - 0
-        - 1
-      description: Flag for logical deletion where 1 means deleted.
-    createdByParam:
-      in: query
-      name: createdBy
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      required: false
-      description: The ID of the user who created this object.
+      description: The ID of the root account user.
   securitySchemes:
     Bearer:
       type: http

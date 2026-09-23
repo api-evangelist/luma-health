@@ -6,13 +6,13 @@ info:
     url: https://lumahealth-assets.s3.us-west-2.amazonaws.com/new_luma_logo_black.png
     backgroundColor: '#FFFFFF'
     altText: Luma Health
-  description: OpenAPI [Basic Structure](https://swagger.io/docs/specification/basic-structure/)
+  description: OpenAPI Basic Structure
 servers:
 - url: https://api.lumahealth.io/api/v2
 security:
 - Bearer: []
 tags:
-- name: insurances
+- name: Insurances
   description: Patient insurance coverage records
 paths:
   /insurances/eligibility/verification/{insuranceId}:
@@ -21,7 +21,7 @@ paths:
       description: Runs a real-time eligibility verification check for one insurance against the account's configured eligibility integrator.
       operationId: insuranceCheckEligibility
       tags:
-      - insurances
+      - Insurances
       parameters:
       - name: insuranceId
         in: path
@@ -56,7 +56,7 @@ paths:
       description: Runs eligibility verification checks for multiple insurances in a single call.
       operationId: insuranceCheckEligibilityBulk
       tags:
-      - insurances
+      - Insurances
       requestBody:
         description: The insurances to check
         required: true
@@ -81,7 +81,7 @@ paths:
       description: Marks the insurance as staff-approved, sets it up to be written back to the EHR integrator, and stamps who reviewed it and when.
       operationId: insuranceWriteback
       tags:
-      - insurances
+      - Insurances
       parameters:
       - name: insuranceId
         in: path
@@ -123,7 +123,7 @@ paths:
       description: Bulk sets the staff review status across multiple insurances. The new review status is only applied to insurances whose current review status is `pending` or unset.
       operationId: insuranceWritebackBulk
       tags:
-      - insurances
+      - Insurances
       requestBody:
         description: The insurances to review
         required: true
@@ -171,7 +171,7 @@ paths:
       description: Bulk-archives the given insurances, marking each as inactive and no longer primary.
       operationId: insuranceArchiveBulk
       tags:
-      - insurances
+      - Insurances
       requestBody:
         description: The insurances to archive
         required: true
@@ -218,30 +218,17 @@ paths:
           description: Access token does not have the required scope
 components:
   schemas:
-    createdAtParam:
-      in: query
-      name: createdAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was created.
-    updatedByParam:
-      in: query
-      name: updatedBy
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the user who updated this object.
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
     createdByParam:
       in: query
       name: createdBy
@@ -256,6 +243,16 @@ components:
         maxLength: 24
       required: false
       description: The ID of the user who created this object.
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
     userParam:
       in: query
       name: user
@@ -270,6 +267,20 @@ components:
         minLength: 24
         maxLength: 24
       description: The ID of the root account user.
+    idParam:
+      in: query
+      name: _id
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      required: false
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: Luma's internal ID of an object.
     deletedParam:
       in: query
       name: deleted
@@ -484,41 +495,30 @@ components:
               maxLength: 24
             errorReason:
               type: string
-    Error:
-      type: object
-      required:
-      - code
-      - message
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
-    idParam:
+    updatedByParam:
       in: query
-      name: _id
+      name: updatedBy
+      required: false
       type: string
       pattern: '[0-9a-f]'
       minLength: 24
       maxLength: 24
-      required: false
       schema:
         type: string
         pattern: '[0-9a-f]'
         minLength: 24
         maxLength: 24
-      description: Luma's internal ID of an object.
-    updatedAtParam:
+      description: The ID of the user who updated this object.
+    createdAtParam:
       in: query
-      name: updatedAt
+      name: createdAt
       type: string
       format: date-time
       schema:
         type: string
         format: date-time
       required: false
-      description: The date/time when this object was updated.
+      description: The date/time when this object was created.
   securitySchemes:
     Bearer:
       type: http

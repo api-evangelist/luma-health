@@ -2,17 +2,14 @@ generated: '2026-08-15'
 method: derived
 status: candidate
 source: openapi/luma-health-openapi.yaml
-note: >-
-  NO official hosted or local Luma Health MCP server exists. Re-searched
-  2026-08-15: the docs host (apidocs.lumahealth.io), the marketing site, the
-  lumahealthhq GitHub organization (31 public repos), npm and the public MCP
-  registries all miss. Search results for "Luma MCP server" return only
-  unaffiliated servers for Luma AI / Dream Machine (video generation) and
-  lu.ma (events) - different companies with a colliding name, and neither is
-  Luma Health. This file is therefore a CANDIDATE tool surface DERIVED from the
-  OpenAPI operations: one tool per marquee operation, each inheriting its
-  backing operation's parameters and requestBody as its real inputSchema.
-  Nothing here is published by Luma Health and no endpoint URL is asserted.
+note: 'NO official hosted or local Luma Health MCP server exists. Re-searched 2026-08-15: the docs host
+  (apidocs.lumahealth.io), the marketing site, the lumahealthhq GitHub organization (31 public repos),
+  npm and the public MCP registries all miss. Search results for "Luma MCP server" return only unaffiliated
+  servers for Luma AI / Dream Machine (video generation) and lu.ma (events) - different companies with
+  a colliding name, and neither is Luma Health. This file is therefore a CANDIDATE tool surface DERIVED
+  from the OpenAPI operations: one tool per marquee operation, each inheriting its backing operation''s
+  parameters and requestBody as its real inputSchema. Nothing here is published by Luma Health and no
+  endpoint URL is asserted.'
 server:
   name: luma-health
   transport: http
@@ -68,15 +65,7 @@ tools:
   source_operation: openapi/luma-health-openapi.yaml#feedbackResponsesExternalReviewRepliesUpdateApproval
 deployment:
   mode: none
-  endpoint: null
-  install: null
-  package: null
-  auth: unknown
-  verified: searched
-  tools: 16
-  checked: '2026-08-15'
-  source: >-
-    Re-searched 2026-08-15 across apidocs.lumahealth.io, www.lumahealth.io,
-    github.com/lumahealthhq, npm and the public MCP registries. No remote
-    endpoint and no stdio package is published. mode:none means WE derived a
-    candidate; Luma Health ships no MCP server of either kind.
+  verified: derived
+  tools: 13
+  checked: '2026-08-12'
+  source: catalog MCP census

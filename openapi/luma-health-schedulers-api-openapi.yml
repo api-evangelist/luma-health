@@ -6,13 +6,13 @@ info:
     url: https://lumahealth-assets.s3.us-west-2.amazonaws.com/new_luma_logo_black.png
     backgroundColor: '#FFFFFF'
     altText: Luma Health
-  description: OpenAPI [Basic Structure](https://swagger.io/docs/specification/basic-structure/)
+  description: OpenAPI Basic Structure
 servers:
 - url: https://api.lumahealth.io/api/v2
 security:
 - Bearer: []
 tags:
-- name: schedulers
+- name: Schedulers
   description: Scheduler
 paths:
   /schedulers/{schedulerId}:
@@ -20,7 +20,7 @@ paths:
       summary: Update a scheduler
       operationId: schedulerUpdate
       tags:
-      - schedulers
+      - Schedulers
       parameters:
       - name: schedulerId
         in: path

@@ -6,21 +6,21 @@ info:
     url: https://lumahealth-assets.s3.us-west-2.amazonaws.com/new_luma_logo_black.png
     backgroundColor: '#FFFFFF'
     altText: Luma Health
-  description: OpenAPI [Basic Structure](https://swagger.io/docs/specification/basic-structure/)
+  description: OpenAPI Basic Structure
 servers:
 - url: https://api.lumahealth.io/api/v2
 security:
 - Bearer: []
 tags:
-- name: auth
+- name: Auth
   description: Luma Client Access
 paths:
   /auth/clients:
     post:
       summary: Generate client id and secret
-      description: This endpoint allows our users to generate clientId and clientSecrets that can be used  for machine-to-machine communication without the need of a username / password. Since  clientId / clientSecret never expires, it is usefull in running automation process / scripts etc. A user can only have one clientId/clientSecret at any given time.
+      description: This endpoint allows our users to generate clientId and clientSecrets that can be used for machine-to-machine communication without the need of a username / password. Since clientId / clientSecret never expires, it is usefull in running automation process / scripts etc. A user can only have one clientId/clientSecret at any given time.
       tags:
-      - auth
+      - Auth
       requestBody:
         required: true
         content:
@@ -74,11 +74,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorSchema'
+      operationId: postAuthClients
+      x-operation-id-source: derived
     patch:
       summary: Rotate clientSecret
       description: This action allows our users to change secrets associated with a clientId. This does not generate a new clientId.
       tags:
-      - auth
+      - Auth
       requestBody:
         required: true
         content:
@@ -132,11 +134,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorSchema'
+      operationId: patchAuthClients
+      x-operation-id-source: derived
     get:
       summary: Get clientIds
       description: This action returns the clientId value as well as its creation date or the last time clientSecret was rotated.
       tags:
-      - auth
+      - Auth
       x-codeSamples:
       - lang: cURL
         source: 'curl --request GET \
@@ -172,12 +176,14 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorSchema'
+      operationId: getAuthClients
+      x-operation-id-source: derived
   /auth/token:
     post:
       summary: Get access token
       description: This endpoint allows user to receive access token that can be used to access luma service with. This is similar to login flow except that client receives access token by providing clientId and clientSecret.
       tags:
-      - auth
+      - Auth
       requestBody:
         required: true
         content:
@@ -236,12 +242,14 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorSchema'
+      operationId: postAuthToken
+      x-operation-id-source: derived
   /auth/token/{userId}:
     put:
       summary: Get subaccount access token
       description: This endpoint allows user to receive access token of another user that can be used to impersonate their account and access luma services. It can only be invoked by an access token with apiUser role, generated with a client_id and a client_secret via POST /api/v2/auth/token.
       tags:
-      - auth
+      - Auth
       parameters:
       - name: userId
         description: The user id for which an impersonated token will be returned.
@@ -297,6 +305,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorSchema'
+      operationId: putAuthTokenByUserId
+      x-operation-id-source: derived
 components:
   schemas:
     ErrorSchema:

@@ -6,7 +6,7 @@ info:
     url: https://lumahealth-assets.s3.us-west-2.amazonaws.com/new_luma_logo_black.png
     backgroundColor: '#FFFFFF'
     altText: Luma Health
-  description: OpenAPI [Basic Structure](https://swagger.io/docs/specification/basic-structure/)
+  description: OpenAPI Basic Structure
 servers:
 - url: https://api.lumahealth.io/api/v2
 security:
@@ -29,9 +29,7 @@ paths:
 
         3. Syncs the intent routing table with the AI service
 
-        4. Rolls back created documents if sync fails
-
-        '
+        4. Rolls back created documents if sync fails'
       operationId: assistantTransferRulesBulkCreate
       tags:
       - assistantTransferRules
@@ -232,6 +230,17 @@ components:
           type: boolean
           description: Whether to replace all existing entries in the intent routing table
           default: false
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
     AssistantTransferRulesResponse:
       type: object
       description: Represents the call routing configuration for a Navigator AI assistant, defining which assistant or phone numbers it applies to, the number and message to use when transferring a caller to staff, and business hours used to decide whether to offer a transfer, an SMS follow up, or an after-hours message instead. It drives how an automated phone assistant decides when and where to hand a call off to a human.
@@ -420,17 +429,6 @@ components:
                 description: Day of week (0=Sunday, 6=Saturday)
                 minimum: 0
                 maximum: 6
-    Error:
-      type: object
-      required:
-      - code
-      - message
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
   securitySchemes:
     Bearer:
       type: http

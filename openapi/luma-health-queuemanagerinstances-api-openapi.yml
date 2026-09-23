@@ -6,7 +6,7 @@ info:
     url: https://lumahealth-assets.s3.us-west-2.amazonaws.com/new_luma_logo_black.png
     backgroundColor: '#FFFFFF'
     altText: Luma Health
-  description: OpenAPI [Basic Structure](https://swagger.io/docs/specification/basic-structure/)
+  description: OpenAPI Basic Structure
 servers:
 - url: https://api.lumahealth.io/api/v2
 security:
@@ -32,9 +32,7 @@ paths:
 
         If `status` is omitted, the new instance is placed in the Initial-type
 
-        status configured on the target template.
-
-        '
+        status configured on the target template.'
       operationId: transferQueueManagerInstance
       tags:
       - queueManagerInstances
