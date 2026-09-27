@@ -336,139 +336,6 @@ paths:
         '403':
           description: Access token does not have the required scope
 components:
-  parameters:
-    updatedAtParam:
-      in: query
-      name: updatedAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was updated.
-    limitParam:
-      name: limit
-      in: query
-      description: How many items to fetch per page
-      required: false
-      type: integer
-      format: int32
-      default: 500
-      minimum: 1
-      maximum: 1000
-      schema:
-        type: integer
-        format: int32
-        default: 500
-        minimum: 1
-        maximum: 1000
-    createdAtParam:
-      in: query
-      name: createdAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was created.
-    createdByParam:
-      in: query
-      name: createdBy
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      required: false
-      description: The ID of the user who created this object.
-    populateParam:
-      name: _populate
-      in: query
-      description: Response properties which will be replaced by the referenced objects, separated by commas.
-      required: false
-      type: string
-      schema:
-        type: string
-    selectParam:
-      name: _select
-      in: query
-      description: Response properties that should be returned, separated by commas.
-      required: false
-      type: string
-      schema:
-        type: string
-    updatedByParam:
-      in: query
-      name: updatedBy
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the user who updated this object.
-    pageParam:
-      in: query
-      name: page
-      required: false
-      type: integer
-      format: int32
-      default: 1
-      minimum: 1
-      schema:
-        type: integer
-        format: int32
-        default: 1
-        minimum: 1
-    languageParam:
-      in: query
-      name: language
-      type: string
-      schema:
-        type: string
-        enum:
-        - ar
-        - bn
-        - cn
-        - de
-        - en
-        - es
-        - fa
-        - fl
-        - fr
-        - gr
-        - gu
-        - hi
-        - ht
-        - hy
-        - it
-        - ja
-        - km
-        - ko
-        - mr
-        - my
-        - pa
-        - pl
-        - pt
-        - ru
-        - so
-        - th
-        - ti
-        - ur
-        - vi
-        - zh-t
-        - zh
-      description: Language code.
   schemas:
     createdByParam:
       in: query
@@ -484,6 +351,16 @@ components:
         maxLength: 24
       required: false
       description: The ID of the user who created this object.
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
     idParam:
       in: query
       name: _id
@@ -498,9 +375,30 @@ components:
         minLength: 24
         maxLength: 24
       description: Luma's internal ID of an object.
-    updatedByParam:
+    createdAtParam:
       in: query
-      name: updatedBy
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    userParam:
+      in: query
+      name: user
       required: false
       type: string
       pattern: '[0-9a-f]'
@@ -511,7 +409,7 @@ components:
         pattern: '[0-9a-f]'
         minLength: 24
         maxLength: 24
-      description: The ID of the user who updated this object.
+      description: The ID of the root account user.
     FileUploadResponse:
       type: object
       description: A FileUpload represents a file uploaded to the Luma Health platform, such as a patient insurance card image, a referral fax, a form attachment, a chat attachment, or a provider headshot. It stores metadata about the file including its storage location, name, extension, content type, upload type, and processing status, and it can link back to related records like a patient, insurance, referral, patient form, message, or estimate. Staff and integrations use this resource to check on an uploaded file's metadata and confirm whether processing completed successfully or failed.
@@ -633,51 +531,6 @@ components:
           pattern: '[0-9a-f]'
           minLength: 24
           maxLength: 24
-    deletedParam:
-      in: query
-      name: deleted
-      required: false
-      type: number
-      enum:
-      - 0
-      - 1
-      schema:
-        type: number
-        enum:
-        - 0
-        - 1
-      description: Flag for logical deletion where 1 means deleted.
-    createdAtParam:
-      in: query
-      name: createdAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was created.
-    Error:
-      type: object
-      required:
-      - code
-      - message
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
-    updatedAtParam:
-      in: query
-      name: updatedAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was updated.
     FileUploadRequest:
       type: object
       required:
@@ -787,9 +640,9 @@ components:
           pattern: '[0-9a-f]'
           minLength: 24
           maxLength: 24
-    userParam:
+    updatedByParam:
       in: query
-      name: user
+      name: updatedBy
       required: false
       type: string
       pattern: '[0-9a-f]'
@@ -800,7 +653,154 @@ components:
         pattern: '[0-9a-f]'
         minLength: 24
         maxLength: 24
-      description: The ID of the root account user.
+      description: The ID of the user who updated this object.
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+  parameters:
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
+    selectParam:
+      name: _select
+      in: query
+      description: Response properties that should be returned, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    populateParam:
+      name: _populate
+      in: query
+      description: Response properties which will be replaced by the referenced objects, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    updatedByParam:
+      in: query
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
+    languageParam:
+      in: query
+      name: language
+      type: string
+      schema:
+        type: string
+        enum:
+        - ar
+        - bn
+        - cn
+        - de
+        - en
+        - es
+        - fa
+        - fl
+        - fr
+        - gr
+        - gu
+        - hi
+        - ht
+        - hy
+        - it
+        - ja
+        - km
+        - ko
+        - mr
+        - my
+        - pa
+        - pl
+        - pt
+        - ru
+        - so
+        - th
+        - ti
+        - ur
+        - vi
+        - zh-t
+        - zh
+      description: Language code.
+    limitParam:
+      name: limit
+      in: query
+      description: How many items to fetch per page
+      required: false
+      type: integer
+      format: int32
+      default: 500
+      minimum: 1
+      maximum: 1000
+      schema:
+        type: integer
+        format: int32
+        default: 500
+        minimum: 1
+        maximum: 1000
+    pageParam:
+      in: query
+      name: page
+      required: false
+      type: integer
+      format: int32
+      default: 1
+      minimum: 1
+      schema:
+        type: integer
+        format: int32
+        default: 1
+        minimum: 1
   securitySchemes:
     Bearer:
       type: http

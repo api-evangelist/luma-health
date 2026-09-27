@@ -352,188 +352,7 @@ paths:
         '403':
           description: Access token does not have the required scope
 components:
-  parameters:
-    updatedAtParam:
-      in: query
-      name: updatedAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was updated.
-    pageParam:
-      in: query
-      name: page
-      required: false
-      type: integer
-      format: int32
-      default: 1
-      minimum: 1
-      schema:
-        type: integer
-        format: int32
-        default: 1
-        minimum: 1
-    createdAtParam:
-      in: query
-      name: createdAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was created.
-    createdByParam:
-      in: query
-      name: createdBy
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      required: false
-      description: The ID of the user who created this object.
-    selectParam:
-      name: _select
-      in: query
-      description: Response properties that should be returned, separated by commas.
-      required: false
-      type: string
-      schema:
-        type: string
-    updatedByParam:
-      in: query
-      name: updatedBy
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the user who updated this object.
-    userParam:
-      in: query
-      name: user
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the root account user.
-    refParam:
-      in: query
-      name: ref
-      description: Indicates what this is about. Depending on this value, you also know what the parameter `refId` refers to.
-      schema:
-        $ref: '#/components/schemas/Ref'
-    limitParam:
-      name: limit
-      in: query
-      description: How many items to fetch per page
-      required: false
-      type: integer
-      format: int32
-      default: 500
-      minimum: 1
-      maximum: 1000
-      schema:
-        type: integer
-        format: int32
-        default: 500
-        minimum: 1
-        maximum: 1000
-    populateParam:
-      name: _populate
-      in: query
-      description: Response properties which will be replaced by the referenced objects, separated by commas.
-      required: false
-      type: string
-      schema:
-        type: string
-    deletedParam:
-      in: query
-      name: deleted
-      required: false
-      type: number
-      enum:
-      - 0
-      - 1
-      schema:
-        type: number
-        enum:
-        - 0
-        - 1
-      description: Flag for logical deletion where 1 means deleted.
   schemas:
-    PatientFormRequest:
-      type: object
-      required:
-      - status
-      - processingStatus
-      properties:
-        status:
-          type: string
-          enum:
-          - pending
-          - unstarted
-          - started
-          - completed
-        processingStatus:
-          description: processingStatus
-          type: string
-          default: open
-          enum:
-          - open
-          - in-progress
-          - closed
-    Error:
-      type: object
-      required:
-      - code
-      - message
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
-    RolesByUser:
-      type: object
-      description: Object containing 2 keys, referringProvider and renderingProvider. The value for each key is an array. The content of the array should be the root account ids under the same organization, where this user has the role with the same name of the key.
-      required: []
-      properties:
-        referringProvider:
-          type: array
-          description: List of root account IDs under an organization where the user has the role referringProvider
-          items:
-            type: string
-            pattern: '[0-9a-f]'
-            minLength: 24
-            maxLength: 24
-        renderingProvider:
-          type: array
-          description: List of root account IDs under an organization where the user has the role renderingProvider
-          items:
-            type: string
-            pattern: '[0-9a-f]'
-            minLength: 24
-            maxLength: 24
     SalesforceData:
       type: object
       description: Salesforce internal meta data for this account.
@@ -773,87 +592,6 @@ components:
         value:
           description: externalId.value
           type: string
-    Ref:
-      description: 'Indicates what this is about. Depending on this value, you also know what the parameter `refId` refers to.<br/>
-
-        - reminder (`refId` will be the ID of a `Reminder`)<br/>
-
-        - referral-reminder (`refId` will be the ID of a `Reminder`)<br/>
-
-        - feedback-reminder (`refId` will be the ID of a `Reminder`)<br/>
-
-        - followup (`refId` will be the ID of a `Reminder`)<br/>
-
-        - outbound-referral-reminder (`refId` will be the ID of a `Reminder`)<br/>
-
-        - form-reminder (`refId` will be the ID of a `Reminder`)<br/>
-
-        - reschedule (`refId` will be the ID of a `Reminder`)<br/>
-
-        - waitlist (`refId` will be the ID of a `Waitlist`)<br/>
-
-        - appointment-offer (`refId` will be the ID of a `Offer`)<br/>
-
-        - chat-notification (`refId` will be the ID of a `Message`)<br/>
-
-        - pin-verification (`refId` will be the ID of a `Message`)<br/>
-
-        - chat (`refId` will be the ID of a `ChatActivity`)<br/>
-
-        - chat-audit (`refId` will be the ID of a `ChatActivity`)<br/>
-
-        - chat-audit-tz (`refId` will be the ID of a `ChatActivity`)<br/>
-
-        - feedback (`refId` will be the ID of a `Feedback` request)<br/>
-
-        - waitlist-offer (`refId` will be the ID of an `Appointment`)<br/>
-
-        - referral-followup (`refId` will be the ID of a `Referral`)<br/>
-
-        - outbound-referral-outreach (`refId` will be the ID of a `Referral`)<br/>
-
-        - referral-redirect (`refId` will be the ID of a `Referral`)<br/>
-
-        - broadcast (`refId` will be the ID of a `Broadcast`)<br/>
-
-        - generic (`refId` will refer to the same object of the previous message to this same patient)<br/>
-
-        - stop (`refId` will refer to the same object of the previous message to this same patient)<br/>
-
-        - bot:followup (`refId` will be the ID of a `Patient`)<br/>
-
-        - telehealth (`refId` will be the ID of a `Telehealth` object)<br/>
-
-        - waiting-room-patient (`refId` will be the ID of a `WaitingRoomPatient` object)<br/>
-
-        '
-      type: string
-      enum:
-      - reminder
-      - referral-reminder
-      - feedback-reminder
-      - followup
-      - outbound-referral-reminder
-      - form-reminder
-      - reschedule
-      - waitlist
-      - appointment-offer
-      - chat-notification
-      - pin-verification
-      - chat
-      - chat-audit
-      - chat-audit-tz
-      - feedback
-      - waitlist-offer
-      - referral-followup
-      - outbound-referral-outreach
-      - referral-redirect
-      - broadcast
-      - generic
-      - stop
-      - bot:followup
-      - telehealth
-      - waiting-room-patient
     PatientFormResponse:
       type: object
       description: A patient form is a specific instance of a form template that has been sent to or filled out by a patient, such as an intake form, consent form, or feedback survey. It tracks the patient's answers, completion status, and processing state, and can be linked to an appointment, a file upload, or a resulting scheduling offer. It also supports advanced workflows like jump logic between form sections, EHR writeback of answers or PDFs, and staff review of submitted answers.
@@ -2152,6 +1890,268 @@ components:
         querystring:
           description: querystring ReplaceAny
           type: object
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    RolesByUser:
+      type: object
+      description: Object containing 2 keys, referringProvider and renderingProvider. The value for each key is an array. The content of the array should be the root account ids under the same organization, where this user has the role with the same name of the key.
+      required: []
+      properties:
+        referringProvider:
+          type: array
+          description: List of root account IDs under an organization where the user has the role referringProvider
+          items:
+            type: string
+            pattern: '[0-9a-f]'
+            minLength: 24
+            maxLength: 24
+        renderingProvider:
+          type: array
+          description: List of root account IDs under an organization where the user has the role renderingProvider
+          items:
+            type: string
+            pattern: '[0-9a-f]'
+            minLength: 24
+            maxLength: 24
+    PatientFormRequest:
+      type: object
+      required:
+      - status
+      - processingStatus
+      properties:
+        status:
+          type: string
+          enum:
+          - pending
+          - unstarted
+          - started
+          - completed
+        processingStatus:
+          description: processingStatus
+          type: string
+          default: open
+          enum:
+          - open
+          - in-progress
+          - closed
+    Ref:
+      description: 'Indicates what this is about. Depending on this value, you also know what the parameter `refId` refers to.<br/>
+
+        - reminder (`refId` will be the ID of a `Reminder`)<br/>
+
+        - referral-reminder (`refId` will be the ID of a `Reminder`)<br/>
+
+        - feedback-reminder (`refId` will be the ID of a `Reminder`)<br/>
+
+        - followup (`refId` will be the ID of a `Reminder`)<br/>
+
+        - outbound-referral-reminder (`refId` will be the ID of a `Reminder`)<br/>
+
+        - form-reminder (`refId` will be the ID of a `Reminder`)<br/>
+
+        - reschedule (`refId` will be the ID of a `Reminder`)<br/>
+
+        - waitlist (`refId` will be the ID of a `Waitlist`)<br/>
+
+        - appointment-offer (`refId` will be the ID of a `Offer`)<br/>
+
+        - chat-notification (`refId` will be the ID of a `Message`)<br/>
+
+        - pin-verification (`refId` will be the ID of a `Message`)<br/>
+
+        - chat (`refId` will be the ID of a `ChatActivity`)<br/>
+
+        - chat-audit (`refId` will be the ID of a `ChatActivity`)<br/>
+
+        - chat-audit-tz (`refId` will be the ID of a `ChatActivity`)<br/>
+
+        - feedback (`refId` will be the ID of a `Feedback` request)<br/>
+
+        - waitlist-offer (`refId` will be the ID of an `Appointment`)<br/>
+
+        - referral-followup (`refId` will be the ID of a `Referral`)<br/>
+
+        - outbound-referral-outreach (`refId` will be the ID of a `Referral`)<br/>
+
+        - referral-redirect (`refId` will be the ID of a `Referral`)<br/>
+
+        - broadcast (`refId` will be the ID of a `Broadcast`)<br/>
+
+        - generic (`refId` will refer to the same object of the previous message to this same patient)<br/>
+
+        - stop (`refId` will refer to the same object of the previous message to this same patient)<br/>
+
+        - bot:followup (`refId` will be the ID of a `Patient`)<br/>
+
+        - telehealth (`refId` will be the ID of a `Telehealth` object)<br/>
+
+        - waiting-room-patient (`refId` will be the ID of a `WaitingRoomPatient` object)<br/>
+
+        '
+      type: string
+      enum:
+      - reminder
+      - referral-reminder
+      - feedback-reminder
+      - followup
+      - outbound-referral-reminder
+      - form-reminder
+      - reschedule
+      - waitlist
+      - appointment-offer
+      - chat-notification
+      - pin-verification
+      - chat
+      - chat-audit
+      - chat-audit-tz
+      - feedback
+      - waitlist-offer
+      - referral-followup
+      - outbound-referral-outreach
+      - referral-redirect
+      - broadcast
+      - generic
+      - stop
+      - bot:followup
+      - telehealth
+      - waiting-room-patient
+  parameters:
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
+    refParam:
+      in: query
+      name: ref
+      description: Indicates what this is about. Depending on this value, you also know what the parameter `refId` refers to.
+      schema:
+        $ref: '#/components/schemas/Ref'
+    pageParam:
+      in: query
+      name: page
+      required: false
+      type: integer
+      format: int32
+      default: 1
+      minimum: 1
+      schema:
+        type: integer
+        format: int32
+        default: 1
+        minimum: 1
+    selectParam:
+      name: _select
+      in: query
+      description: Response properties that should be returned, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
+    populateParam:
+      name: _populate
+      in: query
+      description: Response properties which will be replaced by the referenced objects, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    limitParam:
+      name: limit
+      in: query
+      description: How many items to fetch per page
+      required: false
+      type: integer
+      format: int32
+      default: 500
+      minimum: 1
+      maximum: 1000
+      schema:
+        type: integer
+        format: int32
+        default: 500
+        minimum: 1
+        maximum: 1000
+    updatedByParam:
+      in: query
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
   securitySchemes:
     Bearer:
       type: http

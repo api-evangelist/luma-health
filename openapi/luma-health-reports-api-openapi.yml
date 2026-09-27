@@ -170,6 +170,20 @@ paths:
           description: Access token does not have the required scope
 components:
   schemas:
+    ReportRequestUpdate:
+      type: object
+      properties:
+        _id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+        enabled:
+          type: boolean
+        type:
+          type: string
     Error:
       type: object
       required:
@@ -201,20 +215,6 @@ components:
           type: boolean
         type:
           type: string
-    ReportRequestUpdate:
-      type: object
-      properties:
-        _id:
-          type: string
-          format: uuid
-        name:
-          type: string
-        description:
-          type: string
-        enabled:
-          type: boolean
-        type:
-          type: string
     ReportResponse:
       type: object
       description: Represents a configured analytics report or dashboard, backed by Looker or Sigma, that staff can view within Luma Health. It stores the report name, description, external dashboard reference, and whether it is a custom, featured, or legacy report type.
@@ -231,6 +231,19 @@ components:
         type:
           type: string
   parameters:
+    pageParam:
+      in: query
+      name: page
+      required: false
+      type: integer
+      format: int32
+      default: 1
+      minimum: 1
+      schema:
+        type: integer
+        format: int32
+        default: 1
+        minimum: 1
     limitParam:
       name: limit
       in: query
@@ -247,19 +260,6 @@ components:
         default: 500
         minimum: 1
         maximum: 1000
-    pageParam:
-      in: query
-      name: page
-      required: false
-      type: integer
-      format: int32
-      default: 1
-      minimum: 1
-      schema:
-        type: integer
-        format: int32
-        default: 1
-        minimum: 1
   securitySchemes:
     Bearer:
       type: http

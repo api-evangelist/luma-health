@@ -299,128 +299,6 @@ paths:
         '403':
           description: Access token does not have the required scope
 components:
-  parameters:
-    updatedAtParam:
-      in: query
-      name: updatedAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was updated.
-    limitParam:
-      name: limit
-      in: query
-      description: How many items to fetch per page
-      required: false
-      type: integer
-      format: int32
-      default: 500
-      minimum: 1
-      maximum: 1000
-      schema:
-        type: integer
-        format: int32
-        default: 500
-        minimum: 1
-        maximum: 1000
-    createdAtParam:
-      in: query
-      name: createdAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was created.
-    createdByParam:
-      in: query
-      name: createdBy
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      required: false
-      description: The ID of the user who created this object.
-    populateParam:
-      name: _populate
-      in: query
-      description: Response properties which will be replaced by the referenced objects, separated by commas.
-      required: false
-      type: string
-      schema:
-        type: string
-    selectParam:
-      name: _select
-      in: query
-      description: Response properties that should be returned, separated by commas.
-      required: false
-      type: string
-      schema:
-        type: string
-    updatedByParam:
-      in: query
-      name: updatedBy
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the user who updated this object.
-    pageParam:
-      in: query
-      name: page
-      required: false
-      type: integer
-      format: int32
-      default: 1
-      minimum: 1
-      schema:
-        type: integer
-        format: int32
-        default: 1
-        minimum: 1
-    userParam:
-      in: query
-      name: user
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the root account user.
-    deletedParam:
-      in: query
-      name: deleted
-      required: false
-      type: number
-      enum:
-      - 0
-      - 1
-      schema:
-        type: number
-        enum:
-        - 0
-        - 1
-      description: Flag for logical deletion where 1 means deleted.
   schemas:
     createdByParam:
       in: query
@@ -436,14 +314,138 @@ components:
         maxLength: 24
       required: false
       description: The ID of the user who created this object.
-    ChecklistRequestCreate:
+    ChecklistResponse:
       type: object
-      required:
-      - name
-      - template
-      - appointment
-      - patient
-      - source
+      description: 'A Checklist is a per-appointment, per-patient instance of required pre-visit tasks (forms, insurance, consent, payment) generated at build time from a ChecklistTemplate. It is a materialized, point-in-time snapshot: editing the source template does not retroactively change existing checklists.'
+      properties:
+        _id:
+          $ref: '#/components/schemas/idParam'
+        user:
+          $ref: '#/components/schemas/userParam'
+        deleted:
+          $ref: '#/components/schemas/deletedParam'
+        createdBy:
+          $ref: '#/components/schemas/createdByParam'
+        updatedBy:
+          $ref: '#/components/schemas/updatedByParam'
+        createdAt:
+          $ref: '#/components/schemas/createdAtParam'
+        updatedAt:
+          $ref: '#/components/schemas/updatedAtParam'
+        name:
+          type: string
+          description: Name of the checklist.
+        template:
+          type: string
+          description: ID of the ChecklistTemplate this checklist was generated from.
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        appointment:
+          type: string
+          description: ID of the appointment this checklist belongs to.
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        patient:
+          type: string
+          description: ID of the patient this checklist belongs to.
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        status:
+          type: string
+          description: Overall status of the checklist.
+          enum:
+          - empty
+          - pending
+          - sent
+          - in-progress
+          - completed
+        source:
+          type: string
+          description: How this checklist was created.
+          enum:
+          - appointment
+          - message
+          - manual
+        items:
+          type: array
+          description: The individual pre-visit tasks that make up this checklist.
+          items:
+            type: object
+            properties:
+              name:
+                type: object
+                description: Localized name of this item, keyed by language code.
+                additionalProperties:
+                  type: string
+              category:
+                type: string
+                description: The category this item belongs to.
+                enum:
+                - intake
+                - demographics
+                - consent
+                - insurance
+                - payment
+              status:
+                type: string
+                description: Status of this individual item.
+                default: pending
+                enum:
+                - not-ready
+                - pending
+                - in-progress
+                - skipped
+                - completed
+              ref:
+                type: string
+                description: Type of resource this item's `refId` points to.
+                enum:
+                - patient-form
+                - insurance
+                - payment
+              refId:
+                type: string
+                description: ID of the resource (of type `ref`) that satisfies this item.
+                pattern: '[0-9a-f]'
+                minLength: 24
+                maxLength: 24
+              templateItemRef:
+                type: string
+                description: ID of the ChecklistTemplateItem this item was generated from.
+                pattern: '[0-9a-f]'
+                minLength: 24
+                maxLength: 24
+              visible:
+                type: boolean
+                description: Whether this item is visible to the patient.
+                default: false
+              expiresAt:
+                type: string
+                format: date-time
+                description: When this item expires.
+              completedAt:
+                type: string
+                format: date-time
+                description: When this item was completed.
+        completedAt:
+          type: string
+          format: date-time
+          description: When the entire checklist was completed.
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
+    ChecklistRequestUpdate:
+      type: object
       properties:
         _id:
           $ref: '#/components/schemas/idParam'
@@ -575,154 +577,6 @@ components:
         minLength: 24
         maxLength: 24
       description: Luma's internal ID of an object.
-    updatedByParam:
-      in: query
-      name: updatedBy
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the user who updated this object.
-    ChecklistResponse:
-      type: object
-      description: 'A Checklist is a per-appointment, per-patient instance of required pre-visit tasks (forms, insurance, consent, payment) generated at build time from a ChecklistTemplate. It is a materialized, point-in-time snapshot: editing the source template does not retroactively change existing checklists.'
-      properties:
-        _id:
-          $ref: '#/components/schemas/idParam'
-        user:
-          $ref: '#/components/schemas/userParam'
-        deleted:
-          $ref: '#/components/schemas/deletedParam'
-        createdBy:
-          $ref: '#/components/schemas/createdByParam'
-        updatedBy:
-          $ref: '#/components/schemas/updatedByParam'
-        createdAt:
-          $ref: '#/components/schemas/createdAtParam'
-        updatedAt:
-          $ref: '#/components/schemas/updatedAtParam'
-        name:
-          type: string
-          description: Name of the checklist.
-        template:
-          type: string
-          description: ID of the ChecklistTemplate this checklist was generated from.
-          pattern: '[0-9a-f]'
-          minLength: 24
-          maxLength: 24
-        appointment:
-          type: string
-          description: ID of the appointment this checklist belongs to.
-          pattern: '[0-9a-f]'
-          minLength: 24
-          maxLength: 24
-        patient:
-          type: string
-          description: ID of the patient this checklist belongs to.
-          pattern: '[0-9a-f]'
-          minLength: 24
-          maxLength: 24
-        status:
-          type: string
-          description: Overall status of the checklist.
-          enum:
-          - empty
-          - pending
-          - sent
-          - in-progress
-          - completed
-        source:
-          type: string
-          description: How this checklist was created.
-          enum:
-          - appointment
-          - message
-          - manual
-        items:
-          type: array
-          description: The individual pre-visit tasks that make up this checklist.
-          items:
-            type: object
-            properties:
-              name:
-                type: object
-                description: Localized name of this item, keyed by language code.
-                additionalProperties:
-                  type: string
-              category:
-                type: string
-                description: The category this item belongs to.
-                enum:
-                - intake
-                - demographics
-                - consent
-                - insurance
-                - payment
-              status:
-                type: string
-                description: Status of this individual item.
-                default: pending
-                enum:
-                - not-ready
-                - pending
-                - in-progress
-                - skipped
-                - completed
-              ref:
-                type: string
-                description: Type of resource this item's `refId` points to.
-                enum:
-                - patient-form
-                - insurance
-                - payment
-              refId:
-                type: string
-                description: ID of the resource (of type `ref`) that satisfies this item.
-                pattern: '[0-9a-f]'
-                minLength: 24
-                maxLength: 24
-              templateItemRef:
-                type: string
-                description: ID of the ChecklistTemplateItem this item was generated from.
-                pattern: '[0-9a-f]'
-                minLength: 24
-                maxLength: 24
-              visible:
-                type: boolean
-                description: Whether this item is visible to the patient.
-                default: false
-              expiresAt:
-                type: string
-                format: date-time
-                description: When this item expires.
-              completedAt:
-                type: string
-                format: date-time
-                description: When this item was completed.
-        completedAt:
-          type: string
-          format: date-time
-          description: When the entire checklist was completed.
-    deletedParam:
-      in: query
-      name: deleted
-      required: false
-      type: number
-      enum:
-      - 0
-      - 1
-      schema:
-        type: number
-        enum:
-        - 0
-        - 1
-      description: Flag for logical deletion where 1 means deleted.
     createdAtParam:
       in: query
       name: createdAt
@@ -733,18 +587,14 @@ components:
         format: date-time
       required: false
       description: The date/time when this object was created.
-    updatedAtParam:
-      in: query
-      name: updatedAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was updated.
-    ChecklistRequestUpdate:
+    ChecklistRequestCreate:
       type: object
+      required:
+      - name
+      - template
+      - appointment
+      - patient
+      - source
       properties:
         _id:
           $ref: '#/components/schemas/idParam'
@@ -876,6 +726,156 @@ components:
         minLength: 24
         maxLength: 24
       description: The ID of the root account user.
+    updatedByParam:
+      in: query
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+  parameters:
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
+    selectParam:
+      name: _select
+      in: query
+      description: Response properties that should be returned, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    populateParam:
+      name: _populate
+      in: query
+      description: Response properties which will be replaced by the referenced objects, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    updatedByParam:
+      in: query
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
+    limitParam:
+      name: limit
+      in: query
+      description: How many items to fetch per page
+      required: false
+      type: integer
+      format: int32
+      default: 500
+      minimum: 1
+      maximum: 1000
+      schema:
+        type: integer
+        format: int32
+        default: 500
+        minimum: 1
+        maximum: 1000
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+    pageParam:
+      in: query
+      name: page
+      required: false
+      type: integer
+      format: int32
+      default: 1
+      minimum: 1
+      schema:
+        type: integer
+        format: int32
+        default: 1
+        minimum: 1
   securitySchemes:
     Bearer:
       type: http

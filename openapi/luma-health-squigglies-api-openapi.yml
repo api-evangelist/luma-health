@@ -90,30 +90,20 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 components:
-  schemas:
-    SquiggliesResponse:
-      type: object
-      description: Represents a squiggly, a reusable template tag such as a dynamic URL or system value that can be inserted into messages and rendered at send time. It defines the tag name, namespace, and which product scopes it is available in.
-      properties:
-        tag:
-          type: string
-          pattern: '{{[aA-zZ]+}}'
-        label:
-          type: string
-        ref:
-          type: string
-    Error:
-      type: object
-      required:
-      - code
-      - message
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
   parameters:
+    pageParam:
+      in: query
+      name: page
+      required: false
+      type: integer
+      format: int32
+      default: 1
+      minimum: 1
+      schema:
+        type: integer
+        format: int32
+        default: 1
+        minimum: 1
     limitParam:
       name: limit
       in: query
@@ -130,19 +120,29 @@ components:
         default: 500
         minimum: 1
         maximum: 1000
-    pageParam:
-      in: query
-      name: page
-      required: false
-      type: integer
-      format: int32
-      default: 1
-      minimum: 1
-      schema:
-        type: integer
-        format: int32
-        default: 1
-        minimum: 1
+  schemas:
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    SquiggliesResponse:
+      type: object
+      description: Represents a squiggly, a reusable template tag such as a dynamic URL or system value that can be inserted into messages and rendered at send time. It defines the tag name, namespace, and which product scopes it is available in.
+      properties:
+        tag:
+          type: string
+          pattern: '{{[aA-zZ]+}}'
+        label:
+          type: string
+        ref:
+          type: string
   securitySchemes:
     Bearer:
       type: http

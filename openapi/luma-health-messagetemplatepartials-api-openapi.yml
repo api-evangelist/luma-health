@@ -216,6 +216,34 @@ paths:
           description: MessageTemplatePartial not found
 components:
   parameters:
+    deletedByParam:
+      in: query
+      name: deletedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who deleted this object.
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
     updatedAtParam:
       in: query
       name: updatedAt
@@ -226,6 +254,84 @@ components:
         format: date-time
       required: false
       description: The date/time when this object was updated.
+    selectParam:
+      name: _select
+      in: query
+      description: Response properties that should be returned, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    populateParam:
+      name: _populate
+      in: query
+      description: Response properties which will be replaced by the referenced objects, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    deletedAtParam:
+      in: query
+      name: deletedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was deleted.
+    updatedByParam:
+      in: query
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
+    idParam:
+      in: query
+      name: _id
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      required: false
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: Luma's internal ID of an object.
     limitParam:
       name: limit
       in: query
@@ -242,88 +348,20 @@ components:
         default: 500
         minimum: 1
         maximum: 1000
-    createdAtParam:
+    deletedParam:
       in: query
-      name: createdAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
+      name: deleted
       required: false
-      description: The date/time when this object was created.
-    createdByParam:
-      in: query
-      name: createdBy
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
+      type: number
+      enum:
+      - 0
+      - 1
       schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      required: false
-      description: The ID of the user who created this object.
-    idParam:
-      in: query
-      name: _id
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      required: false
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: Luma's internal ID of an object.
-    deletedByParam:
-      in: query
-      name: deletedBy
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the user who deleted this object.
-    populateParam:
-      name: _populate
-      in: query
-      description: Response properties which will be replaced by the referenced objects, separated by commas.
-      required: false
-      type: string
-      schema:
-        type: string
-    selectParam:
-      name: _select
-      in: query
-      description: Response properties that should be returned, separated by commas.
-      required: false
-      type: string
-      schema:
-        type: string
-    updatedByParam:
-      in: query
-      name: updatedBy
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the user who updated this object.
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
     pageParam:
       in: query
       name: page
@@ -337,59 +375,7 @@ components:
         format: int32
         default: 1
         minimum: 1
-    deletedAtParam:
-      in: query
-      name: deletedAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was deleted.
-    userParam:
-      in: query
-      name: user
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the root account user.
-    deletedParam:
-      in: query
-      name: deleted
-      required: false
-      type: number
-      enum:
-      - 0
-      - 1
-      schema:
-        type: number
-        enum:
-        - 0
-        - 1
-      description: Flag for logical deletion where 1 means deleted.
   schemas:
-    deletedByParam:
-      in: query
-      name: deletedBy
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the user who deleted this object.
     createdByParam:
       in: query
       name: createdBy
@@ -404,134 +390,6 @@ components:
         maxLength: 24
       required: false
       description: The ID of the user who created this object.
-    MessageTemplatePartialsUpdate:
-      type: object
-      properties:
-        _id:
-          $ref: '#/components/schemas/idParam'
-        user:
-          $ref: '#/components/schemas/userParam'
-        name:
-          type: string
-        template:
-          type: string
-        type:
-          type: string
-          enum:
-          - campaign
-          - digital-call-deflection
-          - generic
-        subType:
-          type: string
-          enum:
-          - digital-call-deflection-appointment-management
-          - digital-call-deflection-initiated-text
-          - digital-call-deflection-error
-          - digital-call-deflection-luma-bot
-          - digital-call-deflection-main-menu
-          - digital-call-deflection-other
-          - digital-call-deflection-patient-verification
-          - digital-call-deflection-redirect
-          - digital-call-deflection-scheduling
-          - digital-call-deflection-sub-menu
-          - digital-call-deflection-third-party-link
-    idParam:
-      in: query
-      name: _id
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      required: false
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: Luma's internal ID of an object.
-    updatedByParam:
-      in: query
-      name: updatedBy
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the user who updated this object.
-    MessageTemplatePartialsCreate:
-      type: object
-      required:
-      - template
-      - name
-      properties:
-        _id:
-          $ref: '#/components/schemas/idParam'
-        user:
-          $ref: '#/components/schemas/userParam'
-        name:
-          type: string
-        template:
-          type: string
-        type:
-          type: string
-          enum:
-          - campaign
-          - digital-call-deflection
-          - generic
-        subType:
-          type: string
-          enum:
-          - digital-call-deflection-appointment-management
-          - digital-call-deflection-initiated-text
-          - digital-call-deflection-error
-          - digital-call-deflection-luma-bot
-          - digital-call-deflection-main-menu
-          - digital-call-deflection-other
-          - digital-call-deflection-patient-verification
-          - digital-call-deflection-redirect
-          - digital-call-deflection-scheduling
-          - digital-call-deflection-sub-menu
-          - digital-call-deflection-third-party-link
-    deletedParam:
-      in: query
-      name: deleted
-      required: false
-      type: number
-      enum:
-      - 0
-      - 1
-      schema:
-        type: number
-        enum:
-        - 0
-        - 1
-      description: Flag for logical deletion where 1 means deleted.
-    createdAtParam:
-      in: query
-      name: createdAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was created.
-    Error:
-      type: object
-      required:
-      - code
-      - message
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
     updatedAtParam:
       in: query
       name: updatedAt
@@ -587,6 +445,34 @@ components:
           - digital-call-deflection-scheduling
           - digital-call-deflection-sub-menu
           - digital-call-deflection-third-party-link
+    idParam:
+      in: query
+      name: _id
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      required: false
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: Luma's internal ID of an object.
+    deletedByParam:
+      in: query
+      name: deletedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who deleted this object.
     deletedAtParam:
       in: query
       name: deletedAt
@@ -597,6 +483,61 @@ components:
         format: date-time
       required: false
       description: The date/time when this object was deleted.
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    MessageTemplatePartialsCreate:
+      type: object
+      required:
+      - template
+      - name
+      properties:
+        _id:
+          $ref: '#/components/schemas/idParam'
+        user:
+          $ref: '#/components/schemas/userParam'
+        name:
+          type: string
+        template:
+          type: string
+        type:
+          type: string
+          enum:
+          - campaign
+          - digital-call-deflection
+          - generic
+        subType:
+          type: string
+          enum:
+          - digital-call-deflection-appointment-management
+          - digital-call-deflection-initiated-text
+          - digital-call-deflection-error
+          - digital-call-deflection-luma-bot
+          - digital-call-deflection-main-menu
+          - digital-call-deflection-other
+          - digital-call-deflection-patient-verification
+          - digital-call-deflection-redirect
+          - digital-call-deflection-scheduling
+          - digital-call-deflection-sub-menu
+          - digital-call-deflection-third-party-link
     userParam:
       in: query
       name: user
@@ -611,6 +552,65 @@ components:
         minLength: 24
         maxLength: 24
       description: The ID of the root account user.
+    MessageTemplatePartialsUpdate:
+      type: object
+      properties:
+        _id:
+          $ref: '#/components/schemas/idParam'
+        user:
+          $ref: '#/components/schemas/userParam'
+        name:
+          type: string
+        template:
+          type: string
+        type:
+          type: string
+          enum:
+          - campaign
+          - digital-call-deflection
+          - generic
+        subType:
+          type: string
+          enum:
+          - digital-call-deflection-appointment-management
+          - digital-call-deflection-initiated-text
+          - digital-call-deflection-error
+          - digital-call-deflection-luma-bot
+          - digital-call-deflection-main-menu
+          - digital-call-deflection-other
+          - digital-call-deflection-patient-verification
+          - digital-call-deflection-redirect
+          - digital-call-deflection-scheduling
+          - digital-call-deflection-sub-menu
+          - digital-call-deflection-third-party-link
+    updatedByParam:
+      in: query
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
   securitySchemes:
     Bearer:
       type: http

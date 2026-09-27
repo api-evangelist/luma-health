@@ -363,128 +363,6 @@ paths:
         '404':
           description: No matching event found
 components:
-  parameters:
-    updatedAtParam:
-      in: query
-      name: updatedAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was updated.
-    limitParam:
-      name: limit
-      in: query
-      description: How many items to fetch per page
-      required: false
-      type: integer
-      format: int32
-      default: 500
-      minimum: 1
-      maximum: 1000
-      schema:
-        type: integer
-        format: int32
-        default: 500
-        minimum: 1
-        maximum: 1000
-    createdAtParam:
-      in: query
-      name: createdAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was created.
-    createdByParam:
-      in: query
-      name: createdBy
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      required: false
-      description: The ID of the user who created this object.
-    populateParam:
-      name: _populate
-      in: query
-      description: Response properties which will be replaced by the referenced objects, separated by commas.
-      required: false
-      type: string
-      schema:
-        type: string
-    selectParam:
-      name: _select
-      in: query
-      description: Response properties that should be returned, separated by commas.
-      required: false
-      type: string
-      schema:
-        type: string
-    updatedByParam:
-      in: query
-      name: updatedBy
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the user who updated this object.
-    pageParam:
-      in: query
-      name: page
-      required: false
-      type: integer
-      format: int32
-      default: 1
-      minimum: 1
-      schema:
-        type: integer
-        format: int32
-        default: 1
-        minimum: 1
-    userParam:
-      in: query
-      name: user
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the root account user.
-    deletedParam:
-      in: query
-      name: deleted
-      required: false
-      type: number
-      enum:
-      - 0
-      - 1
-      schema:
-        type: number
-        enum:
-        - 0
-        - 1
-      description: Flag for logical deletion where 1 means deleted.
   schemas:
     createdByParam:
       in: query
@@ -500,34 +378,85 @@ components:
         maxLength: 24
       required: false
       description: The ID of the user who created this object.
-    idParam:
+    updatedAtParam:
       in: query
-      name: _id
+      name: updatedAt
       type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      required: false
+      format: date-time
       schema:
         type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: Luma's internal ID of an object.
-    updatedByParam:
-      in: query
-      name: updatedBy
+        format: date-time
       required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the user who updated this object.
+      description: The date/time when this object was updated.
+    EngagementEventResponse:
+      type: object
+      description: An EngagementEvent is an immutable, append-only log record of something that happened during an Engagement, such as an agent being assigned, a message being sent or received, a voice call starting or ending, or a lifecycle transition. Each event belongs to exactly one Engagement, and the ordered set of events for an engagement forms its event-sourcing history.
+      properties:
+        _id:
+          $ref: '#/components/schemas/idParam'
+        user:
+          $ref: '#/components/schemas/userParam'
+        deleted:
+          $ref: '#/components/schemas/deletedParam'
+        createdBy:
+          $ref: '#/components/schemas/createdByParam'
+        updatedBy:
+          $ref: '#/components/schemas/updatedByParam'
+        createdAt:
+          $ref: '#/components/schemas/createdAtParam'
+        updatedAt:
+          $ref: '#/components/schemas/updatedAtParam'
+        engagement:
+          type: string
+          description: ID of the parent Engagement this event occurred during.
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        recipient:
+          type: string
+          description: ID of the user this event is about, if applicable.
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        payload:
+          type: object
+          description: The event's contents.
+          properties:
+            name:
+              type: string
+              description: The kind of event, for example `AgentAssigned`, `MessageSent`, `VoiceCallStarted`, `EngagementCompleted`.
+            body:
+              type: object
+              description: Event-specific data, shape depends on `name`.
+            metadata:
+              type: object
+              properties:
+                source:
+                  type: object
+                  properties:
+                    service:
+                      type: string
+                    agent:
+                      type: string
+                    operation:
+                      type: string
+                update:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      fromEvent:
+                        type: string
+                      toEngagement:
+                        type: string
+                      op:
+                        type: string
+                        default: $set
+                        enum:
+                        - $set
+                        - $push
+                        - $pull
+                        - $addToSet
     EngagementRequestCreate:
       type: object
       required:
@@ -654,20 +583,20 @@ components:
           enum:
           - expired
           - systemic_failure
-    deletedParam:
+    idParam:
       in: query
-      name: deleted
+      name: _id
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
       required: false
-      type: number
-      enum:
-      - 0
-      - 1
       schema:
-        type: number
-        enum:
-        - 0
-        - 1
-      description: Flag for logical deletion where 1 means deleted.
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: Luma's internal ID of an object.
     createdAtParam:
       in: query
       name: createdAt
@@ -678,6 +607,157 @@ components:
         format: date-time
       required: false
       description: The date/time when this object was created.
+    EngagementRequestUpdate:
+      type: object
+      properties:
+        _id:
+          $ref: '#/components/schemas/idParam'
+        user:
+          $ref: '#/components/schemas/userParam'
+        deleted:
+          $ref: '#/components/schemas/deletedParam'
+        createdBy:
+          $ref: '#/components/schemas/createdByParam'
+        updatedBy:
+          $ref: '#/components/schemas/updatedByParam'
+        createdAt:
+          $ref: '#/components/schemas/createdAtParam'
+        updatedAt:
+          $ref: '#/components/schemas/updatedAtParam'
+        recipient:
+          type: string
+          description: ID of the user this engagement is directed at.
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        recipientType:
+          type: string
+          description: The kind of user `recipient` is.
+          enum:
+          - doctor
+          - staff
+          - patient
+          - system
+        patient:
+          type: string
+          description: DEPRECATED. Use `recipient` and `recipientType` instead.
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        expiresAt:
+          type: string
+          format: date-time
+        topic:
+          type: string
+        agents:
+          type: array
+          description: IDs of the AI agents involved in this engagement.
+          items:
+            type: string
+            pattern: '[0-9a-f]'
+            minLength: 24
+            maxLength: 24
+        mainAgent:
+          type: string
+          description: ID of the primary AI agent driving this engagement.
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        engagementSetting:
+          type: string
+          description: ID of the EngagementSetting (voice/language preset) used for this engagement.
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        context:
+          type: object
+          description: Initial context provided to the engagement, used for outbound flows. Keys must correspond to AgentContextVariable names, and values must conform to that variable's schema.
+        metadata:
+          type: object
+          description: Metadata about the engagement's inactivity tracking and routing decisions.
+          properties:
+            inactivityPolicy:
+              type: object
+              properties:
+                anchor:
+                  type: string
+                inactiveAfterMs:
+                  type: number
+                closeAfterIdleMs:
+                  type: number
+                timeoutAt:
+                  type: string
+                  format: date-time
+            inactivityState:
+              type: object
+              properties:
+                lastRelevantActivityAt:
+                  type: string
+                  format: date-time
+                firstBecameInactiveAt:
+                  type: string
+                  format: date-time
+                lastInactiveEventAt:
+                  type: string
+                  format: date-time
+            sourceService:
+              type: string
+            routingDecision:
+              type: object
+              properties:
+                agentId:
+                  type: string
+        completedAt:
+          type: string
+          format: date-time
+        type:
+          type: string
+          default: conversational
+          enum:
+          - conversational
+          - other
+        status:
+          type: string
+          description: Lifecycle status of the engagement. Transitions from `in-progress` to `success`, `failed`, or `escalation_required`.
+          enum:
+          - in-progress
+          - failed
+          - success
+          - escalation_required
+          - idle
+        statusReason:
+          type: string
+          enum:
+          - expired
+          - systemic_failure
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+    updatedByParam:
+      in: query
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
     EngagementResponse:
       type: object
       description: An Engagement represents a single interaction or conversation session between the system and a recipient, such as a patient, staff member, doctor, or the system itself, for example an inbound or outbound call, SMS thread, chat, or email exchange, driven by one or more AI agents. It tracks lifecycle state as the conversation moves from in-progress to a terminal success, failure, or escalation-required status, the channel and context of the conversation, and optionally links to a reusable EngagementSetting that supplies voice and language presets. EngagementEvents reference an Engagement to form an event-sourcing style history of everything that happened during it.
@@ -802,85 +882,21 @@ components:
           enum:
           - expired
           - systemic_failure
-    EngagementEventResponse:
-      type: object
-      description: An EngagementEvent is an immutable, append-only log record of something that happened during an Engagement, such as an agent being assigned, a message being sent or received, a voice call starting or ending, or a lifecycle transition. Each event belongs to exactly one Engagement, and the ordered set of events for an engagement forms its event-sourcing history.
-      properties:
-        _id:
-          $ref: '#/components/schemas/idParam'
-        user:
-          $ref: '#/components/schemas/userParam'
-        deleted:
-          $ref: '#/components/schemas/deletedParam'
-        createdBy:
-          $ref: '#/components/schemas/createdByParam'
-        updatedBy:
-          $ref: '#/components/schemas/updatedByParam'
-        createdAt:
-          $ref: '#/components/schemas/createdAtParam'
-        updatedAt:
-          $ref: '#/components/schemas/updatedAtParam'
-        engagement:
-          type: string
-          description: ID of the parent Engagement this event occurred during.
-          pattern: '[0-9a-f]'
-          minLength: 24
-          maxLength: 24
-        recipient:
-          type: string
-          description: ID of the user this event is about, if applicable.
-          pattern: '[0-9a-f]'
-          minLength: 24
-          maxLength: 24
-        payload:
-          type: object
-          description: The event's contents.
-          properties:
-            name:
-              type: string
-              description: The kind of event, for example `AgentAssigned`, `MessageSent`, `VoiceCallStarted`, `EngagementCompleted`.
-            body:
-              type: object
-              description: Event-specific data, shape depends on `name`.
-            metadata:
-              type: object
-              properties:
-                source:
-                  type: object
-                  properties:
-                    service:
-                      type: string
-                    agent:
-                      type: string
-                    operation:
-                      type: string
-                update:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      fromEvent:
-                        type: string
-                      toEngagement:
-                        type: string
-                      op:
-                        type: string
-                        default: $set
-                        enum:
-                        - $set
-                        - $push
-                        - $pull
-                        - $addToSet
-    updatedAtParam:
+    deletedParam:
       in: query
-      name: updatedAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
+      name: deleted
       required: false
-      description: The date/time when this object was updated.
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+  parameters:
     userParam:
       in: query
       name: user
@@ -895,129 +911,113 @@ components:
         minLength: 24
         maxLength: 24
       description: The ID of the root account user.
-    EngagementRequestUpdate:
-      type: object
-      properties:
-        _id:
-          $ref: '#/components/schemas/idParam'
-        user:
-          $ref: '#/components/schemas/userParam'
-        deleted:
-          $ref: '#/components/schemas/deletedParam'
-        createdBy:
-          $ref: '#/components/schemas/createdByParam'
-        updatedBy:
-          $ref: '#/components/schemas/updatedByParam'
-        createdAt:
-          $ref: '#/components/schemas/createdAtParam'
-        updatedAt:
-          $ref: '#/components/schemas/updatedAtParam'
-        recipient:
-          type: string
-          description: ID of the user this engagement is directed at.
-          pattern: '[0-9a-f]'
-          minLength: 24
-          maxLength: 24
-        recipientType:
-          type: string
-          description: The kind of user `recipient` is.
-          enum:
-          - doctor
-          - staff
-          - patient
-          - system
-        patient:
-          type: string
-          description: DEPRECATED. Use `recipient` and `recipientType` instead.
-          pattern: '[0-9a-f]'
-          minLength: 24
-          maxLength: 24
-        expiresAt:
-          type: string
-          format: date-time
-        topic:
-          type: string
-        agents:
-          type: array
-          description: IDs of the AI agents involved in this engagement.
-          items:
-            type: string
-            pattern: '[0-9a-f]'
-            minLength: 24
-            maxLength: 24
-        mainAgent:
-          type: string
-          description: ID of the primary AI agent driving this engagement.
-          pattern: '[0-9a-f]'
-          minLength: 24
-          maxLength: 24
-        engagementSetting:
-          type: string
-          description: ID of the EngagementSetting (voice/language preset) used for this engagement.
-          pattern: '[0-9a-f]'
-          minLength: 24
-          maxLength: 24
-        context:
-          type: object
-          description: Initial context provided to the engagement, used for outbound flows. Keys must correspond to AgentContextVariable names, and values must conform to that variable's schema.
-        metadata:
-          type: object
-          description: Metadata about the engagement's inactivity tracking and routing decisions.
-          properties:
-            inactivityPolicy:
-              type: object
-              properties:
-                anchor:
-                  type: string
-                inactiveAfterMs:
-                  type: number
-                closeAfterIdleMs:
-                  type: number
-                timeoutAt:
-                  type: string
-                  format: date-time
-            inactivityState:
-              type: object
-              properties:
-                lastRelevantActivityAt:
-                  type: string
-                  format: date-time
-                firstBecameInactiveAt:
-                  type: string
-                  format: date-time
-                lastInactiveEventAt:
-                  type: string
-                  format: date-time
-            sourceService:
-              type: string
-            routingDecision:
-              type: object
-              properties:
-                agentId:
-                  type: string
-        completedAt:
-          type: string
-          format: date-time
-        type:
-          type: string
-          default: conversational
-          enum:
-          - conversational
-          - other
-        status:
-          type: string
-          description: Lifecycle status of the engagement. Transitions from `in-progress` to `success`, `failed`, or `escalation_required`.
-          enum:
-          - in-progress
-          - failed
-          - success
-          - escalation_required
-          - idle
-        statusReason:
-          type: string
-          enum:
-          - expired
-          - systemic_failure
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
+    selectParam:
+      name: _select
+      in: query
+      description: Response properties that should be returned, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    populateParam:
+      name: _populate
+      in: query
+      description: Response properties which will be replaced by the referenced objects, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    updatedByParam:
+      in: query
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
+    limitParam:
+      name: limit
+      in: query
+      description: How many items to fetch per page
+      required: false
+      type: integer
+      format: int32
+      default: 500
+      minimum: 1
+      maximum: 1000
+      schema:
+        type: integer
+        format: int32
+        default: 500
+        minimum: 1
+        maximum: 1000
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+    pageParam:
+      in: query
+      name: page
+      required: false
+      type: integer
+      format: int32
+      default: 1
+      minimum: 1
+      schema:
+        type: integer
+        format: int32
+        default: 1
+        minimum: 1
   securitySchemes:
     Bearer:
       type: http

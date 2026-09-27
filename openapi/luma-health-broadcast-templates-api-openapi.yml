@@ -124,6 +124,20 @@ paths:
           description: Original broadcast template not found
 components:
   schemas:
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
     createdByParam:
       in: query
       name: createdBy
@@ -138,30 +152,6 @@ components:
         maxLength: 24
       required: false
       description: The ID of the user who created this object.
-    updatedAtParam:
-      in: query
-      name: updatedAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was updated.
-    userParam:
-      in: query
-      name: user
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the root account user.
     BroadcastTemplate:
       type: object
       description: Represents a reusable template for a bulk broadcast messaging campaign, capturing message content per channel and language, throttling and batching settings, and audience filters used to send mass communications to patients such as reminders or announcements via SMS, email, or voice. Templates move through a draft or complete lifecycle and are consumed by the broadcast builder flow to generate an actual broadcast run.
@@ -456,34 +446,16 @@ components:
         fileUpload:
           $ref: '#/components/schemas/idParam'
       required: []
-    idParam:
+    createdAtParam:
       in: query
-      name: _id
+      name: createdAt
       type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      required: false
+      format: date-time
       schema:
         type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: Luma's internal ID of an object.
-    deletedParam:
-      in: query
-      name: deleted
+        format: date-time
       required: false
-      type: number
-      enum:
-      - 0
-      - 1
-      schema:
-        type: number
-        enum:
-        - 0
-        - 1
-      description: Flag for logical deletion where 1 means deleted.
+      description: The date/time when this object was created.
     updatedByParam:
       in: query
       name: updatedBy
@@ -498,16 +470,44 @@ components:
         minLength: 24
         maxLength: 24
       description: The ID of the user who updated this object.
-    createdAtParam:
+    updatedAtParam:
       in: query
-      name: createdAt
+      name: updatedAt
       type: string
       format: date-time
       schema:
         type: string
         format: date-time
       required: false
-      description: The date/time when this object was created.
+      description: The date/time when this object was updated.
+    idParam:
+      in: query
+      name: _id
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      required: false
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: Luma's internal ID of an object.
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
   securitySchemes:
     Bearer:
       type: http
