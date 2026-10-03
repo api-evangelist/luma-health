@@ -251,30 +251,6 @@ paths:
           description: Access token does not have the required scope
 components:
   schemas:
-    createdByParam:
-      in: query
-      name: createdBy
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      required: false
-      description: The ID of the user who created this object.
-    updatedAtParam:
-      in: query
-      name: updatedAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was updated.
     idParam:
       in: query
       name: _id
@@ -289,31 +265,9 @@ components:
         minLength: 24
         maxLength: 24
       description: Luma's internal ID of an object.
-    createdAtParam:
+    createdByParam:
       in: query
-      name: createdAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was created.
-    Error:
-      type: object
-      required:
-      - code
-      - message
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
-    userParam:
-      in: query
-      name: user
-      required: false
+      name: createdBy
       type: string
       pattern: '[0-9a-f]'
       minLength: 24
@@ -323,7 +277,8 @@ components:
         pattern: '[0-9a-f]'
         minLength: 24
         maxLength: 24
-      description: The ID of the root account user.
+      required: false
+      description: The ID of the user who created this object.
     LumabotFlowTemplateRequestCreate:
       type: object
       required:
@@ -503,6 +458,31 @@ components:
             pattern: '[0-9a-f]'
             minLength: 24
             maxLength: 24
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
     updatedByParam:
       in: query
       name: updatedBy
@@ -517,197 +497,6 @@ components:
         minLength: 24
         maxLength: 24
       description: The ID of the user who updated this object.
-    LumabotFlowTemplateRequestUpdate:
-      type: object
-      properties:
-        source:
-          description: source of the lumabot flow template
-          type: string
-          enum:
-          - system
-          - user
-        title:
-          description: title of the lumabot flow template
-          type: string
-        description:
-          description: description of the lumabot flow template
-          type: string
-        active:
-          description: describes if the lumabot flow template is active
-          type: boolean
-        url:
-          description: url of the lumabot flow template
-          type: string
-        tag:
-          description: tag of the lumabot flow template which is used to build the squiggly
-          type: string
-        template:
-          description: template of the lumabot flow template
-          type: object
-          properties:
-            items:
-              type: array
-              items:
-                type: object
-                properties:
-                  id:
-                    type: string
-                  type:
-                    type: string
-                    enum:
-                    - 2FA
-                    - address
-                    - availability_details
-                    - date
-                    - dropdown
-                    - email
-                    - jump
-                    - manage_appointment
-                    - medication_search
-                    - multiple_choice
-                    - pharmacy_search
-                    - phone_number
-                    - scheduler
-                    - ssn
-                    - template_welcome
-                    - template
-                    - text
-                    - yes_no
-                    - zipcode
-                  squiggly:
-                    type: string
-                  title:
-                    type: string
-                  redirectType:
-                    type: string
-                    enum:
-                    - none
-                    - goTo
-                    - goToFlow
-                    - goToPrevious
-                    - isFinal
-                    - externalUrl
-                    - scheduler
-                  redirectValue:
-                    type: string
-                  validations:
-                    type: object
-                    properties:
-                      required:
-                        type: boolean
-                  properties:
-                    type: object
-                    properties:
-                      template:
-                        type: string
-                      visibility:
-                        type: string
-                      notifyStaff:
-                        description: notify staff when a question is answered
-                        type: boolean
-                      sendToHub:
-                        description: send the answers to hub when a question is answered
-                        type: boolean
-                      scoringEnabled:
-                        type: boolean
-                      params:
-                        type: object
-                      answers:
-                        type: object
-                        properties:
-                          id:
-                            type: string
-                          redirectType:
-                            type: string
-                            enum:
-                            - none
-                            - goTo
-                            - goToFlow
-                            - goToPrevious
-                            - isFinal
-                            - externalUrl
-                            - scheduler
-                          redirectValue:
-                            type: string
-                          label:
-                            type: string
-                          score:
-                            type: number
-                          locales:
-                            description: A map-object whose keys may be any of these language codes `es` or `pt`
-                            type: object
-                            properties:
-                              es:
-                                type: object
-                                properties:
-                                  description:
-                                    description: the translation of the description of the question into spanish
-                                    type: string
-                                  title:
-                                    description: the translation of the title of the question into spanish
-                                    type: string
-                                  properties:
-                                    type: object
-                              pt:
-                                type: object
-                                properties:
-                                  description:
-                                    description: the translation of the description of the question into portuguese
-                                    type: string
-                                  title:
-                                    description: the translation of the title of the question into portuguese
-                                    type: string
-                                  properties:
-                                    type: object
-                          disable:
-                            type: boolean
-                          properties:
-                            type: object
-                            properties:
-                              params:
-                                type: object
-        schedulerRequestInterceptor:
-          description: schedulerRequestInterceptor of the lumabot flow template
-          type: string
-        schedulerResponseInterceptor:
-          description: schedulerResponseInterceptor of the lumabot flow template
-          type: string
-        flowType:
-          description: type of the lumabot flow template
-          type: string
-          enum:
-          - welcome
-          - authenticate-patient
-          - speak-with-staff
-          - session-timeout
-          - knock-knock
-          - cul-de-sac
-          - feedback
-          - error
-          - no-availabilities
-          - regular
-        facilities:
-          description: list of facility ids the flow template is associated with
-          type: array
-          items:
-            type: string
-            pattern: '[0-9a-f]'
-            minLength: 24
-            maxLength: 24
-    deletedParam:
-      in: query
-      name: deleted
-      required: false
-      type: number
-      enum:
-      - 0
-      - 1
-      schema:
-        type: number
-        enum:
-        - 0
-        - 1
-      description: Flag for logical deletion where 1 means deleted.
     LumabotFlowTemplateResponse:
       type: object
       description: A Lumabot flow template is a reusable definition for a conversational chatbot flow made up of ordered question and answer items such as text, dropdown, scheduler, or medication search steps. Templates can be system provided or created by a user and are cloned or referenced to build actual Lumabot flows shown to patients, supporting features like scoring, staff notifications, scheduler request and response interception, and mapping collected answers into a format that EHR or scheduling integrators can consume. This response schema returns the stored template record including its ownership, audit fields such as createdBy and updatedBy, and its active status, in addition to the template body itself.
@@ -900,11 +689,259 @@ components:
             pattern: '[0-9a-f]'
             minLength: 24
             maxLength: 24
-  parameters:
-    userParam:
+    deletedParam:
       in: query
-      name: user
+      name: deleted
       required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
+    LumabotFlowTemplateRequestUpdate:
+      type: object
+      properties:
+        source:
+          description: source of the lumabot flow template
+          type: string
+          enum:
+          - system
+          - user
+        title:
+          description: title of the lumabot flow template
+          type: string
+        description:
+          description: description of the lumabot flow template
+          type: string
+        active:
+          description: describes if the lumabot flow template is active
+          type: boolean
+        url:
+          description: url of the lumabot flow template
+          type: string
+        tag:
+          description: tag of the lumabot flow template which is used to build the squiggly
+          type: string
+        template:
+          description: template of the lumabot flow template
+          type: object
+          properties:
+            items:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  type:
+                    type: string
+                    enum:
+                    - 2FA
+                    - address
+                    - availability_details
+                    - date
+                    - dropdown
+                    - email
+                    - jump
+                    - manage_appointment
+                    - medication_search
+                    - multiple_choice
+                    - pharmacy_search
+                    - phone_number
+                    - scheduler
+                    - ssn
+                    - template_welcome
+                    - template
+                    - text
+                    - yes_no
+                    - zipcode
+                  squiggly:
+                    type: string
+                  title:
+                    type: string
+                  redirectType:
+                    type: string
+                    enum:
+                    - none
+                    - goTo
+                    - goToFlow
+                    - goToPrevious
+                    - isFinal
+                    - externalUrl
+                    - scheduler
+                  redirectValue:
+                    type: string
+                  validations:
+                    type: object
+                    properties:
+                      required:
+                        type: boolean
+                  properties:
+                    type: object
+                    properties:
+                      template:
+                        type: string
+                      visibility:
+                        type: string
+                      notifyStaff:
+                        description: notify staff when a question is answered
+                        type: boolean
+                      sendToHub:
+                        description: send the answers to hub when a question is answered
+                        type: boolean
+                      scoringEnabled:
+                        type: boolean
+                      params:
+                        type: object
+                      answers:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                          redirectType:
+                            type: string
+                            enum:
+                            - none
+                            - goTo
+                            - goToFlow
+                            - goToPrevious
+                            - isFinal
+                            - externalUrl
+                            - scheduler
+                          redirectValue:
+                            type: string
+                          label:
+                            type: string
+                          score:
+                            type: number
+                          locales:
+                            description: A map-object whose keys may be any of these language codes `es` or `pt`
+                            type: object
+                            properties:
+                              es:
+                                type: object
+                                properties:
+                                  description:
+                                    description: the translation of the description of the question into spanish
+                                    type: string
+                                  title:
+                                    description: the translation of the title of the question into spanish
+                                    type: string
+                                  properties:
+                                    type: object
+                              pt:
+                                type: object
+                                properties:
+                                  description:
+                                    description: the translation of the description of the question into portuguese
+                                    type: string
+                                  title:
+                                    description: the translation of the title of the question into portuguese
+                                    type: string
+                                  properties:
+                                    type: object
+                          disable:
+                            type: boolean
+                          properties:
+                            type: object
+                            properties:
+                              params:
+                                type: object
+        schedulerRequestInterceptor:
+          description: schedulerRequestInterceptor of the lumabot flow template
+          type: string
+        schedulerResponseInterceptor:
+          description: schedulerResponseInterceptor of the lumabot flow template
+          type: string
+        flowType:
+          description: type of the lumabot flow template
+          type: string
+          enum:
+          - welcome
+          - authenticate-patient
+          - speak-with-staff
+          - session-timeout
+          - knock-knock
+          - cul-de-sac
+          - feedback
+          - error
+          - no-availabilities
+          - regular
+        facilities:
+          description: list of facility ids the flow template is associated with
+          type: array
+          items:
+            type: string
+            pattern: '[0-9a-f]'
+            minLength: 24
+            maxLength: 24
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
+  parameters:
+    populateParam:
+      name: _populate
+      in: query
+      description: Response properties which will be replaced by the referenced objects, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+    limitParam:
+      name: limit
+      in: query
+      description: How many items to fetch per page
+      required: false
+      type: integer
+      format: int32
+      default: 500
+      minimum: 1
+      maximum: 1000
+      schema:
+        type: integer
+        format: int32
+        default: 500
+        minimum: 1
+        maximum: 1000
+    createdByParam:
+      in: query
+      name: createdBy
       type: string
       pattern: '[0-9a-f]'
       minLength: 24
@@ -914,7 +951,8 @@ components:
         pattern: '[0-9a-f]'
         minLength: 24
         maxLength: 24
-      description: The ID of the root account user.
+      required: false
+      description: The ID of the user who created this object.
     updatedAtParam:
       in: query
       name: updatedAt
@@ -933,14 +971,29 @@ components:
       type: string
       schema:
         type: string
-    populateParam:
-      name: _populate
+    pageParam:
       in: query
-      description: Response properties which will be replaced by the referenced objects, separated by commas.
+      name: page
       required: false
+      type: integer
+      format: int32
+      default: 1
+      minimum: 1
+      schema:
+        type: integer
+        format: int32
+        default: 1
+        minimum: 1
+    createdAtParam:
+      in: query
+      name: createdAt
       type: string
+      format: date-time
       schema:
         type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
     updatedByParam:
       in: query
       name: updatedBy
@@ -955,9 +1008,10 @@ components:
         minLength: 24
         maxLength: 24
       description: The ID of the user who updated this object.
-    createdByParam:
+    userParam:
       in: query
-      name: createdBy
+      name: user
+      required: false
       type: string
       pattern: '[0-9a-f]'
       minLength: 24
@@ -967,61 +1021,7 @@ components:
         pattern: '[0-9a-f]'
         minLength: 24
         maxLength: 24
-      required: false
-      description: The ID of the user who created this object.
-    createdAtParam:
-      in: query
-      name: createdAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was created.
-    limitParam:
-      name: limit
-      in: query
-      description: How many items to fetch per page
-      required: false
-      type: integer
-      format: int32
-      default: 500
-      minimum: 1
-      maximum: 1000
-      schema:
-        type: integer
-        format: int32
-        default: 500
-        minimum: 1
-        maximum: 1000
-    deletedParam:
-      in: query
-      name: deleted
-      required: false
-      type: number
-      enum:
-      - 0
-      - 1
-      schema:
-        type: number
-        enum:
-        - 0
-        - 1
-      description: Flag for logical deletion where 1 means deleted.
-    pageParam:
-      in: query
-      name: page
-      required: false
-      type: integer
-      format: int32
-      default: 1
-      minimum: 1
-      schema:
-        type: integer
-        format: int32
-        default: 1
-        minimum: 1
+      description: The ID of the root account user.
   securitySchemes:
     Bearer:
       type: http

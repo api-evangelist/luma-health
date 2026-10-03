@@ -207,6 +207,111 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
+    idParam:
+      in: query
+      name: _id
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      required: false
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: Luma's internal ID of an object.
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+    AppointmentTypeRequestCreate:
+      type: object
+      required:
+      - name
+      properties:
+        _id:
+          $ref: '#/components/schemas/idParam'
+        user:
+          $ref: '#/components/schemas/userParam'
+        deleted:
+          $ref: '#/components/schemas/deletedParam'
+        createdBy:
+          $ref: '#/components/schemas/createdByParam'
+        updatedBy:
+          $ref: '#/components/schemas/updatedByParam'
+        createdAt:
+          $ref: '#/components/schemas/createdAtParam'
+        updatedAt:
+          $ref: '#/components/schemas/updatedAtParam'
+        name:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        alternativeName:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        description:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        duration:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        externalId:
+          $ref: '#/components/schemas/ExternalId'
+        visible:
+          type: integer
+          format: int32
+          default: 15
+        dependents:
+          type: array
+          items:
+            type: object
+            properties:
+              appointmentType:
+                type: string
+                pattern: '[0-9a-f]'
+                minLength: 24
+                maxLength: 24
+              rules:
+                type: object
+                properties:
+                  findAvailabilityAfter:
+                    type: object
+                    properties:
+                      enabled:
+                        type: boolean
+                        default: true
+                      maxMinutes:
+                        type: number
+                        default: 30
+                      minMinutes:
+                        type: number
+                  facilityMatch:
+                    type: object
+                    properties:
+                      criteria:
+                        type: string
+                        enum:
+                        - _id
+                        - postcode
     ExternalId:
       type: object
       properties:
@@ -314,9 +419,21 @@ components:
         value:
           description: externalId.value
           type: string
-    createdByParam:
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    userParam:
       in: query
-      name: createdBy
+      name: user
+      required: false
       type: string
       pattern: '[0-9a-f]'
       minLength: 24
@@ -326,32 +443,21 @@ components:
         pattern: '[0-9a-f]'
         minLength: 24
         maxLength: 24
-      required: false
-      description: The ID of the user who created this object.
-    updatedAtParam:
+      description: The ID of the root account user.
+    updatedByParam:
       in: query
-      name: updatedAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
+      name: updatedBy
       required: false
-      description: The date/time when this object was updated.
-    idParam:
-      in: query
-      name: _id
       type: string
       pattern: '[0-9a-f]'
       minLength: 24
       maxLength: 24
-      required: false
       schema:
         type: string
         pattern: '[0-9a-f]'
         minLength: 24
         maxLength: 24
-      description: Luma's internal ID of an object.
+      description: The ID of the user who updated this object.
     AppointmentTypeResponse:
       type: object
       description: An Appointment Type defines a category of visit that a provider or facility offers, such as a routine office visit or a telehealth consult, along with its default duration, visibility, and optional patient intake forms (checklist). It can also declare dependent appointment types and matching rules used to determine facility or availability logic when a related follow-up appointment needs to be scheduled.
@@ -428,6 +534,30 @@ components:
                         enum:
                         - _id
                         - postcode
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
     AppointmentTypeRequestUpdate:
       type: object
       properties:
@@ -513,122 +643,15 @@ components:
         format: date-time
       required: false
       description: The date/time when this object was created.
-    Error:
-      type: object
-      required:
-      - code
-      - message
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
-    AppointmentTypeRequestCreate:
-      type: object
-      required:
-      - name
-      properties:
-        _id:
-          $ref: '#/components/schemas/idParam'
-        user:
-          $ref: '#/components/schemas/userParam'
-        deleted:
-          $ref: '#/components/schemas/deletedParam'
-        createdBy:
-          $ref: '#/components/schemas/createdByParam'
-        updatedBy:
-          $ref: '#/components/schemas/updatedByParam'
-        createdAt:
-          $ref: '#/components/schemas/createdAtParam'
-        updatedAt:
-          $ref: '#/components/schemas/updatedAtParam'
-        name:
-          type: string
-          pattern: '[0-9a-f]'
-          minLength: 24
-          maxLength: 24
-        alternativeName:
-          type: string
-          pattern: '[0-9a-f]'
-          minLength: 24
-          maxLength: 24
-        description:
-          type: string
-          pattern: '[0-9a-f]'
-          minLength: 24
-          maxLength: 24
-        duration:
-          type: string
-          pattern: '[0-9a-f]'
-          minLength: 24
-          maxLength: 24
-        externalId:
-          $ref: '#/components/schemas/ExternalId'
-        visible:
-          type: integer
-          format: int32
-          default: 15
-        dependents:
-          type: array
-          items:
-            type: object
-            properties:
-              appointmentType:
-                type: string
-                pattern: '[0-9a-f]'
-                minLength: 24
-                maxLength: 24
-              rules:
-                type: object
-                properties:
-                  findAvailabilityAfter:
-                    type: object
-                    properties:
-                      enabled:
-                        type: boolean
-                        default: true
-                      maxMinutes:
-                        type: number
-                        default: 30
-                      minMinutes:
-                        type: number
-                  facilityMatch:
-                    type: object
-                    properties:
-                      criteria:
-                        type: string
-                        enum:
-                        - _id
-                        - postcode
-    userParam:
+  parameters:
+    populateParam:
+      name: _populate
       in: query
-      name: user
+      description: Response properties which will be replaced by the referenced objects, separated by commas.
       required: false
       type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
       schema:
         type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the root account user.
-    updatedByParam:
-      in: query
-      name: updatedBy
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the user who updated this object.
     deletedParam:
       in: query
       name: deleted
@@ -643,11 +666,25 @@ components:
         - 0
         - 1
       description: Flag for logical deletion where 1 means deleted.
-  parameters:
-    userParam:
+    limitParam:
+      name: limit
       in: query
-      name: user
+      description: How many items to fetch per page
       required: false
+      type: integer
+      format: int32
+      default: 500
+      minimum: 1
+      maximum: 1000
+      schema:
+        type: integer
+        format: int32
+        default: 500
+        minimum: 1
+        maximum: 1000
+    createdByParam:
+      in: query
+      name: createdBy
       type: string
       pattern: '[0-9a-f]'
       minLength: 24
@@ -657,7 +694,8 @@ components:
         pattern: '[0-9a-f]'
         minLength: 24
         maxLength: 24
-      description: The ID of the root account user.
+      required: false
+      description: The ID of the user who created this object.
     updatedAtParam:
       in: query
       name: updatedAt
@@ -676,14 +714,29 @@ components:
       type: string
       schema:
         type: string
-    populateParam:
-      name: _populate
+    pageParam:
       in: query
-      description: Response properties which will be replaced by the referenced objects, separated by commas.
+      name: page
       required: false
+      type: integer
+      format: int32
+      default: 1
+      minimum: 1
+      schema:
+        type: integer
+        format: int32
+        default: 1
+        minimum: 1
+    createdAtParam:
+      in: query
+      name: createdAt
       type: string
+      format: date-time
       schema:
         type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
     updatedByParam:
       in: query
       name: updatedBy
@@ -698,9 +751,10 @@ components:
         minLength: 24
         maxLength: 24
       description: The ID of the user who updated this object.
-    createdByParam:
+    userParam:
       in: query
-      name: createdBy
+      name: user
+      required: false
       type: string
       pattern: '[0-9a-f]'
       minLength: 24
@@ -710,61 +764,7 @@ components:
         pattern: '[0-9a-f]'
         minLength: 24
         maxLength: 24
-      required: false
-      description: The ID of the user who created this object.
-    createdAtParam:
-      in: query
-      name: createdAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was created.
-    limitParam:
-      name: limit
-      in: query
-      description: How many items to fetch per page
-      required: false
-      type: integer
-      format: int32
-      default: 500
-      minimum: 1
-      maximum: 1000
-      schema:
-        type: integer
-        format: int32
-        default: 500
-        minimum: 1
-        maximum: 1000
-    deletedParam:
-      in: query
-      name: deleted
-      required: false
-      type: number
-      enum:
-      - 0
-      - 1
-      schema:
-        type: number
-        enum:
-        - 0
-        - 1
-      description: Flag for logical deletion where 1 means deleted.
-    pageParam:
-      in: query
-      name: page
-      required: false
-      type: integer
-      format: int32
-      default: 1
-      minimum: 1
-      schema:
-        type: integer
-        format: int32
-        default: 1
-        minimum: 1
+      description: The ID of the root account user.
   securitySchemes:
     Bearer:
       type: http

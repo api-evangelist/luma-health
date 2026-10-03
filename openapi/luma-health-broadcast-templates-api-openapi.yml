@@ -138,20 +138,20 @@ components:
         - 0
         - 1
       description: Flag for logical deletion where 1 means deleted.
-    createdByParam:
+    idParam:
       in: query
-      name: createdBy
+      name: _id
       type: string
       pattern: '[0-9a-f]'
       minLength: 24
       maxLength: 24
+      required: false
       schema:
         type: string
         pattern: '[0-9a-f]'
         minLength: 24
         maxLength: 24
-      required: false
-      description: The ID of the user who created this object.
+      description: Luma's internal ID of an object.
     BroadcastTemplate:
       type: object
       description: Represents a reusable template for a bulk broadcast messaging campaign, capturing message content per channel and language, throttling and batching settings, and audience filters used to send mass communications to patients such as reminders or announcements via SMS, email, or voice. Templates move through a draft or complete lifecycle and are consumed by the broadcast builder flow to generate an actual broadcast run.
@@ -446,20 +446,9 @@ components:
         fileUpload:
           $ref: '#/components/schemas/idParam'
       required: []
-    createdAtParam:
+    createdByParam:
       in: query
-      name: createdAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was created.
-    updatedByParam:
-      in: query
-      name: updatedBy
-      required: false
+      name: createdBy
       type: string
       pattern: '[0-9a-f]'
       minLength: 24
@@ -469,7 +458,8 @@ components:
         pattern: '[0-9a-f]'
         minLength: 24
         maxLength: 24
-      description: The ID of the user who updated this object.
+      required: false
+      description: The ID of the user who created this object.
     updatedAtParam:
       in: query
       name: updatedAt
@@ -480,20 +470,6 @@ components:
         format: date-time
       required: false
       description: The date/time when this object was updated.
-    idParam:
-      in: query
-      name: _id
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      required: false
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: Luma's internal ID of an object.
     userParam:
       in: query
       name: user
@@ -508,6 +484,30 @@ components:
         minLength: 24
         maxLength: 24
       description: The ID of the root account user.
+    updatedByParam:
+      in: query
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
   securitySchemes:
     Bearer:
       type: http

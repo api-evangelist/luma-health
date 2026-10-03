@@ -181,6 +181,20 @@ paths:
           description: Access token does not have the required scope
 components:
   schemas:
+    idParam:
+      in: query
+      name: _id
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      required: false
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: Luma's internal ID of an object.
     createdByParam:
       in: query
       name: createdBy
@@ -195,12 +209,8 @@ components:
         maxLength: 24
       required: false
       description: The ID of the user who created this object.
-    EngagementSettingRequestCreate:
+    EngagementSettingRequestUpdate:
       type: object
-      required:
-      - name
-      - language
-      - voice
       properties:
         _id:
           $ref: '#/components/schemas/idParam'
@@ -229,40 +239,6 @@ components:
         voice:
           type: string
           description: The voice the assistant should use for engagements using this preset.
-    updatedAtParam:
-      in: query
-      name: updatedAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was updated.
-    idParam:
-      in: query
-      name: _id
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      required: false
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: Luma's internal ID of an object.
-    createdAtParam:
-      in: query
-      name: createdAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was created.
     EngagementSettingResponse:
       type: object
       description: An EngagementSetting is a small, reusable, named preset, made up of a language and a voice, that can be attached to an Engagement to configure how a voice or conversational engagement should sound and speak.
@@ -308,8 +284,26 @@ components:
         minLength: 24
         maxLength: 24
       description: The ID of the root account user.
-    EngagementSettingRequestUpdate:
+    updatedByParam:
+      in: query
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
+    EngagementSettingRequestCreate:
       type: object
+      required:
+      - name
+      - language
+      - voice
       properties:
         _id:
           $ref: '#/components/schemas/idParam'
@@ -338,20 +332,6 @@ components:
         voice:
           type: string
           description: The voice the assistant should use for engagements using this preset.
-    updatedByParam:
-      in: query
-      name: updatedBy
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the user who updated this object.
     deletedParam:
       in: query
       name: deleted
@@ -366,11 +346,68 @@ components:
         - 0
         - 1
       description: Flag for logical deletion where 1 means deleted.
-  parameters:
-    userParam:
+    updatedAtParam:
       in: query
-      name: user
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
       required: false
+      description: The date/time when this object was updated.
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
+  parameters:
+    populateParam:
+      name: _populate
+      in: query
+      description: Response properties which will be replaced by the referenced objects, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+    limitParam:
+      name: limit
+      in: query
+      description: How many items to fetch per page
+      required: false
+      type: integer
+      format: int32
+      default: 500
+      minimum: 1
+      maximum: 1000
+      schema:
+        type: integer
+        format: int32
+        default: 500
+        minimum: 1
+        maximum: 1000
+    createdByParam:
+      in: query
+      name: createdBy
       type: string
       pattern: '[0-9a-f]'
       minLength: 24
@@ -380,7 +417,8 @@ components:
         pattern: '[0-9a-f]'
         minLength: 24
         maxLength: 24
-      description: The ID of the root account user.
+      required: false
+      description: The ID of the user who created this object.
     updatedAtParam:
       in: query
       name: updatedAt
@@ -399,14 +437,29 @@ components:
       type: string
       schema:
         type: string
-    populateParam:
-      name: _populate
+    pageParam:
       in: query
-      description: Response properties which will be replaced by the referenced objects, separated by commas.
+      name: page
       required: false
+      type: integer
+      format: int32
+      default: 1
+      minimum: 1
+      schema:
+        type: integer
+        format: int32
+        default: 1
+        minimum: 1
+    createdAtParam:
+      in: query
+      name: createdAt
       type: string
+      format: date-time
       schema:
         type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
     updatedByParam:
       in: query
       name: updatedBy
@@ -421,9 +474,10 @@ components:
         minLength: 24
         maxLength: 24
       description: The ID of the user who updated this object.
-    createdByParam:
+    userParam:
       in: query
-      name: createdBy
+      name: user
+      required: false
       type: string
       pattern: '[0-9a-f]'
       minLength: 24
@@ -433,61 +487,7 @@ components:
         pattern: '[0-9a-f]'
         minLength: 24
         maxLength: 24
-      required: false
-      description: The ID of the user who created this object.
-    createdAtParam:
-      in: query
-      name: createdAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was created.
-    limitParam:
-      name: limit
-      in: query
-      description: How many items to fetch per page
-      required: false
-      type: integer
-      format: int32
-      default: 500
-      minimum: 1
-      maximum: 1000
-      schema:
-        type: integer
-        format: int32
-        default: 500
-        minimum: 1
-        maximum: 1000
-    deletedParam:
-      in: query
-      name: deleted
-      required: false
-      type: number
-      enum:
-      - 0
-      - 1
-      schema:
-        type: number
-        enum:
-        - 0
-        - 1
-      description: Flag for logical deletion where 1 means deleted.
-    pageParam:
-      in: query
-      name: page
-      required: false
-      type: integer
-      format: int32
-      default: 1
-      minimum: 1
-      schema:
-        type: integer
-        format: int32
-        default: 1
-        minimum: 1
+      description: The ID of the root account user.
   securitySchemes:
     Bearer:
       type: http

@@ -626,113 +626,20 @@ paths:
                 additionalProperties: false
 components:
   schemas:
-    ExternalId:
-      type: object
-      properties:
-        source:
-          description: externalId.source
-          type: string
-          enum:
-          - gcalendar
-          - successehs
-          - drchrono
-          - dentrix
-          - webpt
-          - theraoffice
-          - mi7
-          - practicefusion
-          - advancedmd
-          - acomrapidpm
-          - kareo
-          - nextech
-          - mwtherapy
-          - clinicient
-          - carecloud
-          - eclinicalmobile
-          - duxware
-          - labretriever
-          - optimispt
-          - referral
-          - recall
-          - allscriptspm
-          - lytec
-          - brightree
-          - fullslate
-          - nuemd
-          - centricityps
-          - officeally
-          - greenwayintergy
-          - compulink
-          - adspm
-          - dsnpm
-          - lumamock
-          - medicalmastermind
-          - meditouch
-          - healthnautica
-          - ezemrx
-          - hl7
-          - amazingcharts
-          - greenwayprimesuite
-          - raintree
-          - athenahealth
-          - revflow
-          - eclinicalworks10e
-          - hl7pickup
-          - mindbody
-          - eclinicalworkssql
-          - nextgen
-          - practiceperfect
-          - avimark
-          - clinix
-          - keymedical
-          - mdoffice
-          - webedoctor
-          - emapm
-          - medinformatix
-          - imsgo
-          - emds
-          - allscriptsunity
-          - medevolve
-          - caretracker
-          - clearpractice
-          - valant
-          - micromd
-          - systemedx
-          - medicalmaster
-          - athenamdp
-          - gmed
-          - roche
-          - onetouch
-          - somnoware
-          - managementplus
-          - lumacare
-          - nextechfhir
-          - curemd
-          - epic
-          - phoenixortho
-          - ezderm
-          - ggastromobile
-          - epicconfirmationpickup
-          - cerner
-          - allmeds
-          - oncoemrfilepickup
-          - imedicware
-          - modmedfhir
-          - clinux
-          - acuityscheduling
-          - medstreaming
-          - isalus
-          - meditechexpanse
-          - openemr
-          - genericfhir
-          - nextechpracticeplus
-          - sms
-          - voice
-          - email
-          - none
-        value:
-          description: externalId.value
-          type: string
+    idParam:
+      in: query
+      name: _id
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      required: false
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: Luma's internal ID of an object.
     createdByParam:
       in: query
       name: createdBy
@@ -747,26 +654,6 @@ components:
         maxLength: 24
       required: false
       description: The ID of the user who created this object.
-    updatedAtParam:
-      in: query
-      name: updatedAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was updated.
-    MessagesUpdateVisibilityRequest:
-      type: object
-      properties:
-        markMessageAs:
-          type: string
-          default: public
-          enum:
-          - public
-          - private
-          - internal
     MessageResponse:
       type: object
       description: A Message represents a single communication sent or received between Luma Health and a patient, or between staff members, across channels such as SMS, email, voice, fax, WhatsApp, and in-app chat. It tracks delivery status from the messaging vendor (sent, delivered, opened, undelivered, etc), links back to related records like the appointment, provider, referral, or recall that triggered it, and captures the classification of patient replies such as positive, negative, or unrecognized. It also distinguishes public patient-facing messages from private staff notifications and internal staff-to-staff conversations.
@@ -1139,20 +1026,204 @@ components:
           pattern: '[0-9a-f]'
           minLength: 24
           maxLength: 24
-    idParam:
-      in: query
-      name: _id
+    ExternalId:
+      type: object
+      properties:
+        source:
+          description: externalId.source
+          type: string
+          enum:
+          - gcalendar
+          - successehs
+          - drchrono
+          - dentrix
+          - webpt
+          - theraoffice
+          - mi7
+          - practicefusion
+          - advancedmd
+          - acomrapidpm
+          - kareo
+          - nextech
+          - mwtherapy
+          - clinicient
+          - carecloud
+          - eclinicalmobile
+          - duxware
+          - labretriever
+          - optimispt
+          - referral
+          - recall
+          - allscriptspm
+          - lytec
+          - brightree
+          - fullslate
+          - nuemd
+          - centricityps
+          - officeally
+          - greenwayintergy
+          - compulink
+          - adspm
+          - dsnpm
+          - lumamock
+          - medicalmastermind
+          - meditouch
+          - healthnautica
+          - ezemrx
+          - hl7
+          - amazingcharts
+          - greenwayprimesuite
+          - raintree
+          - athenahealth
+          - revflow
+          - eclinicalworks10e
+          - hl7pickup
+          - mindbody
+          - eclinicalworkssql
+          - nextgen
+          - practiceperfect
+          - avimark
+          - clinix
+          - keymedical
+          - mdoffice
+          - webedoctor
+          - emapm
+          - medinformatix
+          - imsgo
+          - emds
+          - allscriptsunity
+          - medevolve
+          - caretracker
+          - clearpractice
+          - valant
+          - micromd
+          - systemedx
+          - medicalmaster
+          - athenamdp
+          - gmed
+          - roche
+          - onetouch
+          - somnoware
+          - managementplus
+          - lumacare
+          - nextechfhir
+          - curemd
+          - epic
+          - phoenixortho
+          - ezderm
+          - ggastromobile
+          - epicconfirmationpickup
+          - cerner
+          - allmeds
+          - oncoemrfilepickup
+          - imedicware
+          - modmedfhir
+          - clinux
+          - acuityscheduling
+          - medstreaming
+          - isalus
+          - meditechexpanse
+          - openemr
+          - genericfhir
+          - nextechpracticeplus
+          - sms
+          - voice
+          - email
+          - none
+        value:
+          description: externalId.value
+          type: string
+    MessagesUpdateVisibilityRequest:
+      type: object
+      properties:
+        markMessageAs:
+          type: string
+          default: public
+          enum:
+          - public
+          - private
+          - internal
+    Ref:
+      description: 'Indicates what this is about. Depending on this value, you also know what the parameter `refId` refers to.<br/>
+
+        - reminder (`refId` will be the ID of a `Reminder`)<br/>
+
+        - referral-reminder (`refId` will be the ID of a `Reminder`)<br/>
+
+        - feedback-reminder (`refId` will be the ID of a `Reminder`)<br/>
+
+        - followup (`refId` will be the ID of a `Reminder`)<br/>
+
+        - outbound-referral-reminder (`refId` will be the ID of a `Reminder`)<br/>
+
+        - form-reminder (`refId` will be the ID of a `Reminder`)<br/>
+
+        - reschedule (`refId` will be the ID of a `Reminder`)<br/>
+
+        - waitlist (`refId` will be the ID of a `Waitlist`)<br/>
+
+        - appointment-offer (`refId` will be the ID of a `Offer`)<br/>
+
+        - chat-notification (`refId` will be the ID of a `Message`)<br/>
+
+        - pin-verification (`refId` will be the ID of a `Message`)<br/>
+
+        - chat (`refId` will be the ID of a `ChatActivity`)<br/>
+
+        - chat-audit (`refId` will be the ID of a `ChatActivity`)<br/>
+
+        - chat-audit-tz (`refId` will be the ID of a `ChatActivity`)<br/>
+
+        - feedback (`refId` will be the ID of a `Feedback` request)<br/>
+
+        - waitlist-offer (`refId` will be the ID of an `Appointment`)<br/>
+
+        - referral-followup (`refId` will be the ID of a `Referral`)<br/>
+
+        - outbound-referral-outreach (`refId` will be the ID of a `Referral`)<br/>
+
+        - referral-redirect (`refId` will be the ID of a `Referral`)<br/>
+
+        - broadcast (`refId` will be the ID of a `Broadcast`)<br/>
+
+        - generic (`refId` will refer to the same object of the previous message to this same patient)<br/>
+
+        - stop (`refId` will refer to the same object of the previous message to this same patient)<br/>
+
+        - bot:followup (`refId` will be the ID of a `Patient`)<br/>
+
+        - telehealth (`refId` will be the ID of a `Telehealth` object)<br/>
+
+        - waiting-room-patient (`refId` will be the ID of a `WaitingRoomPatient` object)<br/>
+
+        '
       type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      required: false
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: Luma's internal ID of an object.
+      enum:
+      - reminder
+      - referral-reminder
+      - feedback-reminder
+      - followup
+      - outbound-referral-reminder
+      - form-reminder
+      - reschedule
+      - waitlist
+      - appointment-offer
+      - chat-notification
+      - pin-verification
+      - chat
+      - chat-audit
+      - chat-audit-tz
+      - feedback
+      - waitlist-offer
+      - referral-followup
+      - outbound-referral-outreach
+      - referral-redirect
+      - broadcast
+      - generic
+      - stop
+      - bot:followup
+      - telehealth
+      - waiting-room-patient
     MessageRequest:
       type: object
       required:
@@ -1405,132 +1476,6 @@ components:
           pattern: '[0-9a-f]'
           minLength: 24
           maxLength: 24
-    Ref:
-      description: 'Indicates what this is about. Depending on this value, you also know what the parameter `refId` refers to.<br/>
-
-        - reminder (`refId` will be the ID of a `Reminder`)<br/>
-
-        - referral-reminder (`refId` will be the ID of a `Reminder`)<br/>
-
-        - feedback-reminder (`refId` will be the ID of a `Reminder`)<br/>
-
-        - followup (`refId` will be the ID of a `Reminder`)<br/>
-
-        - outbound-referral-reminder (`refId` will be the ID of a `Reminder`)<br/>
-
-        - form-reminder (`refId` will be the ID of a `Reminder`)<br/>
-
-        - reschedule (`refId` will be the ID of a `Reminder`)<br/>
-
-        - waitlist (`refId` will be the ID of a `Waitlist`)<br/>
-
-        - appointment-offer (`refId` will be the ID of a `Offer`)<br/>
-
-        - chat-notification (`refId` will be the ID of a `Message`)<br/>
-
-        - pin-verification (`refId` will be the ID of a `Message`)<br/>
-
-        - chat (`refId` will be the ID of a `ChatActivity`)<br/>
-
-        - chat-audit (`refId` will be the ID of a `ChatActivity`)<br/>
-
-        - chat-audit-tz (`refId` will be the ID of a `ChatActivity`)<br/>
-
-        - feedback (`refId` will be the ID of a `Feedback` request)<br/>
-
-        - waitlist-offer (`refId` will be the ID of an `Appointment`)<br/>
-
-        - referral-followup (`refId` will be the ID of a `Referral`)<br/>
-
-        - outbound-referral-outreach (`refId` will be the ID of a `Referral`)<br/>
-
-        - referral-redirect (`refId` will be the ID of a `Referral`)<br/>
-
-        - broadcast (`refId` will be the ID of a `Broadcast`)<br/>
-
-        - generic (`refId` will refer to the same object of the previous message to this same patient)<br/>
-
-        - stop (`refId` will refer to the same object of the previous message to this same patient)<br/>
-
-        - bot:followup (`refId` will be the ID of a `Patient`)<br/>
-
-        - telehealth (`refId` will be the ID of a `Telehealth` object)<br/>
-
-        - waiting-room-patient (`refId` will be the ID of a `WaitingRoomPatient` object)<br/>
-
-        '
-      type: string
-      enum:
-      - reminder
-      - referral-reminder
-      - feedback-reminder
-      - followup
-      - outbound-referral-reminder
-      - form-reminder
-      - reschedule
-      - waitlist
-      - appointment-offer
-      - chat-notification
-      - pin-verification
-      - chat
-      - chat-audit
-      - chat-audit-tz
-      - feedback
-      - waitlist-offer
-      - referral-followup
-      - outbound-referral-outreach
-      - referral-redirect
-      - broadcast
-      - generic
-      - stop
-      - bot:followup
-      - telehealth
-      - waiting-room-patient
-    createdAtParam:
-      in: query
-      name: createdAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was created.
-    Language:
-      description: Language
-      type: string
-      enum:
-      - ar
-      - bn
-      - cn
-      - de
-      - en
-      - es
-      - fa
-      - fl
-      - fr
-      - gr
-      - gu
-      - hi
-      - ht
-      - hy
-      - it
-      - ja
-      - km
-      - ko
-      - mr
-      - my
-      - pa
-      - pl
-      - pt
-      - ru
-      - so
-      - th
-      - ti
-      - ur
-      - vi
-      - zh-t
-      - zh
     Error:
       type: object
       required:
@@ -1584,7 +1529,100 @@ components:
         - 0
         - 1
       description: Flag for logical deletion where 1 means deleted.
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
+    Language:
+      description: Language
+      type: string
+      enum:
+      - ar
+      - bn
+      - cn
+      - de
+      - en
+      - es
+      - fa
+      - fl
+      - fr
+      - gr
+      - gu
+      - hi
+      - ht
+      - hy
+      - it
+      - ja
+      - km
+      - ko
+      - mr
+      - my
+      - pa
+      - pl
+      - pt
+      - ru
+      - so
+      - th
+      - ti
+      - ur
+      - vi
+      - zh-t
+      - zh
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
   parameters:
+    populateParam:
+      name: _populate
+      in: query
+      description: Response properties which will be replaced by the referenced objects, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    limitParam:
+      name: limit
+      in: query
+      description: How many items to fetch per page
+      required: false
+      type: integer
+      format: int32
+      default: 500
+      minimum: 1
+      maximum: 1000
+      schema:
+        type: integer
+        format: int32
+        default: 500
+        minimum: 1
+        maximum: 1000
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
     updatedAtParam:
       in: query
       name: updatedAt
@@ -1603,42 +1641,19 @@ components:
       type: string
       schema:
         type: string
-    populateParam:
-      name: _populate
+    pageParam:
       in: query
-      description: Response properties which will be replaced by the referenced objects, separated by commas.
+      name: page
       required: false
-      type: string
+      type: integer
+      format: int32
+      default: 1
+      minimum: 1
       schema:
-        type: string
-    updatedByParam:
-      in: query
-      name: updatedBy
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the user who updated this object.
-    createdByParam:
-      in: query
-      name: createdBy
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      required: false
-      description: The ID of the user who created this object.
+        type: integer
+        format: int32
+        default: 1
+        minimum: 1
     createdAtParam:
       in: query
       name: createdAt
@@ -1688,35 +1703,20 @@ components:
         - zh-t
         - zh
       description: Language code.
-    limitParam:
-      name: limit
+    updatedByParam:
       in: query
-      description: How many items to fetch per page
+      name: updatedBy
       required: false
-      type: integer
-      format: int32
-      default: 500
-      minimum: 1
-      maximum: 1000
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
       schema:
-        type: integer
-        format: int32
-        default: 500
-        minimum: 1
-        maximum: 1000
-    pageParam:
-      in: query
-      name: page
-      required: false
-      type: integer
-      format: int32
-      default: 1
-      minimum: 1
-      schema:
-        type: integer
-        format: int32
-        default: 1
-        minimum: 1
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
   securitySchemes:
     Bearer:
       type: http
