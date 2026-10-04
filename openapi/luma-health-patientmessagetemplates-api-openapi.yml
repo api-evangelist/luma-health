@@ -239,6 +239,48 @@ paths:
           description: Access token does not have the required scope
 components:
   schemas:
+    idParam:
+      in: query
+      name: _id
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      required: false
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: Luma's internal ID of an object.
+    deletedByParam:
+      in: query
+      name: deletedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who deleted this object.
+    updatedByParam:
+      in: query
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
     PatientMessageTemplatesUpdate:
       type: object
       properties:
@@ -298,48 +340,105 @@ components:
           - whatsapp
         autoCloseChat:
           type: boolean
-    idParam:
+    deletedParam:
       in: query
-      name: _id
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
+      name: deleted
       required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    deletedAtParam:
+      in: query
+      name: deletedAt
+      type: string
+      format: date-time
       schema:
         type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: Luma's internal ID of an object.
-    deletedByParam:
-      in: query
-      name: deletedBy
+        format: date-time
       required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the user who deleted this object.
-    createdByParam:
-      in: query
-      name: createdBy
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      required: false
-      description: The ID of the user who created this object.
+      description: The date/time when this object was deleted.
+    PatientMessageTemplatesCreate:
+      type: object
+      required:
+      - message
+      - name
+      - type
+      - language
+      properties:
+        _id:
+          $ref: '#/components/schemas/idParam'
+        user:
+          $ref: '#/components/schemas/userParam'
+        name:
+          type: string
+        message:
+          type: string
+        language:
+          type: string
+          enum:
+          - ar
+          - bn
+          - cn
+          - de
+          - en
+          - es
+          - fa
+          - fl
+          - fr
+          - gr
+          - gu
+          - hi
+          - ht
+          - hy
+          - it
+          - ja
+          - km
+          - ko
+          - mr
+          - my
+          - pa
+          - pl
+          - pt
+          - ru
+          - so
+          - th
+          - ti
+          - ur
+          - vi
+          - zh-t
+          - zh
+        type:
+          type: string
+          enum:
+          - chat
+          - broadcast
+        channel:
+          type: string
+          enum:
+          - sms
+          - email
+          - voice
+          - whatsapp
+        autoCloseChat:
+          type: boolean
     PatientMessageTemplatesResponse:
       type: object
       properties:
@@ -413,81 +512,30 @@ components:
           - whatsapp
         autoCloseChat:
           type: boolean
-    PatientMessageTemplatesCreate:
-      type: object
-      required:
-      - message
-      - name
-      - type
-      - language
-      properties:
-        _id:
-          $ref: '#/components/schemas/idParam'
-        user:
-          $ref: '#/components/schemas/userParam'
-        name:
-          type: string
-        message:
-          type: string
-        language:
-          type: string
-          enum:
-          - ar
-          - bn
-          - cn
-          - de
-          - en
-          - es
-          - fa
-          - fl
-          - fr
-          - gr
-          - gu
-          - hi
-          - ht
-          - hy
-          - it
-          - ja
-          - km
-          - ko
-          - mr
-          - my
-          - pa
-          - pl
-          - pt
-          - ru
-          - so
-          - th
-          - ti
-          - ur
-          - vi
-          - zh-t
-          - zh
-        type:
-          type: string
-          enum:
-          - chat
-          - broadcast
-        channel:
-          type: string
-          enum:
-          - sms
-          - email
-          - voice
-          - whatsapp
-        autoCloseChat:
-          type: boolean
-    Error:
-      type: object
-      required:
-      - code
-      - message
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
     userParam:
       in: query
       name: user
@@ -502,44 +550,6 @@ components:
         minLength: 24
         maxLength: 24
       description: The ID of the root account user.
-    updatedByParam:
-      in: query
-      name: updatedBy
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the user who updated this object.
-    deletedParam:
-      in: query
-      name: deleted
-      required: false
-      type: number
-      enum:
-      - 0
-      - 1
-      schema:
-        type: number
-        enum:
-        - 0
-        - 1
-      description: Flag for logical deletion where 1 means deleted.
-    deletedAtParam:
-      in: query
-      name: deletedAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was deleted.
     updatedAtParam:
       in: query
       name: updatedAt
@@ -550,25 +560,7 @@ components:
         format: date-time
       required: false
       description: The date/time when this object was updated.
-    createdAtParam:
-      in: query
-      name: createdAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was created.
   parameters:
-    populateParam:
-      name: _populate
-      in: query
-      description: Response properties which will be replaced by the referenced objects, separated by commas.
-      required: false
-      type: string
-      schema:
-        type: string
     deletedParam:
       in: query
       name: deleted
@@ -583,22 +575,20 @@ components:
         - 0
         - 1
       description: Flag for logical deletion where 1 means deleted.
-    limitParam:
-      name: limit
+    userParam:
       in: query
-      description: How many items to fetch per page
+      name: user
       required: false
-      type: integer
-      format: int32
-      default: 500
-      minimum: 1
-      maximum: 1000
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
       schema:
-        type: integer
-        format: int32
-        default: 500
-        minimum: 1
-        maximum: 1000
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
     createdByParam:
       in: query
       name: createdBy
@@ -623,6 +613,24 @@ components:
         format: date-time
       required: false
       description: The date/time when this object was deleted.
+    populateParam:
+      name: _populate
+      in: query
+      description: Response properties which will be replaced by the referenced objects, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
     updatedAtParam:
       in: query
       name: updatedAt
@@ -633,6 +641,22 @@ components:
         format: date-time
       required: false
       description: The date/time when this object was updated.
+    limitParam:
+      name: limit
+      in: query
+      description: How many items to fetch per page
+      required: false
+      type: integer
+      format: int32
+      default: 500
+      minimum: 1
+      maximum: 1000
+      schema:
+        type: integer
+        format: int32
+        default: 500
+        minimum: 1
+        maximum: 1000
     selectParam:
       name: _select
       in: query
@@ -641,6 +665,20 @@ components:
       type: string
       schema:
         type: string
+    deletedByParam:
+      in: query
+      name: deletedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who deleted this object.
     pageParam:
       in: query
       name: page
@@ -668,16 +706,6 @@ components:
         minLength: 24
         maxLength: 24
       description: Luma's internal ID of an object.
-    createdAtParam:
-      in: query
-      name: createdAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was created.
     updatedByParam:
       in: query
       name: updatedBy
@@ -692,34 +720,6 @@ components:
         minLength: 24
         maxLength: 24
       description: The ID of the user who updated this object.
-    deletedByParam:
-      in: query
-      name: deletedBy
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the user who deleted this object.
-    userParam:
-      in: query
-      name: user
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the root account user.
   securitySchemes:
     Bearer:
       type: http

@@ -192,6 +192,148 @@ paths:
           description: Access token does not have the required scope
 components:
   schemas:
+    ExternalId:
+      type: object
+      properties:
+        source:
+          description: externalId.source
+          type: string
+          enum:
+          - gcalendar
+          - successehs
+          - drchrono
+          - dentrix
+          - webpt
+          - theraoffice
+          - mi7
+          - practicefusion
+          - advancedmd
+          - acomrapidpm
+          - kareo
+          - nextech
+          - mwtherapy
+          - clinicient
+          - carecloud
+          - eclinicalmobile
+          - duxware
+          - labretriever
+          - optimispt
+          - referral
+          - recall
+          - allscriptspm
+          - lytec
+          - brightree
+          - fullslate
+          - nuemd
+          - centricityps
+          - officeally
+          - greenwayintergy
+          - compulink
+          - adspm
+          - dsnpm
+          - lumamock
+          - medicalmastermind
+          - meditouch
+          - healthnautica
+          - ezemrx
+          - hl7
+          - amazingcharts
+          - greenwayprimesuite
+          - raintree
+          - athenahealth
+          - revflow
+          - eclinicalworks10e
+          - hl7pickup
+          - mindbody
+          - eclinicalworkssql
+          - nextgen
+          - practiceperfect
+          - avimark
+          - clinix
+          - keymedical
+          - mdoffice
+          - webedoctor
+          - emapm
+          - medinformatix
+          - imsgo
+          - emds
+          - allscriptsunity
+          - medevolve
+          - caretracker
+          - clearpractice
+          - valant
+          - micromd
+          - systemedx
+          - medicalmaster
+          - athenamdp
+          - gmed
+          - roche
+          - onetouch
+          - somnoware
+          - managementplus
+          - lumacare
+          - nextechfhir
+          - curemd
+          - epic
+          - phoenixortho
+          - ezderm
+          - ggastromobile
+          - epicconfirmationpickup
+          - cerner
+          - allmeds
+          - oncoemrfilepickup
+          - imedicware
+          - modmedfhir
+          - clinux
+          - acuityscheduling
+          - medstreaming
+          - isalus
+          - meditechexpanse
+          - openemr
+          - genericfhir
+          - nextechpracticeplus
+          - sms
+          - voice
+          - email
+          - none
+        value:
+          description: externalId.value
+          type: string
+    idParam:
+      in: query
+      name: _id
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      required: false
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: Luma's internal ID of an object.
+    RolesByUser:
+      type: object
+      description: Object containing 2 keys, referringProvider and renderingProvider. The value for each key is an array. The content of the array should be the root account ids under the same organization, where this user has the role with the same name of the key.
+      required: []
+      properties:
+        referringProvider:
+          type: array
+          description: List of root account IDs under an organization where the user has the role referringProvider
+          items:
+            type: string
+            pattern: '[0-9a-f]'
+            minLength: 24
+            maxLength: 24
+        renderingProvider:
+          type: array
+          description: List of root account IDs under an organization where the user has the role renderingProvider
+          items:
+            type: string
+            pattern: '[0-9a-f]'
+            minLength: 24
+            maxLength: 24
     SalesforceData:
       type: object
       description: Salesforce internal meta data for this account.
@@ -324,6 +466,20 @@ components:
           - Churned
           - Partnered
           - Trial Ended (No Conversion)
+    updatedByParam:
+      in: query
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
     ProviderRequestUpdate:
       type: object
       properties:
@@ -626,34 +782,20 @@ components:
               description: stats.oldestAppointment
               type: string
               format: date-time
-    idParam:
+    deletedParam:
       in: query
-      name: _id
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
+      name: deleted
       required: false
+      type: number
+      enum:
+      - 0
+      - 1
       schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: Luma's internal ID of an object.
-    createdByParam:
-      in: query
-      name: createdBy
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      required: false
-      description: The ID of the user who created this object.
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
     ProviderResponse:
       type: object
       description: A Provider represents a doctor, clinician, or other care team member (including referring or rendering providers) within a Luma Health customer's practice. It tracks scheduling eligibility, appointment type durations, billing classification, and contact details used across scheduling, referrals, and patient communications.
@@ -982,6 +1124,41 @@ components:
               description: stats.oldestAppointment
               type: string
               format: date-time
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
     SettingProperty:
       type: object
       properties:
@@ -3111,152 +3288,6 @@ components:
               description: Determines if the file upload document linked to an estimate document must be updated with the patient ID and the estimate ID.
               type: boolean
               default: false
-    ExternalId:
-      type: object
-      properties:
-        source:
-          description: externalId.source
-          type: string
-          enum:
-          - gcalendar
-          - successehs
-          - drchrono
-          - dentrix
-          - webpt
-          - theraoffice
-          - mi7
-          - practicefusion
-          - advancedmd
-          - acomrapidpm
-          - kareo
-          - nextech
-          - mwtherapy
-          - clinicient
-          - carecloud
-          - eclinicalmobile
-          - duxware
-          - labretriever
-          - optimispt
-          - referral
-          - recall
-          - allscriptspm
-          - lytec
-          - brightree
-          - fullslate
-          - nuemd
-          - centricityps
-          - officeally
-          - greenwayintergy
-          - compulink
-          - adspm
-          - dsnpm
-          - lumamock
-          - medicalmastermind
-          - meditouch
-          - healthnautica
-          - ezemrx
-          - hl7
-          - amazingcharts
-          - greenwayprimesuite
-          - raintree
-          - athenahealth
-          - revflow
-          - eclinicalworks10e
-          - hl7pickup
-          - mindbody
-          - eclinicalworkssql
-          - nextgen
-          - practiceperfect
-          - avimark
-          - clinix
-          - keymedical
-          - mdoffice
-          - webedoctor
-          - emapm
-          - medinformatix
-          - imsgo
-          - emds
-          - allscriptsunity
-          - medevolve
-          - caretracker
-          - clearpractice
-          - valant
-          - micromd
-          - systemedx
-          - medicalmaster
-          - athenamdp
-          - gmed
-          - roche
-          - onetouch
-          - somnoware
-          - managementplus
-          - lumacare
-          - nextechfhir
-          - curemd
-          - epic
-          - phoenixortho
-          - ezderm
-          - ggastromobile
-          - epicconfirmationpickup
-          - cerner
-          - allmeds
-          - oncoemrfilepickup
-          - imedicware
-          - modmedfhir
-          - clinux
-          - acuityscheduling
-          - medstreaming
-          - isalus
-          - meditechexpanse
-          - openemr
-          - genericfhir
-          - nextechpracticeplus
-          - sms
-          - voice
-          - email
-          - none
-        value:
-          description: externalId.value
-          type: string
-    Error:
-      type: object
-      required:
-      - code
-      - message
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
-    userParam:
-      in: query
-      name: user
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the root account user.
-    updatedByParam:
-      in: query
-      name: updatedBy
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the user who updated this object.
     ProviderRequestCreate:
       type: object
       required:
@@ -3568,41 +3599,20 @@ components:
               description: stats.oldestAppointment
               type: string
               format: date-time
-    RolesByUser:
-      type: object
-      description: Object containing 2 keys, referringProvider and renderingProvider. The value for each key is an array. The content of the array should be the root account ids under the same organization, where this user has the role with the same name of the key.
-      required: []
-      properties:
-        referringProvider:
-          type: array
-          description: List of root account IDs under an organization where the user has the role referringProvider
-          items:
-            type: string
-            pattern: '[0-9a-f]'
-            minLength: 24
-            maxLength: 24
-        renderingProvider:
-          type: array
-          description: List of root account IDs under an organization where the user has the role renderingProvider
-          items:
-            type: string
-            pattern: '[0-9a-f]'
-            minLength: 24
-            maxLength: 24
-    deletedParam:
+    userParam:
       in: query
-      name: deleted
+      name: user
       required: false
-      type: number
-      enum:
-      - 0
-      - 1
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
       schema:
-        type: number
-        enum:
-        - 0
-        - 1
-      description: Flag for logical deletion where 1 means deleted.
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
     updatedAtParam:
       in: query
       name: updatedAt
@@ -3613,25 +3623,7 @@ components:
         format: date-time
       required: false
       description: The date/time when this object was updated.
-    createdAtParam:
-      in: query
-      name: createdAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was created.
   parameters:
-    populateParam:
-      name: _populate
-      in: query
-      description: Response properties which will be replaced by the referenced objects, separated by commas.
-      required: false
-      type: string
-      schema:
-        type: string
     deletedParam:
       in: query
       name: deleted
@@ -3646,6 +3638,62 @@ components:
         - 0
         - 1
       description: Flag for logical deletion where 1 means deleted.
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+    populateParam:
+      name: _populate
+      in: query
+      description: Response properties which will be replaced by the referenced objects, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
     limitParam:
       name: limit
       in: query
@@ -3662,30 +3710,6 @@ components:
         default: 500
         minimum: 1
         maximum: 1000
-    createdByParam:
-      in: query
-      name: createdBy
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      required: false
-      description: The ID of the user who created this object.
-    updatedAtParam:
-      in: query
-      name: updatedAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was updated.
     selectParam:
       name: _select
       in: query
@@ -3707,16 +3731,6 @@ components:
         format: int32
         default: 1
         minimum: 1
-    createdAtParam:
-      in: query
-      name: createdAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was created.
     updatedByParam:
       in: query
       name: updatedBy
@@ -3731,20 +3745,6 @@ components:
         minLength: 24
         maxLength: 24
       description: The ID of the user who updated this object.
-    userParam:
-      in: query
-      name: user
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the root account user.
   securitySchemes:
     Bearer:
       type: http

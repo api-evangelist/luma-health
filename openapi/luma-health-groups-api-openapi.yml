@@ -200,34 +200,6 @@ paths:
           description: Access token does not have the required scope
 components:
   schemas:
-    idParam:
-      in: query
-      name: _id
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      required: false
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: Luma's internal ID of an object.
-    createdByParam:
-      in: query
-      name: createdBy
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      required: false
-      description: The ID of the user who created this object.
     GroupResponse:
       type: object
       description: A Group is a named collection of users and/or facilities within a Luma Health account, used to organize staff for tasks like routing and assignment. Groups can be created manually by an admin or generated automatically by the system, and each one can be scoped to all facilities or a specific subset. Other resources, such as chat activities, reference a Group when work needs to be routed to a whole team rather than a single staff member.
@@ -271,17 +243,48 @@ components:
         name:
           type: string
           description: Descriptive label of a group. This is the only way to link a group in Luma with another in an external service, as the group doesn't have an "externalId" field.
-    Error:
-      type: object
-      required:
-      - code
-      - message
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
+    idParam:
+      in: query
+      name: _id
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      required: false
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: Luma's internal ID of an object.
+    updatedByParam:
+      in: query
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
     GroupRequestUpdate:
       type: object
       properties:
@@ -311,34 +314,17 @@ components:
           - user
           - system
           description: Indicates if a group was created by users or by the system.
-    userParam:
-      in: query
-      name: user
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the root account user.
-    updatedByParam:
-      in: query
-      name: updatedBy
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the user who updated this object.
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
     GroupRequestCreate:
       type: object
       required:
@@ -371,30 +357,20 @@ components:
           - user
           - system
           description: Indicates if a group was created by users or by the system.
-    deletedParam:
+    createdByParam:
       in: query
-      name: deleted
-      required: false
-      type: number
-      enum:
-      - 0
-      - 1
-      schema:
-        type: number
-        enum:
-        - 0
-        - 1
-      description: Flag for logical deletion where 1 means deleted.
-    updatedAtParam:
-      in: query
-      name: updatedAt
+      name: createdBy
       type: string
-      format: date-time
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
       schema:
         type: string
-        format: date-time
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
       required: false
-      description: The date/time when this object was updated.
+      description: The ID of the user who created this object.
     createdAtParam:
       in: query
       name: createdAt
@@ -405,7 +381,45 @@ components:
         format: date-time
       required: false
       description: The date/time when this object was created.
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
   parameters:
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
     populateParam:
       name: _populate
       in: query
@@ -414,6 +428,26 @@ components:
       type: string
       schema:
         type: string
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
     limitParam:
       name: limit
       in: query
@@ -430,30 +464,6 @@ components:
         default: 500
         minimum: 1
         maximum: 1000
-    createdByParam:
-      in: query
-      name: createdBy
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      required: false
-      description: The ID of the user who created this object.
-    updatedAtParam:
-      in: query
-      name: updatedAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was updated.
     selectParam:
       name: _select
       in: query
@@ -475,16 +485,6 @@ components:
         format: int32
         default: 1
         minimum: 1
-    createdAtParam:
-      in: query
-      name: createdAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was created.
     updatedByParam:
       in: query
       name: updatedBy

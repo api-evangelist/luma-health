@@ -202,9 +202,10 @@ components:
         minLength: 24
         maxLength: 24
       description: Luma's internal ID of an object.
-    createdByParam:
+    updatedByParam:
       in: query
-      name: createdBy
+      name: updatedBy
+      required: false
       type: string
       pattern: '[0-9a-f]'
       minLength: 24
@@ -214,53 +215,46 @@ components:
         pattern: '[0-9a-f]'
         minLength: 24
         maxLength: 24
+      description: The ID of the user who updated this object.
+    deletedParam:
+      in: query
+      name: deleted
       required: false
-      description: The ID of the user who created this object.
-    CustomWebStylePost:
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+    Error:
       type: object
       required:
-      - scope
+      - code
+      - message
       properties:
-        uploads:
-          description: Binary artifacts. Each item of the array must EITHER have the properties uploadName+fileName+extensin+fileBase64 OR uploadName+fileUpload+url. The first case requires the file data in Base64 to be uploaded. The second case requires you to only pass the fileUpload ID, a descriptive uploadName and the URL to access the fileUpload.
-          type: array
-          items:
-            type: object
-            additionalProperties: false
-            required:
-            - uploadName
-            properties:
-              uploadName:
-                type: string
-              fileName:
-                type: string
-                pattern: ^[0-9a-zA-Z_.-]+$
-                minLength: 5
-                maxLength: 256
-              extension:
-                type: string
-                enum:
-                - jpg
-                - jpeg
-                - png
-                - gif
-                - svg
-                - heic
-              fileBase64:
-                type: string
-              url:
-                type: string
-        scope:
-          description: scope
-          type: array
-        styles:
-          description: styles
-          type: object
-          required:
-          - theme
-          properties:
-            theme:
-              type: object
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
     CustomWebStyleResponse:
       type: object
       description: Represents the custom branding and visual theme a healthcare organization applies to its patient-facing web experience, including uploaded logo files and theme settings such as color palette and text styles. It lets a practice visually customize its scheduling and patient portal pages to match its brand.
@@ -343,17 +337,108 @@ components:
           pattern: '[0-9a-f]'
           minLength: 24
           maxLength: 24
-    Error:
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
+    CustomWebStylePut:
       type: object
       required:
-      - code
-      - message
+      - published
       properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
+        published:
+          description: published
+          type: boolean
+    CustomWebStylePost:
+      type: object
+      required:
+      - scope
+      properties:
+        uploads:
+          description: Binary artifacts. Each item of the array must EITHER have the properties uploadName+fileName+extensin+fileBase64 OR uploadName+fileUpload+url. The first case requires the file data in Base64 to be uploaded. The second case requires you to only pass the fileUpload ID, a descriptive uploadName and the URL to access the fileUpload.
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required:
+            - uploadName
+            properties:
+              uploadName:
+                type: string
+              fileName:
+                type: string
+                pattern: ^[0-9a-zA-Z_.-]+$
+                minLength: 5
+                maxLength: 256
+              extension:
+                type: string
+                enum:
+                - jpg
+                - jpeg
+                - png
+                - gif
+                - svg
+                - heic
+              fileBase64:
+                type: string
+              url:
+                type: string
+        scope:
+          description: scope
+          type: array
+        styles:
+          description: styles
+          type: object
+          required:
+          - theme
+          properties:
+            theme:
+              type: object
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
+  parameters:
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
     userParam:
       in: query
       name: user
@@ -368,10 +453,9 @@ components:
         minLength: 24
         maxLength: 24
       description: The ID of the root account user.
-    updatedByParam:
+    createdByParam:
       in: query
-      name: updatedBy
-      required: false
+      name: createdBy
       type: string
       pattern: '[0-9a-f]'
       minLength: 24
@@ -381,39 +465,16 @@ components:
         pattern: '[0-9a-f]'
         minLength: 24
         maxLength: 24
-      description: The ID of the user who updated this object.
-    CustomWebStylePut:
-      type: object
-      required:
-      - published
-      properties:
-        published:
-          description: published
-          type: boolean
-    deletedParam:
-      in: query
-      name: deleted
       required: false
-      type: number
-      enum:
-      - 0
-      - 1
-      schema:
-        type: number
-        enum:
-        - 0
-        - 1
-      description: Flag for logical deletion where 1 means deleted.
-    updatedAtParam:
+      description: The ID of the user who created this object.
+    populateParam:
+      name: _populate
       in: query
-      name: updatedAt
+      description: Response properties which will be replaced by the referenced objects, separated by commas.
+      required: false
       type: string
-      format: date-time
       schema:
         type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was updated.
     createdAtParam:
       in: query
       name: createdAt
@@ -424,29 +485,16 @@ components:
         format: date-time
       required: false
       description: The date/time when this object was created.
-  parameters:
-    populateParam:
-      name: _populate
+    updatedAtParam:
       in: query
-      description: Response properties which will be replaced by the referenced objects, separated by commas.
-      required: false
+      name: updatedAt
       type: string
+      format: date-time
       schema:
         type: string
-    deletedParam:
-      in: query
-      name: deleted
+        format: date-time
       required: false
-      type: number
-      enum:
-      - 0
-      - 1
-      schema:
-        type: number
-        enum:
-        - 0
-        - 1
-      description: Flag for logical deletion where 1 means deleted.
+      description: The date/time when this object was updated.
     limitParam:
       name: limit
       in: query
@@ -463,30 +511,6 @@ components:
         default: 500
         minimum: 1
         maximum: 1000
-    createdByParam:
-      in: query
-      name: createdBy
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      required: false
-      description: The ID of the user who created this object.
-    updatedAtParam:
-      in: query
-      name: updatedAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was updated.
     selectParam:
       name: _select
       in: query
@@ -508,16 +532,6 @@ components:
         format: int32
         default: 1
         minimum: 1
-    createdAtParam:
-      in: query
-      name: createdAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was created.
     updatedByParam:
       in: query
       name: updatedBy
@@ -532,20 +546,6 @@ components:
         minLength: 24
         maxLength: 24
       description: The ID of the user who updated this object.
-    userParam:
-      in: query
-      name: user
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the root account user.
   securitySchemes:
     Bearer:
       type: http

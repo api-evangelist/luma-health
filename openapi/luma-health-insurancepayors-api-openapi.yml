@@ -321,9 +321,10 @@ components:
         minLength: 24
         maxLength: 24
       description: Luma's internal ID of an object.
-    createdByParam:
+    updatedByParam:
       in: query
-      name: createdBy
+      name: updatedBy
+      required: false
       type: string
       pattern: '[0-9a-f]'
       minLength: 24
@@ -333,8 +334,7 @@ components:
         pattern: '[0-9a-f]'
         minLength: 24
         maxLength: 24
-      required: false
-      description: The ID of the user who created this object.
+      description: The ID of the user who updated this object.
     InsurancePayorRequestUpdate:
       type: object
       properties:
@@ -415,6 +415,125 @@ components:
           type: boolean
           description: Whether this payor is excluded from patient-facing payor search.
           default: false
+    InsurancePayorResponse:
+      type: object
+      description: 'Represents an insurance payor/carrier maintained in Luma''s payor directory: its name, address, and phone, plus one or more external identifiers used to match and write back claims and eligibility data to third-party clearinghouses or the practice''s EHR. Payors can be marked as integrator-managed or manually managed, and optionally hidden from patient-facing payor search.'
+      properties:
+        _id:
+          $ref: '#/components/schemas/idParam'
+        user:
+          $ref: '#/components/schemas/userParam'
+        deleted:
+          $ref: '#/components/schemas/deletedParam'
+        createdBy:
+          $ref: '#/components/schemas/createdByParam'
+        updatedBy:
+          $ref: '#/components/schemas/updatedByParam'
+        createdAt:
+          $ref: '#/components/schemas/createdAtParam'
+        updatedAt:
+          $ref: '#/components/schemas/updatedAtParam'
+        name:
+          type: string
+          description: The payor's legal/system name.
+        friendlyName:
+          type: string
+          description: Patient-facing display name, preferred over `name` when present.
+        externalId:
+          type: object
+          description: The payor's identifier in the practice's EHR.
+          properties:
+            source:
+              type: string
+            value:
+              type: string
+        externalIdentifiers:
+          type: array
+          description: Identifiers used to match and write back claims and eligibility data to third-party clearinghouses, such as NextGen Transaction Hub, Change Healthcare, or Waystar.
+          items:
+            type: object
+            properties:
+              source:
+                type: string
+                description: The clearinghouse or vendor this identifier is for.
+                enum:
+                - nextgentransactionhub
+                - changehealthcare
+                - waystar
+              value:
+                type: string
+                description: The opaque identifier value used by that vendor.
+              status:
+                type: string
+                enum:
+                - inactive
+                - testing
+                - live
+              pin:
+                type: string
+                description: Waystar-specific identifier for this payor.
+        address:
+          type: string
+        address2:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        country:
+          type: string
+        postcode:
+          type: string
+        phone:
+          type: string
+        source:
+          type: string
+          description: Who owns this payor's fields. If `integrator`, the integrator owns all fields and overwrites Luma edits on every sync. If `manual`, the integrator only owns `name` and `externalId`; `friendlyName` and `externalIdentifiers` can be freely edited in Luma.
+          enum:
+          - integrator
+          - manual
+        isHiddenFromPatients:
+          type: boolean
+          description: Whether this payor is excluded from patient-facing payor search.
+          default: false
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
     InsurancePayorRequestCreate:
       type: object
       required:
@@ -511,20 +630,17 @@ components:
         minLength: 24
         maxLength: 24
       description: The ID of the root account user.
-    updatedByParam:
+    updatedAtParam:
       in: query
-      name: updatedBy
-      required: false
+      name: updatedAt
       type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
+      format: date-time
       schema:
         type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the user who updated this object.
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
+  parameters:
     deletedParam:
       in: query
       name: deleted
@@ -539,6 +655,42 @@ components:
         - 0
         - 1
       description: Flag for logical deletion where 1 means deleted.
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+    populateParam:
+      name: _populate
+      in: query
+      description: Response properties which will be replaced by the referenced objects, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
     createdAtParam:
       in: query
       name: createdAt
@@ -559,110 +711,6 @@ components:
         format: date-time
       required: false
       description: The date/time when this object was updated.
-    InsurancePayorResponse:
-      type: object
-      description: 'Represents an insurance payor/carrier maintained in Luma''s payor directory: its name, address, and phone, plus one or more external identifiers used to match and write back claims and eligibility data to third-party clearinghouses or the practice''s EHR. Payors can be marked as integrator-managed or manually managed, and optionally hidden from patient-facing payor search.'
-      properties:
-        _id:
-          $ref: '#/components/schemas/idParam'
-        user:
-          $ref: '#/components/schemas/userParam'
-        deleted:
-          $ref: '#/components/schemas/deletedParam'
-        createdBy:
-          $ref: '#/components/schemas/createdByParam'
-        updatedBy:
-          $ref: '#/components/schemas/updatedByParam'
-        createdAt:
-          $ref: '#/components/schemas/createdAtParam'
-        updatedAt:
-          $ref: '#/components/schemas/updatedAtParam'
-        name:
-          type: string
-          description: The payor's legal/system name.
-        friendlyName:
-          type: string
-          description: Patient-facing display name, preferred over `name` when present.
-        externalId:
-          type: object
-          description: The payor's identifier in the practice's EHR.
-          properties:
-            source:
-              type: string
-            value:
-              type: string
-        externalIdentifiers:
-          type: array
-          description: Identifiers used to match and write back claims and eligibility data to third-party clearinghouses, such as NextGen Transaction Hub, Change Healthcare, or Waystar.
-          items:
-            type: object
-            properties:
-              source:
-                type: string
-                description: The clearinghouse or vendor this identifier is for.
-                enum:
-                - nextgentransactionhub
-                - changehealthcare
-                - waystar
-              value:
-                type: string
-                description: The opaque identifier value used by that vendor.
-              status:
-                type: string
-                enum:
-                - inactive
-                - testing
-                - live
-              pin:
-                type: string
-                description: Waystar-specific identifier for this payor.
-        address:
-          type: string
-        address2:
-          type: string
-        city:
-          type: string
-        state:
-          type: string
-        country:
-          type: string
-        postcode:
-          type: string
-        phone:
-          type: string
-        source:
-          type: string
-          description: Who owns this payor's fields. If `integrator`, the integrator owns all fields and overwrites Luma edits on every sync. If `manual`, the integrator only owns `name` and `externalId`; `friendlyName` and `externalIdentifiers` can be freely edited in Luma.
-          enum:
-          - integrator
-          - manual
-        isHiddenFromPatients:
-          type: boolean
-          description: Whether this payor is excluded from patient-facing payor search.
-          default: false
-  parameters:
-    populateParam:
-      name: _populate
-      in: query
-      description: Response properties which will be replaced by the referenced objects, separated by commas.
-      required: false
-      type: string
-      schema:
-        type: string
-    deletedParam:
-      in: query
-      name: deleted
-      required: false
-      type: number
-      enum:
-      - 0
-      - 1
-      schema:
-        type: number
-        enum:
-        - 0
-        - 1
-      description: Flag for logical deletion where 1 means deleted.
     limitParam:
       name: limit
       in: query
@@ -679,30 +727,6 @@ components:
         default: 500
         minimum: 1
         maximum: 1000
-    createdByParam:
-      in: query
-      name: createdBy
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      required: false
-      description: The ID of the user who created this object.
-    updatedAtParam:
-      in: query
-      name: updatedAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was updated.
     selectParam:
       name: _select
       in: query
@@ -724,16 +748,6 @@ components:
         format: int32
         default: 1
         minimum: 1
-    createdAtParam:
-      in: query
-      name: createdAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was created.
     updatedByParam:
       in: query
       name: updatedBy
@@ -748,20 +762,6 @@ components:
         minLength: 24
         maxLength: 24
       description: The ID of the user who updated this object.
-    userParam:
-      in: query
-      name: user
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the root account user.
   securitySchemes:
     Bearer:
       type: http

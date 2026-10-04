@@ -278,9 +278,10 @@ components:
         minLength: 24
         maxLength: 24
       description: The ID of the user who deleted this object.
-    createdByParam:
+    updatedByParam:
       in: query
-      name: createdBy
+      name: updatedBy
+      required: false
       type: string
       pattern: '[0-9a-f]'
       minLength: 24
@@ -290,8 +291,83 @@ components:
         pattern: '[0-9a-f]'
         minLength: 24
         maxLength: 24
+      description: The ID of the user who updated this object.
+    deletedParam:
+      in: query
+      name: deleted
       required: false
-      description: The ID of the user who created this object.
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+    BillingCopaysUpdate:
+      type: object
+      properties:
+        _id:
+          $ref: '#/components/schemas/idParam'
+        user:
+          $ref: '#/components/schemas/userParam'
+        source:
+          type: string
+          enum:
+          - system
+          - ehr
+          - manual
+        type:
+          type: string
+          enum:
+          - balance
+          - behavioral
+          - copay
+          - custom
+          - dental
+          - medical
+        model:
+          type: string
+          enum:
+          - appointment
+          - patient
+          - offer
+        calculation:
+          type: string
+        name:
+          type: string
+        amount:
+          type: number
+        currency:
+          type: string
+          pattern: ^[A-Z]{3}$
+        visible:
+          type: boolean
+        appointment:
+          type: string
+          pattern: ^[0-9a-f]{24}$
+          minLength: 24
+          maxLength: 24
+        patient:
+          type: string
+          pattern: ^[0-9a-f]{24}$
+          minLength: 24
+          maxLength: 24
+        preAuthorization:
+          type: boolean
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
     BillingCopaysCreate:
       type: object
       required:
@@ -345,57 +421,40 @@ components:
           maxLength: 24
         preAuthorization:
           type: boolean
-    BillingCopaysUpdate:
-      type: object
-      properties:
-        _id:
-          $ref: '#/components/schemas/idParam'
-        user:
-          $ref: '#/components/schemas/userParam'
-        source:
-          type: string
-          enum:
-          - system
-          - ehr
-          - manual
-        type:
-          type: string
-          enum:
-          - balance
-          - behavioral
-          - copay
-          - custom
-          - dental
-          - medical
-        model:
-          type: string
-          enum:
-          - appointment
-          - patient
-          - offer
-        calculation:
-          type: string
-        name:
-          type: string
-        amount:
-          type: number
-        currency:
-          type: string
-          pattern: ^[A-Z]{3}$
-        visible:
-          type: boolean
-        appointment:
-          type: string
-          pattern: ^[0-9a-f]{24}$
-          minLength: 24
-          maxLength: 24
-        patient:
-          type: string
-          pattern: ^[0-9a-f]{24}$
-          minLength: 24
-          maxLength: 24
-        preAuthorization:
-          type: boolean
+    deletedAtParam:
+      in: query
+      name: deletedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was deleted.
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
     BillingCopaysResponse:
       type: object
       properties:
@@ -461,17 +520,6 @@ components:
           maxLength: 24
         preAuthorization:
           type: boolean
-    Error:
-      type: object
-      required:
-      - code
-      - message
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
     userParam:
       in: query
       name: user
@@ -486,44 +534,6 @@ components:
         minLength: 24
         maxLength: 24
       description: The ID of the root account user.
-    updatedByParam:
-      in: query
-      name: updatedBy
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the user who updated this object.
-    deletedParam:
-      in: query
-      name: deleted
-      required: false
-      type: number
-      enum:
-      - 0
-      - 1
-      schema:
-        type: number
-        enum:
-        - 0
-        - 1
-      description: Flag for logical deletion where 1 means deleted.
-    deletedAtParam:
-      in: query
-      name: deletedAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was deleted.
     updatedAtParam:
       in: query
       name: updatedAt
@@ -534,25 +544,7 @@ components:
         format: date-time
       required: false
       description: The date/time when this object was updated.
-    createdAtParam:
-      in: query
-      name: createdAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was created.
   parameters:
-    populateParam:
-      name: _populate
-      in: query
-      description: Response properties which will be replaced by the referenced objects, separated by commas.
-      required: false
-      type: string
-      schema:
-        type: string
     deletedParam:
       in: query
       name: deleted
@@ -567,22 +559,20 @@ components:
         - 0
         - 1
       description: Flag for logical deletion where 1 means deleted.
-    limitParam:
-      name: limit
+    userParam:
       in: query
-      description: How many items to fetch per page
+      name: user
       required: false
-      type: integer
-      format: int32
-      default: 500
-      minimum: 1
-      maximum: 1000
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
       schema:
-        type: integer
-        format: int32
-        default: 500
-        minimum: 1
-        maximum: 1000
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
     createdByParam:
       in: query
       name: createdBy
@@ -607,6 +597,24 @@ components:
         format: date-time
       required: false
       description: The date/time when this object was deleted.
+    populateParam:
+      name: _populate
+      in: query
+      description: Response properties which will be replaced by the referenced objects, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
     updatedAtParam:
       in: query
       name: updatedAt
@@ -617,6 +625,22 @@ components:
         format: date-time
       required: false
       description: The date/time when this object was updated.
+    limitParam:
+      name: limit
+      in: query
+      description: How many items to fetch per page
+      required: false
+      type: integer
+      format: int32
+      default: 500
+      minimum: 1
+      maximum: 1000
+      schema:
+        type: integer
+        format: int32
+        default: 500
+        minimum: 1
+        maximum: 1000
     selectParam:
       name: _select
       in: query
@@ -625,6 +649,20 @@ components:
       type: string
       schema:
         type: string
+    deletedByParam:
+      in: query
+      name: deletedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who deleted this object.
     pageParam:
       in: query
       name: page
@@ -652,16 +690,6 @@ components:
         minLength: 24
         maxLength: 24
       description: Luma's internal ID of an object.
-    createdAtParam:
-      in: query
-      name: createdAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was created.
     updatedByParam:
       in: query
       name: updatedBy
@@ -676,34 +704,6 @@ components:
         minLength: 24
         maxLength: 24
       description: The ID of the user who updated this object.
-    deletedByParam:
-      in: query
-      name: deletedBy
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the user who deleted this object.
-    userParam:
-      in: query
-      name: user
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the root account user.
   securitySchemes:
     Bearer:
       type: http

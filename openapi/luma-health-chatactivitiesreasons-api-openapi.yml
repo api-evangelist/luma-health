@@ -194,84 +194,6 @@ components:
         minLength: 24
         maxLength: 24
       description: Luma's internal ID of an object.
-    createdByParam:
-      in: query
-      name: createdBy
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      required: false
-      description: The ID of the user who created this object.
-    ChatActivityReasonRequestCreate:
-      type: object
-      required:
-      - text
-      - allowDescription
-      properties:
-        text:
-          description: Both the original and the lower-case space-free normalized version of the reason to close a chat
-          type: object
-          required:
-          - original
-          - normalized
-          properties:
-            original:
-              description: The original text of the reason to close a chat
-              type: string
-            normalized:
-              description: The lower-case space-free normalized version of the reason to close a chat
-        allowDescription:
-          description: Indicator if this reason requires an extra description or not. The extra description lives in the chatActivity itself, not here.
-          type: boolean
-    ChatActivityReasonRequestUpdate:
-      type: object
-      properties:
-        text:
-          description: Both the original and the lower-case space-free normalized version of the reason to close a chat
-          type: object
-          required:
-          - original
-          - normalized
-          properties:
-            original:
-              description: The original text of the reason to close a chat
-              type: string
-            normalized:
-              description: The lower-case space-free normalized version of the reason to close a chat
-        allowDescription:
-          description: Indicator if this reason requires an extra description or not. The extra description lives in the chatActivity itself, not here.
-          type: boolean
-    Error:
-      type: object
-      required:
-      - code
-      - message
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
-    userParam:
-      in: query
-      name: user
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the root account user.
     updatedByParam:
       in: query
       name: updatedBy
@@ -300,6 +222,56 @@ components:
         - 0
         - 1
       description: Flag for logical deletion where 1 means deleted.
+    ChatActivityReasonRequestUpdate:
+      type: object
+      properties:
+        text:
+          description: Both the original and the lower-case space-free normalized version of the reason to close a chat
+          type: object
+          required:
+          - original
+          - normalized
+          properties:
+            original:
+              description: The original text of the reason to close a chat
+              type: string
+            normalized:
+              description: The lower-case space-free normalized version of the reason to close a chat
+        allowDescription:
+          description: Indicator if this reason requires an extra description or not. The extra description lives in the chatActivity itself, not here.
+          type: boolean
+    ChatActivityReasonRequestCreate:
+      type: object
+      required:
+      - text
+      - allowDescription
+      properties:
+        text:
+          description: Both the original and the lower-case space-free normalized version of the reason to close a chat
+          type: object
+          required:
+          - original
+          - normalized
+          properties:
+            original:
+              description: The original text of the reason to close a chat
+              type: string
+            normalized:
+              description: The lower-case space-free normalized version of the reason to close a chat
+        allowDescription:
+          description: Indicator if this reason requires an extra description or not. The extra description lives in the chatActivity itself, not here.
+          type: boolean
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
     ChatActivityReasonResponse:
       type: object
       description: A ChatActivityReason represents a predefined reason or category that staff can attach to a chat activity or conversation, such as why it was closed or flagged. It stores both the original text and a normalized version for consistent matching, plus a flag indicating whether an additional free text description is allowed alongside the selected reason. This is used to standardize and report on why patient chat conversations occur or end.
@@ -336,16 +308,20 @@ components:
         allowDescription:
           description: Indicator if this reason requires an extra description or not. The extra description lives in the chatActivity itself, not here.
           type: boolean
-    updatedAtParam:
+    createdByParam:
       in: query
-      name: updatedAt
+      name: createdBy
       type: string
-      format: date-time
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
       schema:
         type: string
-        format: date-time
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
       required: false
-      description: The date/time when this object was updated.
+      description: The ID of the user who created this object.
     createdAtParam:
       in: query
       name: createdAt
@@ -356,15 +332,31 @@ components:
         format: date-time
       required: false
       description: The date/time when this object was created.
-  parameters:
-    populateParam:
-      name: _populate
+    userParam:
       in: query
-      description: Response properties which will be replaced by the referenced objects, separated by commas.
+      name: user
       required: false
       type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
       schema:
         type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
+  parameters:
     deletedParam:
       in: query
       name: deleted
@@ -379,6 +371,62 @@ components:
         - 0
         - 1
       description: Flag for logical deletion where 1 means deleted.
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+    populateParam:
+      name: _populate
+      in: query
+      description: Response properties which will be replaced by the referenced objects, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
     limitParam:
       name: limit
       in: query
@@ -395,30 +443,6 @@ components:
         default: 500
         minimum: 1
         maximum: 1000
-    createdByParam:
-      in: query
-      name: createdBy
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      required: false
-      description: The ID of the user who created this object.
-    updatedAtParam:
-      in: query
-      name: updatedAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was updated.
     selectParam:
       name: _select
       in: query
@@ -440,16 +464,6 @@ components:
         format: int32
         default: 1
         minimum: 1
-    createdAtParam:
-      in: query
-      name: createdAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was created.
     updatedByParam:
       in: query
       name: updatedBy
@@ -464,20 +478,6 @@ components:
         minLength: 24
         maxLength: 24
       description: The ID of the user who updated this object.
-    userParam:
-      in: query
-      name: user
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the root account user.
   securitySchemes:
     Bearer:
       type: http

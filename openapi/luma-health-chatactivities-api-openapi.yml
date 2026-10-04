@@ -252,6 +252,71 @@ components:
         minLength: 24
         maxLength: 24
       description: Luma's internal ID of an object.
+    updatedByParam:
+      in: query
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+    ChatActivityPut:
+      type: object
+      required:
+      - status
+      properties:
+        status:
+          description: status
+          type: array
+          items:
+            type: string
+            enum:
+            - assigned
+            - closed
+        assignee:
+          description: ID of a Staff user or provider to whom the chat will be assigned. If status is "assigned", there must be either an "assignee" or a "groupAssignee"
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        groupAssignee:
+          description: ID of a Group to whom the chat will be assigned. If status is "assigned", there must be either an "assignee" or a "groupAssignee"
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        statusReason:
+          description: ID of a ChatActivityStatusReason to specify why a chat was closed. When status is closed, this field is mandatory, and sometimes the "description" is also mandatory.
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        description:
+          description: Description associated with a ChatActivityStatusReason to specify why a chat was closed. Some ChatActivitiesStatusReasons require a description.
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
     createdByParam:
       in: query
       name: createdBy
@@ -266,6 +331,16 @@ components:
         maxLength: 24
       required: false
       description: The ID of the user who created this object.
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
     ChatActivityResponse:
       type: object
       description: A ChatActivity represents an active conversation thread between a patient and staff in Luma Health's messaging hub, tracking assignment to an individual user or a group, its status such as unassigned, assigned, or closed, and details like the last message sent and any linked facilities. It records why a conversation was closed and flags whether the latest activity resulted from an automated message such as an appointment reminder or from a genuine unexpected reply needing attention. This resource underlies how staff triage, prioritize, and manage incoming patient messages across the organization.
@@ -379,43 +454,30 @@ components:
         automated:
           description: Indicates if this chatActivity was created as a consequence of an automated message being sent out, such as an appointment reminder.
           type: boolean
-    ChatActivityPut:
-      type: object
-      required:
-      - status
-      properties:
-        status:
-          description: status
-          type: array
-          items:
-            type: string
-            enum:
-            - assigned
-            - closed
-        assignee:
-          description: ID of a Staff user or provider to whom the chat will be assigned. If status is "assigned", there must be either an "assignee" or a "groupAssignee"
-          type: string
-          pattern: '[0-9a-f]'
-          minLength: 24
-          maxLength: 24
-        groupAssignee:
-          description: ID of a Group to whom the chat will be assigned. If status is "assigned", there must be either an "assignee" or a "groupAssignee"
-          type: string
-          pattern: '[0-9a-f]'
-          minLength: 24
-          maxLength: 24
-        statusReason:
-          description: ID of a ChatActivityStatusReason to specify why a chat was closed. When status is closed, this field is mandatory, and sometimes the "description" is also mandatory.
-          type: string
-          pattern: '[0-9a-f]'
-          minLength: 24
-          maxLength: 24
-        description:
-          description: Description associated with a ChatActivityStatusReason to specify why a chat was closed. Some ChatActivitiesStatusReasons require a description.
-          type: string
-          pattern: '[0-9a-f]'
-          minLength: 24
-          maxLength: 24
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
     ChatActivityUnreadResponse:
       type: object
       description: Represents a summary count of unread chat activities for a user, rather than a full chat activity record. It is used to power unread message badges or indicators showing how many chat conversations still need attention.
@@ -423,6 +485,21 @@ components:
         count:
           description: Count of unread chat activities
           type: number
+  parameters:
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
     userParam:
       in: query
       name: user
@@ -451,30 +528,28 @@ components:
         minLength: 24
         maxLength: 24
       description: The ID of the user who updated this object.
-    deletedParam:
+    createdByParam:
       in: query
-      name: deleted
-      required: false
-      type: number
-      enum:
-      - 0
-      - 1
-      schema:
-        type: number
-        enum:
-        - 0
-        - 1
-      description: Flag for logical deletion where 1 means deleted.
-    updatedAtParam:
-      in: query
-      name: updatedAt
+      name: createdBy
       type: string
-      format: date-time
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
       schema:
         type: string
-        format: date-time
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
       required: false
-      description: The date/time when this object was updated.
+      description: The ID of the user who created this object.
+    populateParam:
+      name: _populate
+      in: query
+      description: Response properties which will be replaced by the referenced objects, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
     createdAtParam:
       in: query
       name: createdAt
@@ -485,29 +560,16 @@ components:
         format: date-time
       required: false
       description: The date/time when this object was created.
-  parameters:
-    populateParam:
-      name: _populate
+    updatedAtParam:
       in: query
-      description: Response properties which will be replaced by the referenced objects, separated by commas.
-      required: false
+      name: updatedAt
       type: string
+      format: date-time
       schema:
         type: string
-    deletedParam:
-      in: query
-      name: deleted
+        format: date-time
       required: false
-      type: number
-      enum:
-      - 0
-      - 1
-      schema:
-        type: number
-        enum:
-        - 0
-        - 1
-      description: Flag for logical deletion where 1 means deleted.
+      description: The date/time when this object was updated.
     limitParam:
       name: limit
       in: query
@@ -524,30 +586,6 @@ components:
         default: 500
         minimum: 1
         maximum: 1000
-    createdByParam:
-      in: query
-      name: createdBy
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      required: false
-      description: The ID of the user who created this object.
-    updatedAtParam:
-      in: query
-      name: updatedAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was updated.
     selectParam:
       name: _select
       in: query
@@ -556,43 +594,6 @@ components:
       type: string
       schema:
         type: string
-    pageParam:
-      in: query
-      name: page
-      required: false
-      type: integer
-      format: int32
-      default: 1
-      minimum: 1
-      schema:
-        type: integer
-        format: int32
-        default: 1
-        minimum: 1
-    createdAtParam:
-      in: query
-      name: createdAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was created.
-    updatedByParam:
-      in: query
-      name: updatedBy
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the user who updated this object.
     patientGlobalSearch:
       in: query
       name: patientGlobalSearch
@@ -615,20 +616,19 @@ components:
         Date of Birth.
 
         '
-    userParam:
+    pageParam:
       in: query
-      name: user
+      name: page
       required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
+      type: integer
+      format: int32
+      default: 1
+      minimum: 1
       schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the root account user.
+        type: integer
+        format: int32
+        default: 1
+        minimum: 1
   securitySchemes:
     Bearer:
       type: http

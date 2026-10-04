@@ -351,9 +351,119 @@ components:
         minLength: 24
         maxLength: 24
       description: Luma's internal ID of an object.
-    createdByParam:
+    FileUploadRequest:
+      type: object
+      required:
+      - name
+      - extension
+      - contentType
+      - type
+      - base64
+      properties:
+        bucket:
+          type: string
+          description: AWS Bucket S3 name.
+        aswId:
+          type: string
+          description: Asw Id.
+        name:
+          type: string
+          description: Name of file.
+        extension:
+          type: string
+          description: Extension of file.
+        contentType:
+          type: string
+          description: Content Type/MIME of file.
+        type:
+          type: string
+          description: Type of the uploaded file
+          enum:
+          - patient-insurance-image
+          - patient-message
+          - patient-referral-fax
+          - patient-referral
+          - patient-form
+          - provider-headshot
+          - avatar
+          - custom-web-style-logo
+          - generic
+          - integration-archive
+          - patient-pdf
+          - patient-ccda
+          - bulk-patients-insurance
+          - bulk-patients-form
+          - do-not-contact-patients-list
+          - archived-contacts-list
+          - bulk-users-update
+          - bulk-users-create
+          - upload
+          - lumabot-html-preview
+        base64:
+          type: string
+          description: base64 representation of the binary file.
+        patient:
+          type: string
+          description: ID of a Patient.
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        insurance:
+          type: string
+          description: ID of an Insurance.
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        referral:
+          type: string
+          description: ID of a Referral.
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        outboundReferral:
+          type: string
+          description: ID of an Outbound Referral.
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        patientForm:
+          type: string
+          description: ID of a Patient Form.
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        message:
+          type: string
+          description: ID of a Message.
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        broadcast:
+          type: string
+          description: ID of a Broadcast.
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        website:
+          type: string
+          description: Website.
+        status:
+          type: string
+          description: Status of the file upload. Processing = File-upload was created, but still being processed, Completed = File-upload was completed successfully, Failed = File-upload has failed.
+          enum:
+          - processing
+          - completed
+          - failed
+        estimate:
+          type: string
+          description: ID of an estimate.
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+    updatedByParam:
       in: query
-      name: createdBy
+      name: updatedBy
+      required: false
       type: string
       pattern: '[0-9a-f]'
       minLength: 24
@@ -363,8 +473,32 @@ components:
         pattern: '[0-9a-f]'
         minLength: 24
         maxLength: 24
+      description: The ID of the user who updated this object.
+    deletedParam:
+      in: query
+      name: deleted
       required: false
-      description: The ID of the user who created this object.
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
     FileUploadResponse:
       type: object
       description: A FileUpload represents a file uploaded to the Luma Health platform, such as a patient insurance card image, a referral fax, a form attachment, a chat attachment, or a provider headshot. It stores metadata about the file including its storage location, name, extension, content type, upload type, and processing status, and it can link back to related records like a patient, insurance, referral, patient form, message, or estimate. Staff and integrations use this resource to check on an uploaded file's metadata and confirm whether processing completed successfully or failed.
@@ -486,17 +620,30 @@ components:
           pattern: '[0-9a-f]'
           minLength: 24
           maxLength: 24
-    Error:
-      type: object
-      required:
-      - code
-      - message
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
     userParam:
       in: query
       name: user
@@ -511,34 +658,6 @@ components:
         minLength: 24
         maxLength: 24
       description: The ID of the root account user.
-    updatedByParam:
-      in: query
-      name: updatedBy
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the user who updated this object.
-    deletedParam:
-      in: query
-      name: deleted
-      required: false
-      type: number
-      enum:
-      - 0
-      - 1
-      schema:
-        type: number
-        enum:
-        - 0
-        - 1
-      description: Flag for logical deletion where 1 means deleted.
     updatedAtParam:
       in: query
       name: updatedAt
@@ -549,115 +668,29 @@ components:
         format: date-time
       required: false
       description: The date/time when this object was updated.
-    FileUploadRequest:
-      type: object
-      required:
-      - name
-      - extension
-      - contentType
-      - type
-      - base64
-      properties:
-        bucket:
-          type: string
-          description: AWS Bucket S3 name.
-        aswId:
-          type: string
-          description: Asw Id.
-        name:
-          type: string
-          description: Name of file.
-        extension:
-          type: string
-          description: Extension of file.
-        contentType:
-          type: string
-          description: Content Type/MIME of file.
-        type:
-          type: string
-          description: Type of the uploaded file
-          enum:
-          - patient-insurance-image
-          - patient-message
-          - patient-referral-fax
-          - patient-referral
-          - patient-form
-          - provider-headshot
-          - avatar
-          - custom-web-style-logo
-          - generic
-          - integration-archive
-          - patient-pdf
-          - patient-ccda
-          - bulk-patients-insurance
-          - bulk-patients-form
-          - do-not-contact-patients-list
-          - archived-contacts-list
-          - bulk-users-update
-          - bulk-users-create
-          - upload
-          - lumabot-html-preview
-        base64:
-          type: string
-          description: base64 representation of the binary file.
-        patient:
-          type: string
-          description: ID of a Patient.
-          pattern: '[0-9a-f]'
-          minLength: 24
-          maxLength: 24
-        insurance:
-          type: string
-          description: ID of an Insurance.
-          pattern: '[0-9a-f]'
-          minLength: 24
-          maxLength: 24
-        referral:
-          type: string
-          description: ID of a Referral.
-          pattern: '[0-9a-f]'
-          minLength: 24
-          maxLength: 24
-        outboundReferral:
-          type: string
-          description: ID of an Outbound Referral.
-          pattern: '[0-9a-f]'
-          minLength: 24
-          maxLength: 24
-        patientForm:
-          type: string
-          description: ID of a Patient Form.
-          pattern: '[0-9a-f]'
-          minLength: 24
-          maxLength: 24
-        message:
-          type: string
-          description: ID of a Message.
-          pattern: '[0-9a-f]'
-          minLength: 24
-          maxLength: 24
-        broadcast:
-          type: string
-          description: ID of a Broadcast.
-          pattern: '[0-9a-f]'
-          minLength: 24
-          maxLength: 24
-        website:
-          type: string
-          description: Website.
-        status:
-          type: string
-          description: Status of the file upload. Processing = File-upload was created, but still being processed, Completed = File-upload was completed successfully, Failed = File-upload has failed.
-          enum:
-          - processing
-          - completed
-          - failed
-        estimate:
-          type: string
-          description: ID of an estimate.
-          pattern: '[0-9a-f]'
-          minLength: 24
-          maxLength: 24
+  parameters:
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+    populateParam:
+      name: _populate
+      in: query
+      description: Response properties which will be replaced by the referenced objects, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
     createdAtParam:
       in: query
       name: createdAt
@@ -668,15 +701,16 @@ components:
         format: date-time
       required: false
       description: The date/time when this object was created.
-  parameters:
-    populateParam:
-      name: _populate
+    updatedAtParam:
       in: query
-      description: Response properties which will be replaced by the referenced objects, separated by commas.
-      required: false
+      name: updatedAt
       type: string
+      format: date-time
       schema:
         type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
     limitParam:
       name: limit
       in: query
@@ -693,30 +727,6 @@ components:
         default: 500
         minimum: 1
         maximum: 1000
-    createdByParam:
-      in: query
-      name: createdBy
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      required: false
-      description: The ID of the user who created this object.
-    updatedAtParam:
-      in: query
-      name: updatedAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was updated.
     selectParam:
       name: _select
       in: query
@@ -738,16 +748,6 @@ components:
         format: int32
         default: 1
         minimum: 1
-    createdAtParam:
-      in: query
-      name: createdAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was created.
     languageParam:
       in: query
       name: language

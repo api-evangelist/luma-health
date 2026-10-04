@@ -263,9 +263,10 @@ components:
         minLength: 24
         maxLength: 24
       description: Luma's internal ID of an object.
-    createdByParam:
+    updatedByParam:
       in: query
-      name: createdBy
+      name: updatedBy
+      required: false
       type: string
       pattern: '[0-9a-f]'
       minLength: 24
@@ -275,79 +276,7 @@ components:
         pattern: '[0-9a-f]'
         minLength: 24
         maxLength: 24
-      required: false
-      description: The ID of the user who created this object.
-    EstimateRequestCreate:
-      type: object
-      required:
-      - date
-      - totalPatientAmountInCents
-      - patient
-      - fileUpload
-      - visible
-      - source
-      - searchIds
-      properties:
-        date:
-          type: string
-          format: date-time
-          description: The date of service.
-        totalPatientAmountInCents:
-          type: number
-          description: The total amount for the patient.
-        readAt:
-          type: string
-          format: date-time
-          description: The time that the estimate was read.
-        payCode:
-          type: object
-          description: The paycode from estimate.
-          properties:
-            source:
-              type: string
-              enum:
-              - change-healthcare
-            value:
-              type: string
-        patient:
-          type: string
-          description: ID of a patient.
-          pattern: '[0-9a-f]'
-          minLength: 24
-          maxLength: 24
-        appointment:
-          type: string
-          description: ID of an appointment.
-          pattern: '[0-9a-f]'
-          minLength: 24
-          maxLength: 24
-        fileUpload:
-          type: string
-          description: ID of a file upload.
-          pattern: '[0-9a-f]'
-          minLength: 24
-          maxLength: 24
-        message:
-          type: string
-          description: ID of a message.
-          pattern: '[0-9a-f]'
-          minLength: 24
-          maxLength: 24
-        visible:
-          type: boolean
-          description: Flag that indicates if estimate is visible or not to the patient.
-        source:
-          type: string
-          enum:
-          - change-healthcare
-        searchIds:
-          type: array
-          description: Search ID index.
-          items:
-            type: string
-            pattern: '[0-9a-f]'
-            minLength: 24
-            maxLength: 24
+      description: The ID of the user who updated this object.
     EstimateRequestUpdate:
       type: object
       properties:
@@ -411,45 +340,20 @@ components:
             pattern: '[0-9a-f]'
             minLength: 24
             maxLength: 24
-    Error:
-      type: object
-      required:
-      - code
-      - message
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
-    userParam:
+    deletedParam:
       in: query
-      name: user
+      name: deleted
       required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
+      type: number
+      enum:
+      - 0
+      - 1
       schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the root account user.
-    updatedByParam:
-      in: query
-      name: updatedBy
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the user who updated this object.
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
     EstimateResponse:
       type: object
       description: Represents a cost estimate generated for a patient ahead of a date of service, showing the total amount owed in cents, whether and when the patient has read it, and which party is billed first. Estimates are typically produced by a third-party provider, linked to a patient, an appointment, and an uploaded file, and a visibility flag controls whether the patient can see it.
@@ -528,30 +432,31 @@ components:
             pattern: '[0-9a-f]'
             minLength: 24
             maxLength: 24
-    deletedParam:
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    createdByParam:
       in: query
-      name: deleted
-      required: false
-      type: number
-      enum:
-      - 0
-      - 1
-      schema:
-        type: number
-        enum:
-        - 0
-        - 1
-      description: Flag for logical deletion where 1 means deleted.
-    updatedAtParam:
-      in: query
-      name: updatedAt
+      name: createdBy
       type: string
-      format: date-time
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
       schema:
         type: string
-        format: date-time
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
       required: false
-      description: The date/time when this object was updated.
+      description: The ID of the user who created this object.
     createdAtParam:
       in: query
       name: createdAt
@@ -562,15 +467,102 @@ components:
         format: date-time
       required: false
       description: The date/time when this object was created.
-  parameters:
-    populateParam:
-      name: _populate
+    EstimateRequestCreate:
+      type: object
+      required:
+      - date
+      - totalPatientAmountInCents
+      - patient
+      - fileUpload
+      - visible
+      - source
+      - searchIds
+      properties:
+        date:
+          type: string
+          format: date-time
+          description: The date of service.
+        totalPatientAmountInCents:
+          type: number
+          description: The total amount for the patient.
+        readAt:
+          type: string
+          format: date-time
+          description: The time that the estimate was read.
+        payCode:
+          type: object
+          description: The paycode from estimate.
+          properties:
+            source:
+              type: string
+              enum:
+              - change-healthcare
+            value:
+              type: string
+        patient:
+          type: string
+          description: ID of a patient.
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        appointment:
+          type: string
+          description: ID of an appointment.
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        fileUpload:
+          type: string
+          description: ID of a file upload.
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        message:
+          type: string
+          description: ID of a message.
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        visible:
+          type: boolean
+          description: Flag that indicates if estimate is visible or not to the patient.
+        source:
+          type: string
+          enum:
+          - change-healthcare
+        searchIds:
+          type: array
+          description: Search ID index.
+          items:
+            type: string
+            pattern: '[0-9a-f]'
+            minLength: 24
+            maxLength: 24
+    userParam:
       in: query
-      description: Response properties which will be replaced by the referenced objects, separated by commas.
+      name: user
       required: false
       type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
       schema:
         type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
+  parameters:
     deletedParam:
       in: query
       name: deleted
@@ -585,6 +577,62 @@ components:
         - 0
         - 1
       description: Flag for logical deletion where 1 means deleted.
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+    populateParam:
+      name: _populate
+      in: query
+      description: Response properties which will be replaced by the referenced objects, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
     limitParam:
       name: limit
       in: query
@@ -601,30 +649,6 @@ components:
         default: 500
         minimum: 1
         maximum: 1000
-    createdByParam:
-      in: query
-      name: createdBy
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      required: false
-      description: The ID of the user who created this object.
-    updatedAtParam:
-      in: query
-      name: updatedAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was updated.
     selectParam:
       name: _select
       in: query
@@ -646,16 +670,6 @@ components:
         format: int32
         default: 1
         minimum: 1
-    createdAtParam:
-      in: query
-      name: createdAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was created.
     updatedByParam:
       in: query
       name: updatedBy
@@ -670,20 +684,6 @@ components:
         minLength: 24
         maxLength: 24
       description: The ID of the user who updated this object.
-    userParam:
-      in: query
-      name: user
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the root account user.
   securitySchemes:
     Bearer:
       type: http

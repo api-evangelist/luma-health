@@ -353,6 +353,17 @@ paths:
           description: Access token does not have the required scope
 components:
   schemas:
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
     ExternalId:
       type: object
       properties:
@@ -460,138 +471,48 @@ components:
         value:
           description: externalId.value
           type: string
-    SalesforceData:
+    RolesByUser:
       type: object
-      description: Salesforce internal meta data for this account.
-      required:
-      - respectProvisioning
+      description: Object containing 2 keys, referringProvider and renderingProvider. The value for each key is an array. The content of the array should be the root account ids under the same organization, where this user has the role with the same name of the key.
+      required: []
       properties:
-        customerSuccessManager:
-          type: object
-          properties:
-            name:
-              type: string
-            email:
-              type: string
-            phone:
-              type: string
-        provisioning:
+        referringProvider:
           type: array
+          description: List of root account IDs under an organization where the user has the role referringProvider
           items:
             type: string
-            enum:
-            - reminder
-            - waitlist
-            - feedback
-            - followup
-            - referral
-            - outbound-referral
-            - chat
-            - scheduler
-            - recall
-            - insurance
-            - broadcast
-            - form
-            - intake-form
-            - prequal-form
-            - branding
-            - upload
-            - telehealth
-            - waiting-room
-            - luma-pay
-            - insurance-verification
-        respectProvisioning:
-          type: boolean
-          default: true
-        lifeline:
+            pattern: '[0-9a-f]'
+            minLength: 24
+            maxLength: 24
+        renderingProvider:
+          type: array
+          description: List of root account IDs under an organization where the user has the role renderingProvider
+          items:
+            type: string
+            pattern: '[0-9a-f]'
+            minLength: 24
+            maxLength: 24
+    PatientFormRequest:
+      type: object
+      required:
+      - status
+      - processingStatus
+      properties:
+        status:
           type: string
           enum:
-          - trial
-          - converted
-          - active
-          - churn
-        mrr:
-          type: number
-        arr:
-          type: number
-        renewalDate:
+          - pending
+          - unstarted
+          - started
+          - completed
+        processingStatus:
+          description: processingStatus
           type: string
-          format: date-time
-        providers:
-          type: number
-        specialty:
-          type: string
-        referralTrialLimit:
-          type: number
-        recordType:
-          type: string
-        domesticAccessRequired:
-          type: boolean
-        goLiveAt:
-          type: string
-          format: date-time
-        fullyImplementedAt:
-          type: string
-          format: date-time
-        contractSignedAt:
-          type: string
-          format: date-time
-        contractLength:
-          type: number
-        healthStatus:
-          type: string
-          default: green
+          default: open
           enum:
-          - green
-          - yellow
-          - red
-          - poor fit
-          - Healthy
-          - Neutral
-          - Churn Risk
-          - Advocate
-        boardSegment:
-          type: string
-          default: Unknown
-          enum:
-          - Reseller
-          - Strategic
-          - Majors
-          - Core
-          - Sub 20
-          - Unknown
-        onboardingState:
-          type: string
-          default: Customer Success Introduction
-          enum:
-          - Customer Success Introduction
-          - Kickoff
-          - Integration
-          - Discovery Call
-          - Customization
-          - Testing
-          - Staff Training
-          - Ready To Launch
-          - Go-Live
-          - Fully Implemented
-        accountLifeline:
-          type: string
-          default: Active
-          enum:
-          - Unassigned
-          - Assigned
-          - Sales Accepted
-          - Working
-          - Sales Qualified
-          - Open Opportunity
-          - Nurture
-          - Disqualified
-          - Trial
-          - Converted
-          - Active
-          - Churned
-          - Partnered
-          - Trial Ended (No Conversion)
+          - open
+          - in-progress
+          - closed
     PatientFormResponse:
       type: object
       description: A patient form is a specific instance of a form template that has been sent to or filled out by a patient, such as an intake form, consent form, or feedback survey. It tracks the patient's answers, completion status, and processing state, and can be linked to an appointment, a file upload, or a resulting scheduling offer. It also supports advanced workflows like jump logic between form sections, EHR writeback of answers or PDFs, and staff review of submitted answers.
@@ -1890,27 +1811,6 @@ components:
         querystring:
           description: querystring ReplaceAny
           type: object
-    PatientFormRequest:
-      type: object
-      required:
-      - status
-      - processingStatus
-      properties:
-        status:
-          type: string
-          enum:
-          - pending
-          - unstarted
-          - started
-          - completed
-        processingStatus:
-          description: processingStatus
-          type: string
-          default: open
-          enum:
-          - open
-          - in-progress
-          - closed
     Ref:
       description: 'Indicates what this is about. Depending on this value, you also know what the parameter `refId` refers to.<br/>
 
@@ -1992,45 +1892,234 @@ components:
       - bot:followup
       - telehealth
       - waiting-room-patient
-    Error:
+    SalesforceData:
       type: object
+      description: Salesforce internal meta data for this account.
       required:
-      - code
-      - message
+      - respectProvisioning
       properties:
-        code:
-          type: integer
-          format: int32
-        message:
+        customerSuccessManager:
+          type: object
+          properties:
+            name:
+              type: string
+            email:
+              type: string
+            phone:
+              type: string
+        provisioning:
+          type: array
+          items:
+            type: string
+            enum:
+            - reminder
+            - waitlist
+            - feedback
+            - followup
+            - referral
+            - outbound-referral
+            - chat
+            - scheduler
+            - recall
+            - insurance
+            - broadcast
+            - form
+            - intake-form
+            - prequal-form
+            - branding
+            - upload
+            - telehealth
+            - waiting-room
+            - luma-pay
+            - insurance-verification
+        respectProvisioning:
+          type: boolean
+          default: true
+        lifeline:
           type: string
-    RolesByUser:
-      type: object
-      description: Object containing 2 keys, referringProvider and renderingProvider. The value for each key is an array. The content of the array should be the root account ids under the same organization, where this user has the role with the same name of the key.
-      required: []
-      properties:
-        referringProvider:
-          type: array
-          description: List of root account IDs under an organization where the user has the role referringProvider
-          items:
-            type: string
-            pattern: '[0-9a-f]'
-            minLength: 24
-            maxLength: 24
-        renderingProvider:
-          type: array
-          description: List of root account IDs under an organization where the user has the role renderingProvider
-          items:
-            type: string
-            pattern: '[0-9a-f]'
-            minLength: 24
-            maxLength: 24
+          enum:
+          - trial
+          - converted
+          - active
+          - churn
+        mrr:
+          type: number
+        arr:
+          type: number
+        renewalDate:
+          type: string
+          format: date-time
+        providers:
+          type: number
+        specialty:
+          type: string
+        referralTrialLimit:
+          type: number
+        recordType:
+          type: string
+        domesticAccessRequired:
+          type: boolean
+        goLiveAt:
+          type: string
+          format: date-time
+        fullyImplementedAt:
+          type: string
+          format: date-time
+        contractSignedAt:
+          type: string
+          format: date-time
+        contractLength:
+          type: number
+        healthStatus:
+          type: string
+          default: green
+          enum:
+          - green
+          - yellow
+          - red
+          - poor fit
+          - Healthy
+          - Neutral
+          - Churn Risk
+          - Advocate
+        boardSegment:
+          type: string
+          default: Unknown
+          enum:
+          - Reseller
+          - Strategic
+          - Majors
+          - Core
+          - Sub 20
+          - Unknown
+        onboardingState:
+          type: string
+          default: Customer Success Introduction
+          enum:
+          - Customer Success Introduction
+          - Kickoff
+          - Integration
+          - Discovery Call
+          - Customization
+          - Testing
+          - Staff Training
+          - Ready To Launch
+          - Go-Live
+          - Fully Implemented
+        accountLifeline:
+          type: string
+          default: Active
+          enum:
+          - Unassigned
+          - Assigned
+          - Sales Accepted
+          - Working
+          - Sales Qualified
+          - Open Opportunity
+          - Nurture
+          - Disqualified
+          - Trial
+          - Converted
+          - Active
+          - Churned
+          - Partnered
+          - Trial Ended (No Conversion)
   parameters:
+    selectParam:
+      name: _select
+      in: query
+      description: Response properties that should be returned, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    pageParam:
+      in: query
+      name: page
+      required: false
+      type: integer
+      format: int32
+      default: 1
+      minimum: 1
+      schema:
+        type: integer
+        format: int32
+        default: 1
+        minimum: 1
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
     refParam:
       in: query
       name: ref
       description: Indicates what this is about. Depending on this value, you also know what the parameter `refId` refers to.
       schema:
         $ref: '#/components/schemas/Ref'
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
+    limitParam:
+      name: limit
+      in: query
+      description: How many items to fetch per page
+      required: false
+      type: integer
+      format: int32
+      default: 500
+      minimum: 1
+      maximum: 1000
+      schema:
+        type: integer
+        format: int32
+        default: 500
+        minimum: 1
+        maximum: 1000
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
     populateParam:
       name: _populate
       in: query
@@ -2053,50 +2142,6 @@ components:
         minLength: 24
         maxLength: 24
       description: The ID of the user who updated this object.
-    deletedParam:
-      in: query
-      name: deleted
-      required: false
-      type: number
-      enum:
-      - 0
-      - 1
-      schema:
-        type: number
-        enum:
-        - 0
-        - 1
-      description: Flag for logical deletion where 1 means deleted.
-    limitParam:
-      name: limit
-      in: query
-      description: How many items to fetch per page
-      required: false
-      type: integer
-      format: int32
-      default: 500
-      minimum: 1
-      maximum: 1000
-      schema:
-        type: integer
-        format: int32
-        default: 500
-        minimum: 1
-        maximum: 1000
-    createdByParam:
-      in: query
-      name: createdBy
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      required: false
-      description: The ID of the user who created this object.
     createdAtParam:
       in: query
       name: createdAt
@@ -2107,51 +2152,6 @@ components:
         format: date-time
       required: false
       description: The date/time when this object was created.
-    updatedAtParam:
-      in: query
-      name: updatedAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was updated.
-    userParam:
-      in: query
-      name: user
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the root account user.
-    selectParam:
-      name: _select
-      in: query
-      description: Response properties that should be returned, separated by commas.
-      required: false
-      type: string
-      schema:
-        type: string
-    pageParam:
-      in: query
-      name: page
-      required: false
-      type: integer
-      format: int32
-      default: 1
-      minimum: 1
-      schema:
-        type: integer
-        format: int32
-        default: 1
-        minimum: 1
   securitySchemes:
     Bearer:
       type: http

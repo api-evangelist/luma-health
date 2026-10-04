@@ -221,9 +221,10 @@ components:
         minLength: 24
         maxLength: 24
       description: Luma's internal ID of an object.
-    createdByParam:
+    updatedByParam:
       in: query
-      name: createdBy
+      name: updatedBy
+      required: false
       type: string
       pattern: '[0-9a-f]'
       minLength: 24
@@ -233,71 +234,7 @@ components:
         pattern: '[0-9a-f]'
         minLength: 24
         maxLength: 24
-      required: false
-      description: The ID of the user who created this object.
-    BillingChargeBalanceRequestCreate:
-      type: object
-      required:
-      - patient
-      - amount
-      properties:
-        patient:
-          type: string
-          description: ID of the patient this balance charge is for.
-          pattern: '[0-9a-f]'
-          minLength: 24
-          maxLength: 24
-        amount:
-          type: number
-          description: The balance amount to charge. Must be a positive number.
-        currency:
-          type: string
-          description: Currency code for the charge. Defaults to the account's payment localization currency, or USD.
-        appointment:
-          type: string
-          description: ID of an appointment to associate with this balance charge, if any.
-          pattern: '[0-9a-f]'
-          minLength: 24
-          maxLength: 24
-    BillingChargesUpsertRequest:
-      type: object
-      required:
-      - appointmentId
-      - charges
-      properties:
-        appointmentId:
-          type: string
-          description: ID of the appointment these charges belong to.
-          pattern: '[0-9a-f]'
-          minLength: 24
-          maxLength: 24
-        charges:
-          type: array
-          description: Charges to upsert for this appointment. Include `_id` to update an existing charge, or omit it to create a new one. Only one `copay` type charge is allowed per appointment. Any existing custom-appointment-charge not present in this array will be aborted.
-          minItems: 1
-          items:
-            type: object
-            properties:
-              _id:
-                type: string
-                description: ID of an existing charge to update. Omit to create a new charge.
-                pattern: '[0-9a-f]'
-                minLength: 24
-                maxLength: 24
-              amount:
-                type: number
-                description: The charge amount.
-              type:
-                type: string
-                description: The kind of charge.
-                enum:
-                - copay
-                - balance
-                - custom-appointment-charge
-                - convenience-fee
-              description:
-                type: string
-                description: Public description of the charge, visible to the patient.
+      description: The ID of the user who updated this object.
     BillingChargeResponse:
       type: object
       description: Represents a single financial charge tracked against a patient, such as a copay, patient balance, custom appointment fee, or convenience fee. A billing charge moves through a status lifecycle (planned, billable, billed, or aborted) and a separate payment status (pending, paid, partially paid, refunded) as it is billed and collected, and can be linked to an appointment, patient, insurance verification, and one or more billing transactions.
@@ -410,6 +347,20 @@ components:
         isCreatedByAI:
           type: boolean
           description: Indicates whether this charge was created or suggested by AI.
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
     Error:
       type: object
       required:
@@ -421,6 +372,93 @@ components:
           format: int32
         message:
           type: string
+    BillingChargesUpsertRequest:
+      type: object
+      required:
+      - appointmentId
+      - charges
+      properties:
+        appointmentId:
+          type: string
+          description: ID of the appointment these charges belong to.
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        charges:
+          type: array
+          description: Charges to upsert for this appointment. Include `_id` to update an existing charge, or omit it to create a new one. Only one `copay` type charge is allowed per appointment. Any existing custom-appointment-charge not present in this array will be aborted.
+          minItems: 1
+          items:
+            type: object
+            properties:
+              _id:
+                type: string
+                description: ID of an existing charge to update. Omit to create a new charge.
+                pattern: '[0-9a-f]'
+                minLength: 24
+                maxLength: 24
+              amount:
+                type: number
+                description: The charge amount.
+              type:
+                type: string
+                description: The kind of charge.
+                enum:
+                - copay
+                - balance
+                - custom-appointment-charge
+                - convenience-fee
+              description:
+                type: string
+                description: Public description of the charge, visible to the patient.
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
+    BillingChargeBalanceRequestCreate:
+      type: object
+      required:
+      - patient
+      - amount
+      properties:
+        patient:
+          type: string
+          description: ID of the patient this balance charge is for.
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        amount:
+          type: number
+          description: The balance amount to charge. Must be a positive number.
+        currency:
+          type: string
+          description: Currency code for the charge. Defaults to the account's payment localization currency, or USD.
+        appointment:
+          type: string
+          description: ID of an appointment to associate with this balance charge, if any.
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
     userParam:
       in: query
       name: user
@@ -435,34 +473,6 @@ components:
         minLength: 24
         maxLength: 24
       description: The ID of the root account user.
-    updatedByParam:
-      in: query
-      name: updatedBy
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the user who updated this object.
-    deletedParam:
-      in: query
-      name: deleted
-      required: false
-      type: number
-      enum:
-      - 0
-      - 1
-      schema:
-        type: number
-        enum:
-        - 0
-        - 1
-      description: Flag for logical deletion where 1 means deleted.
     updatedAtParam:
       in: query
       name: updatedAt
@@ -473,25 +483,7 @@ components:
         format: date-time
       required: false
       description: The date/time when this object was updated.
-    createdAtParam:
-      in: query
-      name: createdAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was created.
   parameters:
-    populateParam:
-      name: _populate
-      in: query
-      description: Response properties which will be replaced by the referenced objects, separated by commas.
-      required: false
-      type: string
-      schema:
-        type: string
     deletedParam:
       in: query
       name: deleted
@@ -506,6 +498,62 @@ components:
         - 0
         - 1
       description: Flag for logical deletion where 1 means deleted.
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+    populateParam:
+      name: _populate
+      in: query
+      description: Response properties which will be replaced by the referenced objects, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
     limitParam:
       name: limit
       in: query
@@ -522,30 +570,6 @@ components:
         default: 500
         minimum: 1
         maximum: 1000
-    createdByParam:
-      in: query
-      name: createdBy
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      required: false
-      description: The ID of the user who created this object.
-    updatedAtParam:
-      in: query
-      name: updatedAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was updated.
     selectParam:
       name: _select
       in: query
@@ -567,16 +591,6 @@ components:
         format: int32
         default: 1
         minimum: 1
-    createdAtParam:
-      in: query
-      name: createdAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was created.
     updatedByParam:
       in: query
       name: updatedBy
@@ -591,20 +605,6 @@ components:
         minLength: 24
         maxLength: 24
       description: The ID of the user who updated this object.
-    userParam:
-      in: query
-      name: user
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the root account user.
   securitySchemes:
     Bearer:
       type: http

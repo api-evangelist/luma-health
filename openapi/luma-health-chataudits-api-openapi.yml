@@ -222,69 +222,12 @@ components:
         minLength: 24
         maxLength: 24
       description: Luma's internal ID of an object.
-    createdByParam:
-      in: query
-      name: createdBy
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      required: false
-      description: The ID of the user who created this object.
     ChatAuditRequestCreate:
       type: object
       required:
       - reader
       - patient
       properties:
-        reader:
-          description: The message reader ID
-          type: string
-          pattern: '[0-9a-f]'
-          minLength: 24
-          maxLength: 24
-        patient:
-          description: The patient ID
-          type: string
-          pattern: '[0-9a-f]'
-          minLength: 24
-          maxLength: 24
-        lastMessage:
-          description: The last message ID
-          type: string
-          pattern: '[0-9a-f]'
-          minLength: 24
-          maxLength: 24
-        readAt:
-          description: When the message was read
-          type: string
-          format: date-time
-    ChatAuditResponse:
-      type: object
-      description: A ChatAudit record tracks which messages a given staff user has read within a patient chat, linking a reader, a patient, and the last message read along with the timestamp it was read at. It exists purely to support read receipt and unread message tracking so the product can show staff which patient conversations still need attention. This underpins inbox style unread counts and message triage across the chat feature.
-      required:
-      - _id
-      - name
-      properties:
-        _id:
-          $ref: '#/components/schemas/idParam'
-        user:
-          $ref: '#/components/schemas/userParam'
-        deleted:
-          $ref: '#/components/schemas/deletedParam'
-        createdBy:
-          $ref: '#/components/schemas/createdByParam'
-        updatedBy:
-          $ref: '#/components/schemas/updatedByParam'
-        createdAt:
-          $ref: '#/components/schemas/createdAtParam'
-        updatedAt:
-          $ref: '#/components/schemas/updatedAtParam'
         reader:
           description: The message reader ID
           type: string
@@ -332,31 +275,6 @@ components:
           description: When the message was read
           type: string
           format: date-time
-    Error:
-      type: object
-      required:
-      - code
-      - message
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
-    userParam:
-      in: query
-      name: user
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the root account user.
     updatedByParam:
       in: query
       name: updatedBy
@@ -371,6 +289,49 @@ components:
         minLength: 24
         maxLength: 24
       description: The ID of the user who updated this object.
+    ChatAuditResponse:
+      type: object
+      description: A ChatAudit record tracks which messages a given staff user has read within a patient chat, linking a reader, a patient, and the last message read along with the timestamp it was read at. It exists purely to support read receipt and unread message tracking so the product can show staff which patient conversations still need attention. This underpins inbox style unread counts and message triage across the chat feature.
+      required:
+      - _id
+      - name
+      properties:
+        _id:
+          $ref: '#/components/schemas/idParam'
+        user:
+          $ref: '#/components/schemas/userParam'
+        deleted:
+          $ref: '#/components/schemas/deletedParam'
+        createdBy:
+          $ref: '#/components/schemas/createdByParam'
+        updatedBy:
+          $ref: '#/components/schemas/updatedByParam'
+        createdAt:
+          $ref: '#/components/schemas/createdAtParam'
+        updatedAt:
+          $ref: '#/components/schemas/updatedAtParam'
+        reader:
+          description: The message reader ID
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        patient:
+          description: The patient ID
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        lastMessage:
+          description: The last message ID
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        readAt:
+          description: When the message was read
+          type: string
+          format: date-time
     deletedParam:
       in: query
       name: deleted
@@ -385,16 +346,31 @@ components:
         - 0
         - 1
       description: Flag for logical deletion where 1 means deleted.
-    updatedAtParam:
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    createdByParam:
       in: query
-      name: updatedAt
+      name: createdBy
       type: string
-      format: date-time
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
       schema:
         type: string
-        format: date-time
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
       required: false
-      description: The date/time when this object was updated.
+      description: The ID of the user who created this object.
     createdAtParam:
       in: query
       name: createdAt
@@ -405,15 +381,31 @@ components:
         format: date-time
       required: false
       description: The date/time when this object was created.
-  parameters:
-    populateParam:
-      name: _populate
+    userParam:
       in: query
-      description: Response properties which will be replaced by the referenced objects, separated by commas.
+      name: user
       required: false
       type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
       schema:
         type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
+  parameters:
     deletedParam:
       in: query
       name: deleted
@@ -428,6 +420,62 @@ components:
         - 0
         - 1
       description: Flag for logical deletion where 1 means deleted.
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+    populateParam:
+      name: _populate
+      in: query
+      description: Response properties which will be replaced by the referenced objects, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
     limitParam:
       name: limit
       in: query
@@ -444,30 +492,6 @@ components:
         default: 500
         minimum: 1
         maximum: 1000
-    createdByParam:
-      in: query
-      name: createdBy
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      required: false
-      description: The ID of the user who created this object.
-    updatedAtParam:
-      in: query
-      name: updatedAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was updated.
     selectParam:
       name: _select
       in: query
@@ -489,16 +513,6 @@ components:
         format: int32
         default: 1
         minimum: 1
-    createdAtParam:
-      in: query
-      name: createdAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was created.
     updatedByParam:
       in: query
       name: updatedBy
@@ -513,20 +527,6 @@ components:
         minLength: 24
         maxLength: 24
       description: The ID of the user who updated this object.
-    userParam:
-      in: query
-      name: user
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the root account user.
   securitySchemes:
     Bearer:
       type: http

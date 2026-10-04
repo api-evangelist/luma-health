@@ -192,34 +192,6 @@ paths:
           description: Access token does not have the required scope
 components:
   schemas:
-    deletedParam:
-      in: query
-      name: deleted
-      required: false
-      type: number
-      enum:
-      - 0
-      - 1
-      schema:
-        type: number
-        enum:
-        - 0
-        - 1
-      description: Flag for logical deletion where 1 means deleted.
-    idParam:
-      in: query
-      name: _id
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      required: false
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: Luma's internal ID of an object.
     createdByParam:
       in: query
       name: createdBy
@@ -245,44 +217,44 @@ components:
           format: int32
         message:
           type: string
-    updatedAtParam:
+    idParam:
       in: query
-      name: updatedAt
+      name: _id
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      required: false
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: Luma's internal ID of an object.
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+    createdAtParam:
+      in: query
+      name: createdAt
       type: string
       format: date-time
       schema:
         type: string
         format: date-time
       required: false
-      description: The date/time when this object was updated.
-    userParam:
-      in: query
-      name: user
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the root account user.
-    updatedByParam:
-      in: query
-      name: updatedBy
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the user who updated this object.
+      description: The date/time when this object was created.
     Campaign:
       type: object
       description: Represents an outreach campaign that targets a specific resource, such as a patient, facility, or user, and defines which contact channels like SMS, email, or voice should be attempted and in what order. It tracks whether the campaign is active, who last updated it, and optional external identifiers for syncing with third-party systems, and is used to drive automated patient engagement workflows like recall or referral outreach.
@@ -335,16 +307,44 @@ components:
         active:
           schema:
             type: boolean
-    createdAtParam:
+    updatedByParam:
       in: query
-      name: createdAt
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+    updatedAtParam:
+      in: query
+      name: updatedAt
       type: string
       format: date-time
       schema:
         type: string
         format: date-time
       required: false
-      description: The date/time when this object was created.
+      description: The date/time when this object was updated.
   securitySchemes:
     Bearer:
       type: http
