@@ -1,0 +1,12 @@
+{
+ "url": "https://apidocs.lumahealth.io/public.yaml",
+ "requested_url": "https://apidocs.lumahealth.io/public.yaml",
+ "status": 200,
+ "content_type": "application/yaml",
+ "bytes": 1071928,
+ "sha256": "d3c75c2a2f1dae4af239a845683a84713cf91f943ec0acc2328bda50ad3968d6",
+ "fetched_at": "2026-10-04",
+ "fetched_by": "APIEvangelist-Harvest/1.0 (+https://apievangelist.com)",
+ "match": "equivalent",
+ "note": "Re-fetched from the provider by verify-openapi-sources.py; the provider's current document describes the same operations (Jaccard 0.939), but the bytes differ, so the archive is an earlier or reformatted copy."
+}
