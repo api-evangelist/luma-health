@@ -58,7 +58,7 @@ tags:
 - Reputation Management
 - Patient Feedback
 created: '2026-07-24'
-modified: '2026-09-16'
+modified: '2026-10-06'
 specificationVersion: '0.23'
 apis:
 - aid: luma-health:luma-health-appointments-api
@@ -2461,6 +2461,8 @@ apis:
   - type: APIReference
     url: https://apidocs.lumahealth.io/#tag/auth
 common:
+- url: https://www.lumahealth.io/feed/
+  type: BlogRSS
 - type: CapabilityMap
   url: capabilities/luma-health-capability-edges.yml
   name: Luma Health Business Capability Map
