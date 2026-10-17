@@ -184,7 +184,421 @@ paths:
         '403':
           description: Access token does not have the required scope
 components:
+  parameters:
+    deletedAtParam:
+      in: query
+      name: deletedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was deleted.
+    selectParam:
+      name: _select
+      in: query
+      description: Response properties that should be returned, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    pageParam:
+      in: query
+      name: page
+      required: false
+      type: integer
+      format: int32
+      default: 1
+      minimum: 1
+      schema:
+        type: integer
+        format: int32
+        default: 1
+        minimum: 1
+    limitParam:
+      name: limit
+      in: query
+      description: How many items to fetch per page
+      required: false
+      type: integer
+      format: int32
+      default: 500
+      minimum: 1
+      maximum: 1000
+      schema:
+        type: integer
+        format: int32
+        default: 500
+        minimum: 1
+        maximum: 1000
+    populateParam:
+      name: _populate
+      in: query
+      description: Response properties which will be replaced by the referenced objects, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
+    deletedByParam:
+      in: query
+      name: deletedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who deleted this object.
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+    updatedByParam:
+      in: query
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
   schemas:
+    updatedByParam:
+      in: query
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+    OutboundReferralsCreate:
+      type: object
+      properties:
+        _id:
+          $ref: '#/components/schemas/idParam'
+        user:
+          $ref: '#/components/schemas/userParam'
+        facility:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        provider:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        renderingProvider:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        appointmentType:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        source:
+          type: string
+          enum:
+          - upload
+          - ui
+          - integrator
+        status:
+          type: string
+          enum:
+          - active
+          - called
+          - scheduled
+          - incomplete
+          - cancelled
+          - expired
+          - closed
+        diagnoses:
+          type: array
+          items:
+            type: string
+            pattern: '[0-9a-f]'
+            minLength: 24
+            maxLength: 24
+        attempt:
+          type: int32
+        startOn:
+          type: string
+          format: date-time
+        expireAt:
+          type: string
+          format: date-time
+        lastAttemptAt:
+          type: string
+          format: date-time
+        calledAt:
+          type: string
+          format: date-time
+        notes:
+          type: string
+        reason:
+          type: string
+        processedReferallOutreach:
+          type: string
+          enum:
+          - pending
+          - skipped
+          - failed
+          - success
+        faxUpload:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        externalId:
+          $ref: '#/components/schemas/ExternalId'
+    deletedByParam:
+      in: query
+      name: deletedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who deleted this object.
+    idParam:
+      in: query
+      name: _id
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      required: false
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: Luma's internal ID of an object.
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+    OutboundReferralsUpdate:
+      type: object
+      properties:
+        _id:
+          $ref: '#/components/schemas/idParam'
+        user:
+          $ref: '#/components/schemas/userParam'
+        facility:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        provider:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        renderingProvider:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        appointmentType:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        source:
+          type: string
+          enum:
+          - upload
+          - ui
+          - integrator
+        status:
+          type: string
+          enum:
+          - active
+          - called
+          - scheduled
+          - incomplete
+          - cancelled
+          - expired
+          - closed
+        diagnoses:
+          type: array
+          items:
+            type: string
+            pattern: '[0-9a-f]'
+            minLength: 24
+            maxLength: 24
+        attempt:
+          type: int32
+        startOn:
+          type: string
+          format: date-time
+        expireAt:
+          type: string
+          format: date-time
+        lastAttemptAt:
+          type: string
+          format: date-time
+        calledAt:
+          type: string
+          format: date-time
+        notes:
+          type: string
+        reason:
+          type: string
+        processedReferallOutreach:
+          type: string
+          enum:
+          - pending
+          - skipped
+          - failed
+          - success
+        faxUpload:
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+        externalId:
+          $ref: '#/components/schemas/ExternalId'
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
     ExternalId:
       type: object
       properties:
@@ -292,62 +706,6 @@ components:
         value:
           description: externalId.value
           type: string
-    idParam:
-      in: query
-      name: _id
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      required: false
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: Luma's internal ID of an object.
-    deletedByParam:
-      in: query
-      name: deletedBy
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the user who deleted this object.
-    updatedByParam:
-      in: query
-      name: updatedBy
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the user who updated this object.
-    deletedParam:
-      in: query
-      name: deleted
-      required: false
-      type: number
-      enum:
-      - 0
-      - 1
-      schema:
-        type: number
-        enum:
-        - 0
-        - 1
-      description: Flag for logical deletion where 1 means deleted.
     Error:
       type: object
       required:
@@ -359,98 +717,6 @@ components:
           format: int32
         message:
           type: string
-    deletedAtParam:
-      in: query
-      name: deletedAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was deleted.
-    OutboundReferralsUpdate:
-      type: object
-      properties:
-        _id:
-          $ref: '#/components/schemas/idParam'
-        user:
-          $ref: '#/components/schemas/userParam'
-        facility:
-          type: string
-          pattern: '[0-9a-f]'
-          minLength: 24
-          maxLength: 24
-        provider:
-          type: string
-          pattern: '[0-9a-f]'
-          minLength: 24
-          maxLength: 24
-        renderingProvider:
-          type: string
-          pattern: '[0-9a-f]'
-          minLength: 24
-          maxLength: 24
-        appointmentType:
-          type: string
-          pattern: '[0-9a-f]'
-          minLength: 24
-          maxLength: 24
-        source:
-          type: string
-          enum:
-          - upload
-          - ui
-          - integrator
-        status:
-          type: string
-          enum:
-          - active
-          - called
-          - scheduled
-          - incomplete
-          - cancelled
-          - expired
-          - closed
-        diagnoses:
-          type: array
-          items:
-            type: string
-            pattern: '[0-9a-f]'
-            minLength: 24
-            maxLength: 24
-        attempt:
-          type: int32
-        startOn:
-          type: string
-          format: date-time
-        expireAt:
-          type: string
-          format: date-time
-        lastAttemptAt:
-          type: string
-          format: date-time
-        calledAt:
-          type: string
-          format: date-time
-        notes:
-          type: string
-        reason:
-          type: string
-        processedReferallOutreach:
-          type: string
-          enum:
-          - pending
-          - skipped
-          - failed
-          - success
-        faxUpload:
-          type: string
-          pattern: '[0-9a-f]'
-          minLength: 24
-          maxLength: 24
-        externalId:
-          $ref: '#/components/schemas/ExternalId'
     OutboundReferralsResponse:
       type: object
       description: An Outbound Referral represents a referral sent from a practice to an outside provider or facility on behalf of a patient, for example when a primary care office refers a patient to a specialist. It tracks the referring and rendering providers, the receiving facility, the associated diagnoses and appointment type, and how the referral entered the system such as by upload, manual entry, or integration. It also tracks the outreach lifecycle including attempts to contact the patient, expiration, and status values like active, called, scheduled, or closed.
@@ -548,179 +814,6 @@ components:
           maxLength: 24
         externalId:
           $ref: '#/components/schemas/ExternalId'
-    createdByParam:
-      in: query
-      name: createdBy
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      required: false
-      description: The ID of the user who created this object.
-    OutboundReferralsCreate:
-      type: object
-      properties:
-        _id:
-          $ref: '#/components/schemas/idParam'
-        user:
-          $ref: '#/components/schemas/userParam'
-        facility:
-          type: string
-          pattern: '[0-9a-f]'
-          minLength: 24
-          maxLength: 24
-        provider:
-          type: string
-          pattern: '[0-9a-f]'
-          minLength: 24
-          maxLength: 24
-        renderingProvider:
-          type: string
-          pattern: '[0-9a-f]'
-          minLength: 24
-          maxLength: 24
-        appointmentType:
-          type: string
-          pattern: '[0-9a-f]'
-          minLength: 24
-          maxLength: 24
-        source:
-          type: string
-          enum:
-          - upload
-          - ui
-          - integrator
-        status:
-          type: string
-          enum:
-          - active
-          - called
-          - scheduled
-          - incomplete
-          - cancelled
-          - expired
-          - closed
-        diagnoses:
-          type: array
-          items:
-            type: string
-            pattern: '[0-9a-f]'
-            minLength: 24
-            maxLength: 24
-        attempt:
-          type: int32
-        startOn:
-          type: string
-          format: date-time
-        expireAt:
-          type: string
-          format: date-time
-        lastAttemptAt:
-          type: string
-          format: date-time
-        calledAt:
-          type: string
-          format: date-time
-        notes:
-          type: string
-        reason:
-          type: string
-        processedReferallOutreach:
-          type: string
-          enum:
-          - pending
-          - skipped
-          - failed
-          - success
-        faxUpload:
-          type: string
-          pattern: '[0-9a-f]'
-          minLength: 24
-          maxLength: 24
-        externalId:
-          $ref: '#/components/schemas/ExternalId'
-    createdAtParam:
-      in: query
-      name: createdAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was created.
-    userParam:
-      in: query
-      name: user
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the root account user.
-    updatedAtParam:
-      in: query
-      name: updatedAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was updated.
-  parameters:
-    deletedParam:
-      in: query
-      name: deleted
-      required: false
-      type: number
-      enum:
-      - 0
-      - 1
-      schema:
-        type: number
-        enum:
-        - 0
-        - 1
-      description: Flag for logical deletion where 1 means deleted.
-    userParam:
-      in: query
-      name: user
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the root account user.
-    createdByParam:
-      in: query
-      name: createdBy
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      required: false
-      description: The ID of the user who created this object.
     deletedAtParam:
       in: query
       name: deletedAt
@@ -731,99 +824,6 @@ components:
         format: date-time
       required: false
       description: The date/time when this object was deleted.
-    populateParam:
-      name: _populate
-      in: query
-      description: Response properties which will be replaced by the referenced objects, separated by commas.
-      required: false
-      type: string
-      schema:
-        type: string
-    createdAtParam:
-      in: query
-      name: createdAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was created.
-    updatedAtParam:
-      in: query
-      name: updatedAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was updated.
-    limitParam:
-      name: limit
-      in: query
-      description: How many items to fetch per page
-      required: false
-      type: integer
-      format: int32
-      default: 500
-      minimum: 1
-      maximum: 1000
-      schema:
-        type: integer
-        format: int32
-        default: 500
-        minimum: 1
-        maximum: 1000
-    selectParam:
-      name: _select
-      in: query
-      description: Response properties that should be returned, separated by commas.
-      required: false
-      type: string
-      schema:
-        type: string
-    deletedByParam:
-      in: query
-      name: deletedBy
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the user who deleted this object.
-    pageParam:
-      in: query
-      name: page
-      required: false
-      type: integer
-      format: int32
-      default: 1
-      minimum: 1
-      schema:
-        type: integer
-        format: int32
-        default: 1
-        minimum: 1
-    updatedByParam:
-      in: query
-      name: updatedBy
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the user who updated this object.
   securitySchemes:
     Bearer:
       type: http

@@ -238,48 +238,6 @@ paths:
           description: Access token does not have the required scope
 components:
   schemas:
-    idParam:
-      in: query
-      name: _id
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      required: false
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: Luma's internal ID of an object.
-    updatedByParam:
-      in: query
-      name: updatedBy
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the user who updated this object.
-    deletedParam:
-      in: query
-      name: deleted
-      required: false
-      type: number
-      enum:
-      - 0
-      - 1
-      schema:
-        type: number
-        enum:
-        - 0
-        - 1
-      description: Flag for logical deletion where 1 means deleted.
     ChatActivityPut:
       type: object
       required:
@@ -317,6 +275,79 @@ components:
           pattern: '[0-9a-f]'
           minLength: 24
           maxLength: 24
+    updatedByParam:
+      in: query
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+    ChatActivityUnreadResponse:
+      type: object
+      description: Represents a summary count of unread chat activities for a user, rather than a full chat activity record. It is used to power unread message badges or indicators showing how many chat conversations still need attention.
+      properties:
+        count:
+          description: Count of unread chat activities
+          type: number
+    idParam:
+      in: query
+      name: _id
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      required: false
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: Luma's internal ID of an object.
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
     createdByParam:
       in: query
       name: createdBy
@@ -454,122 +485,28 @@ components:
         automated:
           description: Indicates if this chatActivity was created as a consequence of an automated message being sent out, such as an appointment reminder.
           type: boolean
-    userParam:
-      in: query
-      name: user
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the root account user.
-    updatedAtParam:
-      in: query
-      name: updatedAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was updated.
-    ChatActivityUnreadResponse:
-      type: object
-      description: Represents a summary count of unread chat activities for a user, rather than a full chat activity record. It is used to power unread message badges or indicators showing how many chat conversations still need attention.
-      properties:
-        count:
-          description: Count of unread chat activities
-          type: number
   parameters:
-    deletedParam:
+    selectParam:
+      name: _select
       in: query
-      name: deleted
-      required: false
-      type: number
-      enum:
-      - 0
-      - 1
-      schema:
-        type: number
-        enum:
-        - 0
-        - 1
-      description: Flag for logical deletion where 1 means deleted.
-    userParam:
-      in: query
-      name: user
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the root account user.
-    updatedByParam:
-      in: query
-      name: updatedBy
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the user who updated this object.
-    createdByParam:
-      in: query
-      name: createdBy
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      required: false
-      description: The ID of the user who created this object.
-    populateParam:
-      name: _populate
-      in: query
-      description: Response properties which will be replaced by the referenced objects, separated by commas.
+      description: Response properties that should be returned, separated by commas.
       required: false
       type: string
       schema:
         type: string
-    createdAtParam:
+    pageParam:
       in: query
-      name: createdAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
+      name: page
       required: false
-      description: The date/time when this object was created.
-    updatedAtParam:
-      in: query
-      name: updatedAt
-      type: string
-      format: date-time
+      type: integer
+      format: int32
+      default: 1
+      minimum: 1
       schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was updated.
+        type: integer
+        format: int32
+        default: 1
+        minimum: 1
     limitParam:
       name: limit
       in: query
@@ -586,14 +523,76 @@ components:
         default: 500
         minimum: 1
         maximum: 1000
-    selectParam:
-      name: _select
+    populateParam:
+      name: _populate
       in: query
-      description: Response properties that should be returned, separated by commas.
+      description: Response properties which will be replaced by the referenced objects, separated by commas.
       required: false
       type: string
       schema:
         type: string
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+    updatedByParam:
+      in: query
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
     patientGlobalSearch:
       in: query
       name: patientGlobalSearch
@@ -616,19 +615,20 @@ components:
         Date of Birth.
 
         '
-    pageParam:
+    deletedParam:
       in: query
-      name: page
+      name: deleted
       required: false
-      type: integer
-      format: int32
-      default: 1
-      minimum: 1
+      type: number
+      enum:
+      - 0
+      - 1
       schema:
-        type: integer
-        format: int32
-        default: 1
-        minimum: 1
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
   securitySchemes:
     Bearer:
       type: http

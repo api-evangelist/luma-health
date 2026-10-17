@@ -249,7 +249,72 @@ paths:
         '403':
           description: Access token does not have the required scope
 components:
-  schemas:
+  parameters:
+    deletedAtParam:
+      in: query
+      name: deletedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was deleted.
+    selectParam:
+      name: _select
+      in: query
+      description: Response properties that should be returned, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    pageParam:
+      in: query
+      name: page
+      required: false
+      type: integer
+      format: int32
+      default: 1
+      minimum: 1
+      schema:
+        type: integer
+        format: int32
+        default: 1
+        minimum: 1
+    limitParam:
+      name: limit
+      in: query
+      description: How many items to fetch per page
+      required: false
+      type: integer
+      format: int32
+      default: 500
+      minimum: 1
+      maximum: 1000
+      schema:
+        type: integer
+        format: int32
+        default: 500
+        minimum: 1
+        maximum: 1000
+    populateParam:
+      name: _populate
+      in: query
+      description: Response properties which will be replaced by the referenced objects, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
     idParam:
       in: query
       name: _id
@@ -264,6 +329,16 @@ components:
         minLength: 24
         maxLength: 24
       description: Luma's internal ID of an object.
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
     deletedByParam:
       in: query
       name: deletedBy
@@ -278,6 +353,34 @@ components:
         minLength: 24
         maxLength: 24
       description: The ID of the user who deleted this object.
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
     updatedByParam:
       in: query
       name: updatedBy
@@ -306,6 +409,21 @@ components:
         - 0
         - 1
       description: Flag for logical deletion where 1 means deleted.
+  schemas:
+    updatedByParam:
+      in: query
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
     BillingCopaysUpdate:
       type: object
       properties:
@@ -357,17 +475,6 @@ components:
           maxLength: 24
         preAuthorization:
           type: boolean
-    Error:
-      type: object
-      required:
-      - code
-      - message
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
     BillingCopaysCreate:
       type: object
       required:
@@ -421,16 +528,72 @@ components:
           maxLength: 24
         preAuthorization:
           type: boolean
-    deletedAtParam:
+    userParam:
       in: query
-      name: deletedAt
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+    deletedByParam:
+      in: query
+      name: deletedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who deleted this object.
+    idParam:
+      in: query
+      name: _id
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      required: false
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: Luma's internal ID of an object.
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+    updatedAtParam:
+      in: query
+      name: updatedAt
       type: string
       format: date-time
       schema:
         type: string
         format: date-time
       required: false
-      description: The date/time when this object was deleted.
+      description: The date/time when this object was updated.
     createdByParam:
       in: query
       name: createdBy
@@ -455,6 +618,17 @@ components:
         format: date-time
       required: false
       description: The date/time when this object was created.
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
     BillingCopaysResponse:
       type: object
       properties:
@@ -520,73 +694,6 @@ components:
           maxLength: 24
         preAuthorization:
           type: boolean
-    userParam:
-      in: query
-      name: user
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the root account user.
-    updatedAtParam:
-      in: query
-      name: updatedAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was updated.
-  parameters:
-    deletedParam:
-      in: query
-      name: deleted
-      required: false
-      type: number
-      enum:
-      - 0
-      - 1
-      schema:
-        type: number
-        enum:
-        - 0
-        - 1
-      description: Flag for logical deletion where 1 means deleted.
-    userParam:
-      in: query
-      name: user
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the root account user.
-    createdByParam:
-      in: query
-      name: createdBy
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      required: false
-      description: The ID of the user who created this object.
     deletedAtParam:
       in: query
       name: deletedAt
@@ -597,113 +704,6 @@ components:
         format: date-time
       required: false
       description: The date/time when this object was deleted.
-    populateParam:
-      name: _populate
-      in: query
-      description: Response properties which will be replaced by the referenced objects, separated by commas.
-      required: false
-      type: string
-      schema:
-        type: string
-    createdAtParam:
-      in: query
-      name: createdAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was created.
-    updatedAtParam:
-      in: query
-      name: updatedAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was updated.
-    limitParam:
-      name: limit
-      in: query
-      description: How many items to fetch per page
-      required: false
-      type: integer
-      format: int32
-      default: 500
-      minimum: 1
-      maximum: 1000
-      schema:
-        type: integer
-        format: int32
-        default: 500
-        minimum: 1
-        maximum: 1000
-    selectParam:
-      name: _select
-      in: query
-      description: Response properties that should be returned, separated by commas.
-      required: false
-      type: string
-      schema:
-        type: string
-    deletedByParam:
-      in: query
-      name: deletedBy
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the user who deleted this object.
-    pageParam:
-      in: query
-      name: page
-      required: false
-      type: integer
-      format: int32
-      default: 1
-      minimum: 1
-      schema:
-        type: integer
-        format: int32
-        default: 1
-        minimum: 1
-    idParam:
-      in: query
-      name: _id
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      required: false
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: Luma's internal ID of an object.
-    updatedByParam:
-      in: query
-      name: updatedBy
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the user who updated this object.
   securitySchemes:
     Bearer:
       type: http

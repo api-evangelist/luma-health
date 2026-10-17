@@ -192,6 +192,16 @@ paths:
           description: Access token does not have the required scope
 components:
   schemas:
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
     createdByParam:
       in: query
       name: createdBy
@@ -206,55 +216,20 @@ components:
         maxLength: 24
       required: false
       description: The ID of the user who created this object.
-    Error:
-      type: object
-      required:
-      - code
-      - message
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
-    idParam:
+    userParam:
       in: query
-      name: _id
+      name: user
+      required: false
       type: string
       pattern: '[0-9a-f]'
       minLength: 24
       maxLength: 24
-      required: false
       schema:
         type: string
         pattern: '[0-9a-f]'
         minLength: 24
         maxLength: 24
-      description: Luma's internal ID of an object.
-    deletedParam:
-      in: query
-      name: deleted
-      required: false
-      type: number
-      enum:
-      - 0
-      - 1
-      schema:
-        type: number
-        enum:
-        - 0
-        - 1
-      description: Flag for logical deletion where 1 means deleted.
-    createdAtParam:
-      in: query
-      name: createdAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was created.
+      description: The ID of the root account user.
     Campaign:
       type: object
       description: Represents an outreach campaign that targets a specific resource, such as a patient, facility, or user, and defines which contact channels like SMS, email, or voice should be attempted and in what order. It tracks whether the campaign is active, who last updated it, and optional external identifiers for syncing with third-party systems, and is used to drive automated patient engagement workflows like recall or referral outreach.
@@ -307,6 +282,16 @@ components:
         active:
           schema:
             type: boolean
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
     updatedByParam:
       in: query
       name: updatedBy
@@ -321,30 +306,45 @@ components:
         minLength: 24
         maxLength: 24
       description: The ID of the user who updated this object.
-    userParam:
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    idParam:
       in: query
-      name: user
-      required: false
+      name: _id
       type: string
       pattern: '[0-9a-f]'
       minLength: 24
       maxLength: 24
+      required: false
       schema:
         type: string
         pattern: '[0-9a-f]'
         minLength: 24
         maxLength: 24
-      description: The ID of the root account user.
-    updatedAtParam:
+      description: Luma's internal ID of an object.
+    deletedParam:
       in: query
-      name: updatedAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
+      name: deleted
       required: false
-      description: The date/time when this object was updated.
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
   securitySchemes:
     Bearer:
       type: http

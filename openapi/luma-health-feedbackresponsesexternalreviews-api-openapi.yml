@@ -180,6 +180,42 @@ paths:
           description: Internal server error
 components:
   parameters:
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+    selectParam:
+      name: _select
+      in: query
+      description: Response properties that should be returned, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
     pageParam:
       in: query
       name: page
@@ -209,42 +245,6 @@ components:
         default: 500
         minimum: 1
         maximum: 1000
-    deletedParam:
-      in: query
-      name: deleted
-      required: false
-      type: number
-      enum:
-      - 0
-      - 1
-      schema:
-        type: number
-        enum:
-        - 0
-        - 1
-      description: Flag for logical deletion where 1 means deleted.
-    userParam:
-      in: query
-      name: user
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the root account user.
-    selectParam:
-      name: _select
-      in: query
-      description: Response properties that should be returned, separated by commas.
-      required: false
-      type: string
-      schema:
-        type: string
   securitySchemes:
     Bearer:
       type: http

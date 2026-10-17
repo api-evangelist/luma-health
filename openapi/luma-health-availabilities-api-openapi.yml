@@ -432,25 +432,150 @@ paths:
         '403':
           description: Access token does not have the required scope
 components:
+  parameters:
+    selectParam:
+      name: _select
+      in: query
+      description: Response properties that should be returned, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    pageParam:
+      in: query
+      name: page
+      required: false
+      type: integer
+      format: int32
+      default: 1
+      minimum: 1
+      schema:
+        type: integer
+        format: int32
+        default: 1
+        minimum: 1
+    limitParam:
+      name: limit
+      in: query
+      description: How many items to fetch per page
+      required: false
+      type: integer
+      format: int32
+      default: 500
+      minimum: 1
+      maximum: 1000
+      schema:
+        type: integer
+        format: int32
+        default: 500
+        minimum: 1
+        maximum: 1000
+    populateParam:
+      name: _populate
+      in: query
+      description: Response properties which will be replaced by the referenced objects, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+    updatedByParam:
+      in: query
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
   schemas:
-    AvailabilitySchedulerResponse:
+    AvailabilityRequestUpdate:
       type: object
-      description: An Availability represents an open time slot for a provider, facility, or appointment type that a patient can book through Luma's self-scheduling pages. It tracks the slot's date, duration, and status (such as available, offered, booked-pending, or booked) as it moves through the offer and booking workflow, and links to related records like the provider, facility, appointment type, and any resulting offer or appointment.
       properties:
-        _id:
-          $ref: '#/components/schemas/idParam'
-        user:
-          $ref: '#/components/schemas/userParam'
-        deleted:
-          $ref: '#/components/schemas/deletedParam'
-        createdBy:
-          $ref: '#/components/schemas/createdByParam'
-        updatedBy:
-          $ref: '#/components/schemas/updatedByParam'
-        createdAt:
-          $ref: '#/components/schemas/createdAtParam'
-        updatedAt:
-          $ref: '#/components/schemas/updatedAtParam'
+        booked:
+          type: boolean
+          description: 'Determines if the availability is being booked or not.
+
+            If it is set to true, the system will book the availability.
+
+            '
+        notes:
+          type: string
+          description: 'Optional freeform text to append to the appointment reason when booking (status: booked).
+
+            If a patientForm or lumabotFlow is also provided, this value is appended after the
+
+            patient-form or Lumabot notes (separated by "; "). The combined string is forwarded to the EHR
+
+            as part of the appointment reason (e.g. prepended to the eClinicalWorks SQL reason field).
+
+            '
         filters:
           $ref: '#/components/schemas/Filters'
         provider:
@@ -525,6 +650,96 @@ components:
             '
           type: boolean
           default: false
+    updatedByParam:
+      in: query
+      name: updatedBy
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the user who updated this object.
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
+    idParam:
+      in: query
+      name: _id
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      required: false
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: Luma's internal ID of an object.
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
     ExternalId:
       type: object
       properties:
@@ -632,55 +847,24 @@ components:
         value:
           description: externalId.value
           type: string
-    idParam:
-      in: query
-      name: _id
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      required: false
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: Luma's internal ID of an object.
-    updatedByParam:
-      in: query
-      name: updatedBy
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the user who updated this object.
-    AvailabilityRequestUpdate:
+    AvailabilitySchedulerResponse:
       type: object
+      description: An Availability represents an open time slot for a provider, facility, or appointment type that a patient can book through Luma's self-scheduling pages. It tracks the slot's date, duration, and status (such as available, offered, booked-pending, or booked) as it moves through the offer and booking workflow, and links to related records like the provider, facility, appointment type, and any resulting offer or appointment.
       properties:
-        booked:
-          type: boolean
-          description: 'Determines if the availability is being booked or not.
-
-            If it is set to true, the system will book the availability.
-
-            '
-        notes:
-          type: string
-          description: 'Optional freeform text to append to the appointment reason when booking (status: booked).
-
-            If a patientForm or lumabotFlow is also provided, this value is appended after the
-
-            patient-form or Lumabot notes (separated by "; "). The combined string is forwarded to the EHR
-
-            as part of the appointment reason (e.g. prepended to the eClinicalWorks SQL reason field).
-
-            '
+        _id:
+          $ref: '#/components/schemas/idParam'
+        user:
+          $ref: '#/components/schemas/userParam'
+        deleted:
+          $ref: '#/components/schemas/deletedParam'
+        createdBy:
+          $ref: '#/components/schemas/createdByParam'
+        updatedBy:
+          $ref: '#/components/schemas/updatedByParam'
+        createdAt:
+          $ref: '#/components/schemas/createdAtParam'
+        updatedAt:
+          $ref: '#/components/schemas/updatedAtParam'
         filters:
           $ref: '#/components/schemas/Filters'
         provider:
@@ -755,20 +939,6 @@ components:
             '
           type: boolean
           default: false
-    deletedParam:
-      in: query
-      name: deleted
-      required: false
-      type: number
-      enum:
-      - 0
-      - 1
-      schema:
-        type: number
-        enum:
-        - 0
-        - 1
-      description: Flag for logical deletion where 1 means deleted.
     Filters:
       type: object
       description: Object containing the filters with appointmentTypes, facilities, providers
@@ -798,176 +968,6 @@ components:
             pattern: '[0-9a-f]'
             minLength: 24
             maxLength: 24
-    createdByParam:
-      in: query
-      name: createdBy
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      required: false
-      description: The ID of the user who created this object.
-    createdAtParam:
-      in: query
-      name: createdAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was created.
-    userParam:
-      in: query
-      name: user
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the root account user.
-    updatedAtParam:
-      in: query
-      name: updatedAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was updated.
-  parameters:
-    deletedParam:
-      in: query
-      name: deleted
-      required: false
-      type: number
-      enum:
-      - 0
-      - 1
-      schema:
-        type: number
-        enum:
-        - 0
-        - 1
-      description: Flag for logical deletion where 1 means deleted.
-    userParam:
-      in: query
-      name: user
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the root account user.
-    createdByParam:
-      in: query
-      name: createdBy
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      required: false
-      description: The ID of the user who created this object.
-    populateParam:
-      name: _populate
-      in: query
-      description: Response properties which will be replaced by the referenced objects, separated by commas.
-      required: false
-      type: string
-      schema:
-        type: string
-    createdAtParam:
-      in: query
-      name: createdAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was created.
-    updatedAtParam:
-      in: query
-      name: updatedAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was updated.
-    limitParam:
-      name: limit
-      in: query
-      description: How many items to fetch per page
-      required: false
-      type: integer
-      format: int32
-      default: 500
-      minimum: 1
-      maximum: 1000
-      schema:
-        type: integer
-        format: int32
-        default: 500
-        minimum: 1
-        maximum: 1000
-    selectParam:
-      name: _select
-      in: query
-      description: Response properties that should be returned, separated by commas.
-      required: false
-      type: string
-      schema:
-        type: string
-    pageParam:
-      in: query
-      name: page
-      required: false
-      type: integer
-      format: int32
-      default: 1
-      minimum: 1
-      schema:
-        type: integer
-        format: int32
-        default: 1
-        minimum: 1
-    updatedByParam:
-      in: query
-      name: updatedBy
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the user who updated this object.
   securitySchemes:
     Bearer:
       type: http

@@ -353,145 +353,6 @@ paths:
           description: Access token does not have the required scope
 components:
   schemas:
-    Error:
-      type: object
-      required:
-      - code
-      - message
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
-    ExternalId:
-      type: object
-      properties:
-        source:
-          description: externalId.source
-          type: string
-          enum:
-          - gcalendar
-          - successehs
-          - drchrono
-          - dentrix
-          - webpt
-          - theraoffice
-          - mi7
-          - practicefusion
-          - advancedmd
-          - acomrapidpm
-          - kareo
-          - nextech
-          - mwtherapy
-          - clinicient
-          - carecloud
-          - eclinicalmobile
-          - duxware
-          - labretriever
-          - optimispt
-          - referral
-          - recall
-          - allscriptspm
-          - lytec
-          - brightree
-          - fullslate
-          - nuemd
-          - centricityps
-          - officeally
-          - greenwayintergy
-          - compulink
-          - adspm
-          - dsnpm
-          - lumamock
-          - medicalmastermind
-          - meditouch
-          - healthnautica
-          - ezemrx
-          - hl7
-          - amazingcharts
-          - greenwayprimesuite
-          - raintree
-          - athenahealth
-          - revflow
-          - eclinicalworks10e
-          - hl7pickup
-          - mindbody
-          - eclinicalworkssql
-          - nextgen
-          - practiceperfect
-          - avimark
-          - clinix
-          - keymedical
-          - mdoffice
-          - webedoctor
-          - emapm
-          - medinformatix
-          - imsgo
-          - emds
-          - allscriptsunity
-          - medevolve
-          - caretracker
-          - clearpractice
-          - valant
-          - micromd
-          - systemedx
-          - medicalmaster
-          - athenamdp
-          - gmed
-          - roche
-          - onetouch
-          - somnoware
-          - managementplus
-          - lumacare
-          - nextechfhir
-          - curemd
-          - epic
-          - phoenixortho
-          - ezderm
-          - ggastromobile
-          - epicconfirmationpickup
-          - cerner
-          - allmeds
-          - oncoemrfilepickup
-          - imedicware
-          - modmedfhir
-          - clinux
-          - acuityscheduling
-          - medstreaming
-          - isalus
-          - meditechexpanse
-          - openemr
-          - genericfhir
-          - nextechpracticeplus
-          - sms
-          - voice
-          - email
-          - none
-        value:
-          description: externalId.value
-          type: string
-    RolesByUser:
-      type: object
-      description: Object containing 2 keys, referringProvider and renderingProvider. The value for each key is an array. The content of the array should be the root account ids under the same organization, where this user has the role with the same name of the key.
-      required: []
-      properties:
-        referringProvider:
-          type: array
-          description: List of root account IDs under an organization where the user has the role referringProvider
-          items:
-            type: string
-            pattern: '[0-9a-f]'
-            minLength: 24
-            maxLength: 24
-        renderingProvider:
-          type: array
-          description: List of root account IDs under an organization where the user has the role renderingProvider
-          items:
-            type: string
-            pattern: '[0-9a-f]'
-            minLength: 24
-            maxLength: 24
     PatientFormRequest:
       type: object
       required:
@@ -1811,87 +1672,113 @@ components:
         querystring:
           description: querystring ReplaceAny
           type: object
-    Ref:
-      description: 'Indicates what this is about. Depending on this value, you also know what the parameter `refId` refers to.<br/>
-
-        - reminder (`refId` will be the ID of a `Reminder`)<br/>
-
-        - referral-reminder (`refId` will be the ID of a `Reminder`)<br/>
-
-        - feedback-reminder (`refId` will be the ID of a `Reminder`)<br/>
-
-        - followup (`refId` will be the ID of a `Reminder`)<br/>
-
-        - outbound-referral-reminder (`refId` will be the ID of a `Reminder`)<br/>
-
-        - form-reminder (`refId` will be the ID of a `Reminder`)<br/>
-
-        - reschedule (`refId` will be the ID of a `Reminder`)<br/>
-
-        - waitlist (`refId` will be the ID of a `Waitlist`)<br/>
-
-        - appointment-offer (`refId` will be the ID of a `Offer`)<br/>
-
-        - chat-notification (`refId` will be the ID of a `Message`)<br/>
-
-        - pin-verification (`refId` will be the ID of a `Message`)<br/>
-
-        - chat (`refId` will be the ID of a `ChatActivity`)<br/>
-
-        - chat-audit (`refId` will be the ID of a `ChatActivity`)<br/>
-
-        - chat-audit-tz (`refId` will be the ID of a `ChatActivity`)<br/>
-
-        - feedback (`refId` will be the ID of a `Feedback` request)<br/>
-
-        - waitlist-offer (`refId` will be the ID of an `Appointment`)<br/>
-
-        - referral-followup (`refId` will be the ID of a `Referral`)<br/>
-
-        - outbound-referral-outreach (`refId` will be the ID of a `Referral`)<br/>
-
-        - referral-redirect (`refId` will be the ID of a `Referral`)<br/>
-
-        - broadcast (`refId` will be the ID of a `Broadcast`)<br/>
-
-        - generic (`refId` will refer to the same object of the previous message to this same patient)<br/>
-
-        - stop (`refId` will refer to the same object of the previous message to this same patient)<br/>
-
-        - bot:followup (`refId` will be the ID of a `Patient`)<br/>
-
-        - telehealth (`refId` will be the ID of a `Telehealth` object)<br/>
-
-        - waiting-room-patient (`refId` will be the ID of a `WaitingRoomPatient` object)<br/>
-
-        '
-      type: string
-      enum:
-      - reminder
-      - referral-reminder
-      - feedback-reminder
-      - followup
-      - outbound-referral-reminder
-      - form-reminder
-      - reschedule
-      - waitlist
-      - appointment-offer
-      - chat-notification
-      - pin-verification
-      - chat
-      - chat-audit
-      - chat-audit-tz
-      - feedback
-      - waitlist-offer
-      - referral-followup
-      - outbound-referral-outreach
-      - referral-redirect
-      - broadcast
-      - generic
-      - stop
-      - bot:followup
-      - telehealth
-      - waiting-room-patient
+    ExternalId:
+      type: object
+      properties:
+        source:
+          description: externalId.source
+          type: string
+          enum:
+          - gcalendar
+          - successehs
+          - drchrono
+          - dentrix
+          - webpt
+          - theraoffice
+          - mi7
+          - practicefusion
+          - advancedmd
+          - acomrapidpm
+          - kareo
+          - nextech
+          - mwtherapy
+          - clinicient
+          - carecloud
+          - eclinicalmobile
+          - duxware
+          - labretriever
+          - optimispt
+          - referral
+          - recall
+          - allscriptspm
+          - lytec
+          - brightree
+          - fullslate
+          - nuemd
+          - centricityps
+          - officeally
+          - greenwayintergy
+          - compulink
+          - adspm
+          - dsnpm
+          - lumamock
+          - medicalmastermind
+          - meditouch
+          - healthnautica
+          - ezemrx
+          - hl7
+          - amazingcharts
+          - greenwayprimesuite
+          - raintree
+          - athenahealth
+          - revflow
+          - eclinicalworks10e
+          - hl7pickup
+          - mindbody
+          - eclinicalworkssql
+          - nextgen
+          - practiceperfect
+          - avimark
+          - clinix
+          - keymedical
+          - mdoffice
+          - webedoctor
+          - emapm
+          - medinformatix
+          - imsgo
+          - emds
+          - allscriptsunity
+          - medevolve
+          - caretracker
+          - clearpractice
+          - valant
+          - micromd
+          - systemedx
+          - medicalmaster
+          - athenamdp
+          - gmed
+          - roche
+          - onetouch
+          - somnoware
+          - managementplus
+          - lumacare
+          - nextechfhir
+          - curemd
+          - epic
+          - phoenixortho
+          - ezderm
+          - ggastromobile
+          - epicconfirmationpickup
+          - cerner
+          - allmeds
+          - oncoemrfilepickup
+          - imedicware
+          - modmedfhir
+          - clinux
+          - acuityscheduling
+          - medstreaming
+          - isalus
+          - meditechexpanse
+          - openemr
+          - genericfhir
+          - nextechpracticeplus
+          - sms
+          - voice
+          - email
+          - none
+        value:
+          description: externalId.value
+          type: string
     SalesforceData:
       type: object
       description: Salesforce internal meta data for this account.
@@ -2024,7 +1911,134 @@ components:
           - Churned
           - Partnered
           - Trial Ended (No Conversion)
+    Ref:
+      description: 'Indicates what this is about. Depending on this value, you also know what the parameter `refId` refers to.<br/>
+
+        - reminder (`refId` will be the ID of a `Reminder`)<br/>
+
+        - referral-reminder (`refId` will be the ID of a `Reminder`)<br/>
+
+        - feedback-reminder (`refId` will be the ID of a `Reminder`)<br/>
+
+        - followup (`refId` will be the ID of a `Reminder`)<br/>
+
+        - outbound-referral-reminder (`refId` will be the ID of a `Reminder`)<br/>
+
+        - form-reminder (`refId` will be the ID of a `Reminder`)<br/>
+
+        - reschedule (`refId` will be the ID of a `Reminder`)<br/>
+
+        - waitlist (`refId` will be the ID of a `Waitlist`)<br/>
+
+        - appointment-offer (`refId` will be the ID of a `Offer`)<br/>
+
+        - chat-notification (`refId` will be the ID of a `Message`)<br/>
+
+        - pin-verification (`refId` will be the ID of a `Message`)<br/>
+
+        - chat (`refId` will be the ID of a `ChatActivity`)<br/>
+
+        - chat-audit (`refId` will be the ID of a `ChatActivity`)<br/>
+
+        - chat-audit-tz (`refId` will be the ID of a `ChatActivity`)<br/>
+
+        - feedback (`refId` will be the ID of a `Feedback` request)<br/>
+
+        - waitlist-offer (`refId` will be the ID of an `Appointment`)<br/>
+
+        - referral-followup (`refId` will be the ID of a `Referral`)<br/>
+
+        - outbound-referral-outreach (`refId` will be the ID of a `Referral`)<br/>
+
+        - referral-redirect (`refId` will be the ID of a `Referral`)<br/>
+
+        - broadcast (`refId` will be the ID of a `Broadcast`)<br/>
+
+        - generic (`refId` will refer to the same object of the previous message to this same patient)<br/>
+
+        - stop (`refId` will refer to the same object of the previous message to this same patient)<br/>
+
+        - bot:followup (`refId` will be the ID of a `Patient`)<br/>
+
+        - telehealth (`refId` will be the ID of a `Telehealth` object)<br/>
+
+        - waiting-room-patient (`refId` will be the ID of a `WaitingRoomPatient` object)<br/>
+
+        '
+      type: string
+      enum:
+      - reminder
+      - referral-reminder
+      - feedback-reminder
+      - followup
+      - outbound-referral-reminder
+      - form-reminder
+      - reschedule
+      - waitlist
+      - appointment-offer
+      - chat-notification
+      - pin-verification
+      - chat
+      - chat-audit
+      - chat-audit-tz
+      - feedback
+      - waitlist-offer
+      - referral-followup
+      - outbound-referral-outreach
+      - referral-redirect
+      - broadcast
+      - generic
+      - stop
+      - bot:followup
+      - telehealth
+      - waiting-room-patient
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    RolesByUser:
+      type: object
+      description: Object containing 2 keys, referringProvider and renderingProvider. The value for each key is an array. The content of the array should be the root account ids under the same organization, where this user has the role with the same name of the key.
+      required: []
+      properties:
+        referringProvider:
+          type: array
+          description: List of root account IDs under an organization where the user has the role referringProvider
+          items:
+            type: string
+            pattern: '[0-9a-f]'
+            minLength: 24
+            maxLength: 24
+        renderingProvider:
+          type: array
+          description: List of root account IDs under an organization where the user has the role renderingProvider
+          items:
+            type: string
+            pattern: '[0-9a-f]'
+            minLength: 24
+            maxLength: 24
   parameters:
+    userParam:
+      in: query
+      name: user
+      required: false
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: The ID of the root account user.
     selectParam:
       name: _select
       in: query
@@ -2033,19 +2047,30 @@ components:
       type: string
       schema:
         type: string
-    pageParam:
+    updatedAtParam:
       in: query
-      name: page
-      required: false
-      type: integer
-      format: int32
-      default: 1
-      minimum: 1
+      name: updatedAt
+      type: string
+      format: date-time
       schema:
-        type: integer
-        format: int32
-        default: 1
-        minimum: 1
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
     createdByParam:
       in: query
       name: createdBy
@@ -2060,22 +2085,19 @@ components:
         maxLength: 24
       required: false
       description: The ID of the user who created this object.
-    refParam:
+    pageParam:
       in: query
-      name: ref
-      description: Indicates what this is about. Depending on this value, you also know what the parameter `refId` refers to.
-      schema:
-        $ref: '#/components/schemas/Ref'
-    updatedAtParam:
-      in: query
-      name: updatedAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
+      name: page
       required: false
-      description: The date/time when this object was updated.
+      type: integer
+      format: int32
+      default: 1
+      minimum: 1
+      schema:
+        type: integer
+        format: int32
+        default: 1
+        minimum: 1
     limitParam:
       name: limit
       in: query
@@ -2092,42 +2114,12 @@ components:
         default: 500
         minimum: 1
         maximum: 1000
-    userParam:
+    refParam:
       in: query
-      name: user
-      required: false
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
+      name: ref
+      description: Indicates what this is about. Depending on this value, you also know what the parameter `refId` refers to.
       schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: The ID of the root account user.
-    deletedParam:
-      in: query
-      name: deleted
-      required: false
-      type: number
-      enum:
-      - 0
-      - 1
-      schema:
-        type: number
-        enum:
-        - 0
-        - 1
-      description: Flag for logical deletion where 1 means deleted.
-    populateParam:
-      name: _populate
-      in: query
-      description: Response properties which will be replaced by the referenced objects, separated by commas.
-      required: false
-      type: string
-      schema:
-        type: string
+        $ref: '#/components/schemas/Ref'
     updatedByParam:
       in: query
       name: updatedBy
@@ -2142,6 +2134,14 @@ components:
         minLength: 24
         maxLength: 24
       description: The ID of the user who updated this object.
+    populateParam:
+      name: _populate
+      in: query
+      description: Response properties which will be replaced by the referenced objects, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
     createdAtParam:
       in: query
       name: createdAt

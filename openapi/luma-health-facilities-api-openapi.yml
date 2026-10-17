@@ -210,129 +210,16 @@ paths:
           description: Access token does not have the required scope
 components:
   schemas:
-    ExternalId:
+    FacilityRequestCreate:
       type: object
-      properties:
-        source:
-          description: externalId.source
-          type: string
-          enum:
-          - gcalendar
-          - successehs
-          - drchrono
-          - dentrix
-          - webpt
-          - theraoffice
-          - mi7
-          - practicefusion
-          - advancedmd
-          - acomrapidpm
-          - kareo
-          - nextech
-          - mwtherapy
-          - clinicient
-          - carecloud
-          - eclinicalmobile
-          - duxware
-          - labretriever
-          - optimispt
-          - referral
-          - recall
-          - allscriptspm
-          - lytec
-          - brightree
-          - fullslate
-          - nuemd
-          - centricityps
-          - officeally
-          - greenwayintergy
-          - compulink
-          - adspm
-          - dsnpm
-          - lumamock
-          - medicalmastermind
-          - meditouch
-          - healthnautica
-          - ezemrx
-          - hl7
-          - amazingcharts
-          - greenwayprimesuite
-          - raintree
-          - athenahealth
-          - revflow
-          - eclinicalworks10e
-          - hl7pickup
-          - mindbody
-          - eclinicalworkssql
-          - nextgen
-          - practiceperfect
-          - avimark
-          - clinix
-          - keymedical
-          - mdoffice
-          - webedoctor
-          - emapm
-          - medinformatix
-          - imsgo
-          - emds
-          - allscriptsunity
-          - medevolve
-          - caretracker
-          - clearpractice
-          - valant
-          - micromd
-          - systemedx
-          - medicalmaster
-          - athenamdp
-          - gmed
-          - roche
-          - onetouch
-          - somnoware
-          - managementplus
-          - lumacare
-          - nextechfhir
-          - curemd
-          - epic
-          - phoenixortho
-          - ezderm
-          - ggastromobile
-          - epicconfirmationpickup
-          - cerner
-          - allmeds
-          - oncoemrfilepickup
-          - imedicware
-          - modmedfhir
-          - clinux
-          - acuityscheduling
-          - medstreaming
-          - isalus
-          - meditechexpanse
-          - openemr
-          - genericfhir
-          - nextechpracticeplus
-          - sms
-          - voice
-          - email
-          - none
-        value:
-          description: externalId.value
-          type: string
-    idParam:
-      in: query
-      name: _id
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      required: false
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      description: Luma's internal ID of an object.
-    FacilityRequestUpdate:
-      type: object
+      required:
+      - name
+      - city
+      - address
+      - state
+      - country
+      - postcode
+      - visible
       properties:
         name:
           description: name
@@ -494,212 +381,6 @@ components:
         minLength: 24
         maxLength: 24
       description: The ID of the user who updated this object.
-    deletedParam:
-      in: query
-      name: deleted
-      required: false
-      type: number
-      enum:
-      - 0
-      - 1
-      schema:
-        type: number
-        enum:
-        - 0
-        - 1
-      description: Flag for logical deletion where 1 means deleted.
-    Error:
-      type: object
-      required:
-      - code
-      - message
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
-    FacilityRequestCreate:
-      type: object
-      required:
-      - name
-      - city
-      - address
-      - state
-      - country
-      - postcode
-      - visible
-      properties:
-        name:
-          description: name
-          type: string
-        alternativeName:
-          description: alternativeName
-          type: string
-        phonetic:
-          description: phonetic
-          type: string
-        address:
-          description: address
-          type: string
-        city:
-          description: city
-          type: string
-        state:
-          description: state
-          type: string
-        country:
-          description: country
-          type: string
-          default: US
-        postcode:
-          description: postcode
-          type: string
-        phone:
-          description: phone
-          type: string
-        fax:
-          description: fax
-          type: string
-        alternativePhone:
-          description: alternativePhone
-          type: string
-        visible:
-          description: visible
-          type: boolean
-          default: true
-        specialInstructions:
-          description: specialInstructions
-          type: string
-        integrator:
-          description: integrator
-          type: string
-          enum:
-          - gcalendar
-          - successehs
-          - drchrono
-          - dentrix
-          - webpt
-          - theraoffice
-          - mi7
-          - practicefusion
-          - advancedmd
-          - acomrapidpm
-          - kareo
-          - nextech
-          - mwtherapy
-          - clinicient
-          - carecloud
-          - eclinicalmobile
-          - duxware
-          - labretriever
-          - optimispt
-          - referral
-          - recall
-          - allscriptspm
-          - lytec
-          - brightree
-          - fullslate
-          - nuemd
-          - centricityps
-          - officeally
-          - greenwayintergy
-          - compulink
-          - adspm
-          - dsnpm
-          - lumamock
-          - medicalmastermind
-          - meditouch
-          - healthnautica
-          - ezemrx
-          - hl7
-          - amazingcharts
-          - greenwayprimesuite
-          - raintree
-          - athenahealth
-          - revflow
-          - eclinicalworks10e
-          - hl7pickup
-          - mindbody
-          - eclinicalworkssql
-          - nextgen
-          - practiceperfect
-          - avimark
-          - clinix
-          - keymedical
-          - mdoffice
-          - webedoctor
-          - emapm
-          - medinformatix
-          - imsgo
-          - emds
-          - allscriptsunity
-          - medevolve
-          - caretracker
-          - clearpractice
-          - valant
-          - micromd
-          - systemedx
-          - medicalmaster
-          - athenamdp
-          - gmed
-          - roche
-          - onetouch
-          - somnoware
-          - managementplus
-          - lumacare
-          - nextechfhir
-          - curemd
-          - epic
-          - phoenixortho
-          - ezderm
-          - ggastromobile
-          - epicconfirmationpickup
-          - cerner
-          - allmeds
-          - oncoemrfilepickup
-          - imedicware
-          - modmedfhir
-          - clinux
-          - acuityscheduling
-          - medstreaming
-          - isalus
-          - meditechexpanse
-          - openemr
-          - genericfhir
-          - nextechpracticeplus
-        externalId:
-          $ref: '#/components/schemas/ExternalId'
-        _id:
-          description: _id
-          type: string
-          pattern: '[0-9a-f]'
-          minLength: 24
-          maxLength: 24
-    createdByParam:
-      in: query
-      name: createdBy
-      type: string
-      pattern: '[0-9a-f]'
-      minLength: 24
-      maxLength: 24
-      schema:
-        type: string
-        pattern: '[0-9a-f]'
-        minLength: 24
-        maxLength: 24
-      required: false
-      description: The ID of the user who created this object.
-    createdAtParam:
-      in: query
-      name: createdAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was created.
     SettingProperty:
       type: object
       properties:
@@ -3012,17 +2693,20 @@ components:
         minLength: 24
         maxLength: 24
       description: The ID of the root account user.
-    updatedAtParam:
+    idParam:
       in: query
-      name: updatedAt
+      name: _id
       type: string
-      format: date-time
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      required: false
       schema:
         type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was updated.
-  parameters:
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      description: Luma's internal ID of an object.
     deletedParam:
       in: query
       name: deleted
@@ -3037,6 +2721,373 @@ components:
         - 0
         - 1
       description: Flag for logical deletion where 1 means deleted.
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
+    FacilityRequestUpdate:
+      type: object
+      properties:
+        name:
+          description: name
+          type: string
+        alternativeName:
+          description: alternativeName
+          type: string
+        phonetic:
+          description: phonetic
+          type: string
+        address:
+          description: address
+          type: string
+        city:
+          description: city
+          type: string
+        state:
+          description: state
+          type: string
+        country:
+          description: country
+          type: string
+          default: US
+        postcode:
+          description: postcode
+          type: string
+        phone:
+          description: phone
+          type: string
+        fax:
+          description: fax
+          type: string
+        alternativePhone:
+          description: alternativePhone
+          type: string
+        visible:
+          description: visible
+          type: boolean
+          default: true
+        specialInstructions:
+          description: specialInstructions
+          type: string
+        integrator:
+          description: integrator
+          type: string
+          enum:
+          - gcalendar
+          - successehs
+          - drchrono
+          - dentrix
+          - webpt
+          - theraoffice
+          - mi7
+          - practicefusion
+          - advancedmd
+          - acomrapidpm
+          - kareo
+          - nextech
+          - mwtherapy
+          - clinicient
+          - carecloud
+          - eclinicalmobile
+          - duxware
+          - labretriever
+          - optimispt
+          - referral
+          - recall
+          - allscriptspm
+          - lytec
+          - brightree
+          - fullslate
+          - nuemd
+          - centricityps
+          - officeally
+          - greenwayintergy
+          - compulink
+          - adspm
+          - dsnpm
+          - lumamock
+          - medicalmastermind
+          - meditouch
+          - healthnautica
+          - ezemrx
+          - hl7
+          - amazingcharts
+          - greenwayprimesuite
+          - raintree
+          - athenahealth
+          - revflow
+          - eclinicalworks10e
+          - hl7pickup
+          - mindbody
+          - eclinicalworkssql
+          - nextgen
+          - practiceperfect
+          - avimark
+          - clinix
+          - keymedical
+          - mdoffice
+          - webedoctor
+          - emapm
+          - medinformatix
+          - imsgo
+          - emds
+          - allscriptsunity
+          - medevolve
+          - caretracker
+          - clearpractice
+          - valant
+          - micromd
+          - systemedx
+          - medicalmaster
+          - athenamdp
+          - gmed
+          - roche
+          - onetouch
+          - somnoware
+          - managementplus
+          - lumacare
+          - nextechfhir
+          - curemd
+          - epic
+          - phoenixortho
+          - ezderm
+          - ggastromobile
+          - epicconfirmationpickup
+          - cerner
+          - allmeds
+          - oncoemrfilepickup
+          - imedicware
+          - modmedfhir
+          - clinux
+          - acuityscheduling
+          - medstreaming
+          - isalus
+          - meditechexpanse
+          - openemr
+          - genericfhir
+          - nextechpracticeplus
+        externalId:
+          $ref: '#/components/schemas/ExternalId'
+        _id:
+          description: _id
+          type: string
+          pattern: '[0-9a-f]'
+          minLength: 24
+          maxLength: 24
+    createdByParam:
+      in: query
+      name: createdBy
+      type: string
+      pattern: '[0-9a-f]'
+      minLength: 24
+      maxLength: 24
+      schema:
+        type: string
+        pattern: '[0-9a-f]'
+        minLength: 24
+        maxLength: 24
+      required: false
+      description: The ID of the user who created this object.
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
+    ExternalId:
+      type: object
+      properties:
+        source:
+          description: externalId.source
+          type: string
+          enum:
+          - gcalendar
+          - successehs
+          - drchrono
+          - dentrix
+          - webpt
+          - theraoffice
+          - mi7
+          - practicefusion
+          - advancedmd
+          - acomrapidpm
+          - kareo
+          - nextech
+          - mwtherapy
+          - clinicient
+          - carecloud
+          - eclinicalmobile
+          - duxware
+          - labretriever
+          - optimispt
+          - referral
+          - recall
+          - allscriptspm
+          - lytec
+          - brightree
+          - fullslate
+          - nuemd
+          - centricityps
+          - officeally
+          - greenwayintergy
+          - compulink
+          - adspm
+          - dsnpm
+          - lumamock
+          - medicalmastermind
+          - meditouch
+          - healthnautica
+          - ezemrx
+          - hl7
+          - amazingcharts
+          - greenwayprimesuite
+          - raintree
+          - athenahealth
+          - revflow
+          - eclinicalworks10e
+          - hl7pickup
+          - mindbody
+          - eclinicalworkssql
+          - nextgen
+          - practiceperfect
+          - avimark
+          - clinix
+          - keymedical
+          - mdoffice
+          - webedoctor
+          - emapm
+          - medinformatix
+          - imsgo
+          - emds
+          - allscriptsunity
+          - medevolve
+          - caretracker
+          - clearpractice
+          - valant
+          - micromd
+          - systemedx
+          - medicalmaster
+          - athenamdp
+          - gmed
+          - roche
+          - onetouch
+          - somnoware
+          - managementplus
+          - lumacare
+          - nextechfhir
+          - curemd
+          - epic
+          - phoenixortho
+          - ezderm
+          - ggastromobile
+          - epicconfirmationpickup
+          - cerner
+          - allmeds
+          - oncoemrfilepickup
+          - imedicware
+          - modmedfhir
+          - clinux
+          - acuityscheduling
+          - medstreaming
+          - isalus
+          - meditechexpanse
+          - openemr
+          - genericfhir
+          - nextechpracticeplus
+          - sms
+          - voice
+          - email
+          - none
+        value:
+          description: externalId.value
+          type: string
+    Error:
+      type: object
+      required:
+      - code
+      - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+  parameters:
+    selectParam:
+      name: _select
+      in: query
+      description: Response properties that should be returned, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    pageParam:
+      in: query
+      name: page
+      required: false
+      type: integer
+      format: int32
+      default: 1
+      minimum: 1
+      schema:
+        type: integer
+        format: int32
+        default: 1
+        minimum: 1
+    limitParam:
+      name: limit
+      in: query
+      description: How many items to fetch per page
+      required: false
+      type: integer
+      format: int32
+      default: 500
+      minimum: 1
+      maximum: 1000
+      schema:
+        type: integer
+        format: int32
+        default: 500
+        minimum: 1
+        maximum: 1000
+    populateParam:
+      name: _populate
+      in: query
+      description: Response properties which will be replaced by the referenced objects, separated by commas.
+      required: false
+      type: string
+      schema:
+        type: string
+    updatedAtParam:
+      in: query
+      name: updatedAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was updated.
+    createdAtParam:
+      in: query
+      name: createdAt
+      type: string
+      format: date-time
+      schema:
+        type: string
+        format: date-time
+      required: false
+      description: The date/time when this object was created.
     userParam:
       in: query
       name: user
@@ -3065,71 +3116,6 @@ components:
         maxLength: 24
       required: false
       description: The ID of the user who created this object.
-    populateParam:
-      name: _populate
-      in: query
-      description: Response properties which will be replaced by the referenced objects, separated by commas.
-      required: false
-      type: string
-      schema:
-        type: string
-    createdAtParam:
-      in: query
-      name: createdAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was created.
-    updatedAtParam:
-      in: query
-      name: updatedAt
-      type: string
-      format: date-time
-      schema:
-        type: string
-        format: date-time
-      required: false
-      description: The date/time when this object was updated.
-    limitParam:
-      name: limit
-      in: query
-      description: How many items to fetch per page
-      required: false
-      type: integer
-      format: int32
-      default: 500
-      minimum: 1
-      maximum: 1000
-      schema:
-        type: integer
-        format: int32
-        default: 500
-        minimum: 1
-        maximum: 1000
-    selectParam:
-      name: _select
-      in: query
-      description: Response properties that should be returned, separated by commas.
-      required: false
-      type: string
-      schema:
-        type: string
-    pageParam:
-      in: query
-      name: page
-      required: false
-      type: integer
-      format: int32
-      default: 1
-      minimum: 1
-      schema:
-        type: integer
-        format: int32
-        default: 1
-        minimum: 1
     updatedByParam:
       in: query
       name: updatedBy
@@ -3144,6 +3130,20 @@ components:
         minLength: 24
         maxLength: 24
       description: The ID of the user who updated this object.
+    deletedParam:
+      in: query
+      name: deleted
+      required: false
+      type: number
+      enum:
+      - 0
+      - 1
+      schema:
+        type: number
+        enum:
+        - 0
+        - 1
+      description: Flag for logical deletion where 1 means deleted.
   securitySchemes:
     Bearer:
       type: http
