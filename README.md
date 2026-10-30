@@ -1,4 +1,4 @@
-# Luma Health (luma-health)
+# Luma Health
 
 <!-- API-EVANGELIST-PROVENANCE:BEGIN -->
 > ### About this repository
@@ -64,73 +64,183 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-Luma Health is a United States patient-engagement (Patient Success) platform for healthcare provider organizations, headquartered in San Francisco, California. Its operational AI platform automates the patient journey - self-service scheduling, referral and waitlist management, digital intake and forms, omnichannel two-way messaging and broadcast, appointment reminders and recalls, insurance eligibility verification, payments and billing, and a conversational AI assistant - and integrates bidirectionally with the major EHRs (Epic, Oracle Health/Cerner, MEDITECH, eClinicalWorks, athenahealth, NextGen, Greenway, Nextech).
+Luma Health is a United States patient-engagement (Patient Success) platform for healthcare provider organizations, headquartered in San Francisco, California. Its operational AI platform automates the patient journey - self-service scheduling and appointment management, referral and waitlist management, intake and digital forms, omnichannel two-way messaging and broadcast, appointment reminders and recalls, insurance eligibility verification, payments and billing, and a conversational AI assistant (Navigator / lumabot) - and integrates bidirectionally with the major EHRs (Epic, Oracle Health/Cerner, MEDITECH, eClinicalWorks, athenahealth, NextGen, Greenway, Nextech). Luma exposes a documented public REST API (Rest-Service v2.0.0, OpenAPI 3.0.0) at https://api.lumahealth.io/api/v2, secured with OAuth2 client-credentials that issue JWT bearer tokens. The developer-facing surface is a REST API rather than an HL7 FHIR server; FHIR/HL7 interoperability with EHRs happens inside Luma's integration layer, not as a public FHIR endpoint.
 
-Luma exposes a documented public REST API (Rest-Service v2.0.0, OpenAPI 3.0.0) at `https://api.lumahealth.io/api/v2`, secured with OAuth2 client-credentials that issue JWT bearer tokens. The developer-facing surface is a REST API rather than an HL7 FHIR server; FHIR/HL7 interoperability with EHRs happens inside Luma's integration layer, not as a public FHIR endpoint.
+**Areas:** Healthcare · United States · Patient Engagement · Scheduling · Referrals · Intake · Messaging · Eligibility · Electronic Health Records · Interoperability · Clinical AI · Reputation Management
 
-**APIs.json:** [https://raw.githubusercontent.com/api-evangelist/luma-health/refs/heads/main/apis.yml](https://raw.githubusercontent.com/api-evangelist/luma-health/refs/heads/main/apis.yml)
+## Luma Health on APIs.io
 
-## Home Market
+Everything profiled for Luma Health is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/luma-health/](https://apis.io/providers/luma-health/)** — or go straight to one of the APIs or properties below.
 
-United States
+### APIs (58)
 
-## Tags
+- [Luma Health Appointments API](https://apis.io/apis/luma-health/luma-health-appointments-api/) — Patient's appointments to see a doctor
+- [Luma Health Assistant Actions API](https://apis.io/apis/luma-health/luma-health-assistantactions-api/) — Audit log of individual tool calls made by the Navigator AI assistant during a conversation
+- [Luma Health Assistant Instances API](https://apis.io/apis/luma-health/luma-health-assistantinstances-api/) — Conversations between the Navigator AI assistant and a patient or staff member
+- [Luma Health Assistant Transfer Rules API](https://apis.io/apis/luma-health/luma-health-assistanttransferrules-api/) — Transfer rules for AI assistants (Navigator) to handle call routing
+- [Luma Health Auth API](https://apis.io/apis/luma-health/luma-health-auth-api/) — Luma Client Access
+- [Luma Health Availabilities API](https://apis.io/apis/luma-health/luma-health-availabilities-api/) — EHR provider scheduler availability
+- [Luma Health Billing Charges API](https://apis.io/apis/luma-health/luma-health-billingcharges-api/) — Financial charges tracked against a patient, such as copays and patient balances
+- [Luma Health Billing Copays API](https://apis.io/apis/luma-health/luma-health-billingcopays-api/) — Copay amounts configured per source (system, EHR, or manual) and referenced by patient form templates
+- [Luma Health Broadcast Templates API](https://apis.io/apis/luma-health/luma-health-broadcast-templates-api/) — The Broadcast Templates API from Luma Health — 2 operation(s) for broadcast templates.
+- [Luma Health Broadcast Events API](https://apis.io/apis/luma-health/luma-health-broadcastevents-api/) — Broadcast event logs and history
+- [Luma Health Broadcast Flows API](https://apis.io/apis/luma-health/luma-health-broadcastflows-api/) — Broadcast flows for mass messaging campaigns
+- [Luma Health Campaigns API](https://apis.io/apis/luma-health/luma-health-campaigns-api/) — Contact preference campaigns that determine how and in what order a patient, facility, or user is contacted
+- [Luma Health Chat Activities API](https://apis.io/apis/luma-health/luma-health-chatactivities-api/) — conversations with a patient
+- [Luma Health Chat Activities Reasons API](https://apis.io/apis/luma-health/luma-health-chatactivitiesreasons-api/) — reason why a chatActivity was closed
+- [Luma Health Chat Audits API](https://apis.io/apis/luma-health/luma-health-chataudits-api/) — Audits for message chat
+- [Luma Health Checklists API](https://apis.io/apis/luma-health/luma-health-checklists-api/) — Per-appointment, per-patient instances of required pre-visit tasks generated from a checklist template
+- [Luma Health Custom Web Styles API](https://apis.io/apis/luma-health/luma-health-customwebstyles-api/) — custom styles, CSS, logo images for customers
+- [Luma Health Engagements API](https://apis.io/apis/luma-health/luma-health-engagements-api/) — Conversation sessions between the system and a recipient, driven by one or more AI agents
+- [Luma Health Estimates API](https://apis.io/apis/luma-health/luma-health-estimates-api/) — Estimates
+- [Luma Health Facilities API](https://apis.io/apis/luma-health/luma-health-facilities-api/) — Customer facilities
+- [Luma Health Feedback Responses API](https://apis.io/apis/luma-health/luma-health-feedbackresponses-api/) — Patient responses to NPS feedback surveys and clicks on feedback links
+- [Luma Health Feedback Responses External Review Replies API](https://apis.io/apis/luma-health/luma-health-feedbackresponsesexternalreviewreplies-api/) — AI-generated reply drafts for external reviews, with approve/reject workflow
+- [Luma Health Feedback Responses External Reviews API](https://apis.io/apis/luma-health/luma-health-feedbackresponsesexternalreviews-api/) — Scraped external reviews from Google Business Profile and Yelp
+- [Luma Health Feedback Responses Promoter Histories API](https://apis.io/apis/luma-health/luma-health-feedbackresponsespromoterhistories-api/) — Per-patient platform rotation history for NPS promoter review requests
+- [Luma Health Groups API](https://apis.io/apis/luma-health/luma-health-groups-api/) — Group of staff users
+- [Luma Health Insurance Payors API](https://apis.io/apis/luma-health/luma-health-insurancepayors-api/) — Insurance payors/carriers maintained in Luma's payor directory
+- [Luma Health Insurances API](https://apis.io/apis/luma-health/luma-health-insurances-api/) — Patient insurance coverage records
+- [Luma Health Knowledge Base Question Answers API](https://apis.io/apis/luma-health/luma-health-knowledgebasequestionanswers-api/) — Question and answer entries for knowledge bases
+- [Luma Health Lumabot Flows API](https://apis.io/apis/luma-health/luma-health-lumabotflows-api/) — LumaBot Flows answered by patients
+- [Luma Health Lumabot Flow Templates API](https://apis.io/apis/luma-health/luma-health-lumabotflowtemplates-api/) — Templates for LumaBot flows
+- [Luma Health Messages API](https://apis.io/apis/luma-health/luma-health-messages-api/) — Messages (chat, sms, voice, email, whatsapp, fax, in-app)
+- [Luma Health Message Template Partials API](https://apis.io/apis/luma-health/luma-health-messagetemplatepartials-api/) — Reusable partials that can be composed into message templates
+- [Luma Health Offers API](https://apis.io/apis/luma-health/luma-health-offers-api/) — Offers
+- [Luma Health Outbound Referrals API](https://apis.io/apis/luma-health/luma-health-outboundreferrals-api/) — Outbound Referral
+- [Luma Health Patient Credit Cards API](https://apis.io/apis/luma-health/luma-health-patientcreditcards-api/) — Luma Health patient credit cards
+- [Luma Health Patient Form Templates API](https://apis.io/apis/luma-health/luma-health-patientformtemplates-api/) — Templates from patient forms
+- [Luma Health Patient Message Templates API](https://apis.io/apis/luma-health/luma-health-patientmessagetemplates-api/) — Message templates used to compose patient communications
+- [Luma Health Patients API](https://apis.io/apis/luma-health/luma-health-patients-api/) — Customer patients
+- [Luma Health Providers API](https://apis.io/apis/luma-health/luma-health-providers-api/) — Luma Health providers
+- [Luma Health Provider Scheduling Groups API](https://apis.io/apis/luma-health/luma-health-providerschedulinggroups-api/) — Groups of providers configured for shared scheduling behavior, such as round-robin or waterfall assignment
+- [Luma Health Queue Manager Instances API](https://apis.io/apis/luma-health/luma-health-queuemanagerinstances-api/) — Instances of queue manager templates representing items in a queue
+- [Luma Health Recalls API](https://apis.io/apis/luma-health/luma-health-recalls-api/) — Recalls
+- [Luma Health Referrals API](https://apis.io/apis/luma-health/luma-health-referrals-api/) — Luma Patient referrals
+- [Luma Health Reminders API](https://apis.io/apis/luma-health/luma-health-reminders-api/) — Luma Reminders
+- [Luma Health Reports API](https://apis.io/apis/luma-health/luma-health-reports-api/) — Luma Analytical Reports
+- [Luma Health Schedulers API](https://apis.io/apis/luma-health/luma-health-schedulers-api/) — Scheduler
+- [Luma Health Settings API](https://apis.io/apis/luma-health/luma-health-settings-api/) — Luma resource settings
+- [Luma Health Specialties API](https://apis.io/apis/luma-health/luma-health-specialties-api/) — A Doctor's specialty
+- [Luma Health Squigglies API](https://apis.io/apis/luma-health/luma-health-squigglies-api/) — Messages Squigglies
+- [Luma Health Users API](https://apis.io/apis/luma-health/luma-health-users-api/) — Staff users
+- [Luma Health Waitlists API](https://apis.io/apis/luma-health/luma-health-waitlists-api/) — Patients waiting for an appointment
+- [Luma Health Appointment Types API](https://apis.io/apis/luma-health/luma-health-appointment-types-api/) — EHR appointment types
+- [Luma Health Checklist Templates API](https://apis.io/apis/luma-health/luma-health-checklist-templates-api/) — Reusable definitions of required pre-visit tasks used to build checklists
+- [Luma Health Engagement Events API](https://apis.io/apis/luma-health/luma-health-engagement-events-api/) — Append-only history of events that occurred during an engagement
+- [Luma Health Engagement Settings API](https://apis.io/apis/luma-health/luma-health-engagement-settings-api/) — Reusable voice and language presets that can be attached to an engagement
+- [Luma Health File Uploads API](https://apis.io/apis/luma-health/luma-health-file-uploads-api/) — File Uploads
+- [Luma Health Patient Forms API](https://apis.io/apis/luma-health/luma-health-patient-forms-api/) — Patient forms answered by patients
+- [Luma Health system Audits API](https://apis.io/apis/luma-health/luma-health-system-audits-api/) — Audit logs for certain system events in a given account
 
-- Healthcare
-- United States
-- Patient Engagement
-- Scheduling
-- Referrals
-- Intake
-- Messaging
-- Eligibility
-- EHR
-- Interoperability
-- Clinical AI
+### Published properties
 
-## Timestamps
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
 
-- **Created:** 2026-07-24
-- **Modified:** 2026-07-24
+#### MCP servers (1)
 
-## APIs
+Model Context Protocol servers that expose the API to agents.
 
-A single OpenAPI 3.0.0 specification ("Rest-Service" v2.0.0, 143 paths / 276 operations / 54 tags), harvested verbatim to [`openapi/luma-health-openapi.yaml`](openapi/luma-health-openapi.yaml) from `https://apidocs.lumahealth.io/public.yaml`, backs the following product-family APIs (all served at `https://api.lumahealth.io/api/v2`):
+- [luma-health](https://apis.io/servers/luma-health/luma-health/)
 
-- **Scheduling & Appointments API** - appointments, appointment types, availabilities, schedulers, offers, recalls, waitlists.
-- **Patients API** - patient records, patient forms and form templates, stored payment cards.
-- **Providers & Facilities API** - providers, provider scheduling groups, facilities, specialties, groups, users.
-- **Messaging & Engagement API** - two-way messaging, engagements/events/settings, reminders, message templates.
-- **Broadcast & Campaigns API** - broadcast events, broadcast flows and templates, campaigns.
-- **Intake & Forms API** - checklists and templates, patient forms, file uploads.
-- **Billing & Payments API** - billing charges and copays, estimates, patient credit cards.
-- **Eligibility & Insurance API** - insurance records with real-time eligibility verification and payors directory.
-- **Referrals API** - inbound and outbound referral management.
-- **Conversational AI Assistant API** - assistant instances and actions, lumabot flows and templates, knowledge base Q&A, chat activities, queue-manager routing.
-- **Reporting & Audits API** - operational reports, system and chat audits.
-- **Authentication API** - OAuth2 client-credentials: generate/rotate client id/secret and exchange for JWT access tokens.
+#### Agentic access (1)
 
-## Authentication
+Which operations an agent can call, which act, and which need a human in the loop.
 
-OAuth2 client-credentials. `POST /auth/clients` provisions a client id and secret, `POST /auth/token` exchanges them for a JWT access token, and all other operations require the `Bearer` JWT. This is not SMART-on-FHIR; no `patient/*.read` or `system/*.rw` scopes are documented.
+- [Luma Health Agentic Access](https://apis.io/agentic-access/luma-health/luma-health-agentic-access/)
 
-## Common Properties
+#### Overlays (1)
+
+OpenAPI overlays, including conversational phrasing for each operation.
+
+- [Luma Health Openapi Overlay](https://apis.io/overlays/luma-health/luma-health-openapi-overlay/)
+
+#### Security (4)
+
+Authentication, trust centre, and vulnerability disclosure.
+
+- [Luma Health Authentication](https://apis.io/security/luma-health/luma-health-authentication/)
+- [Luma Health Domain Security](https://apis.io/security/luma-health/luma-health-domain-security/)
+- [Luma Health Trust Center](https://apis.io/security/luma-health/luma-health-trust-center/)
+- [Luma Health Vulnerability Disclosure](https://apis.io/security/luma-health/luma-health-vulnerability-disclosure/)
+
+#### Plans and pricing (1)
+
+Published plans, tiers and prices.
+
+- [Luma Health Plans Pricing](https://apis.io/plans/luma-health/luma-health-plans-pricing/)
+
+#### Rate limits (1)
+
+Published request limits.
+
+- [Luma Health Rate Limits](https://apis.io/rate-limits/luma-health/luma-health-rate-limits/)
+
+## Where to find this API
+
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
 
 - [Website](https://www.lumahealth.io)
-- [Developer Portal](https://apidocs.lumahealth.io)
 - [Documentation](https://apidocs.lumahealth.io)
-- [OpenAPI](openapi/luma-health-openapi.yaml)
-- [Integrations](https://www.lumahealth.io/integrations)
+- [API reference](https://apidocs.lumahealth.io)
 - [Blog](https://www.lumahealth.io/blog)
-- [Status Page](https://status.lumahealth.io)
-- [Security](https://www.lumahealth.io/security)
-- [Login](https://next.lumahealth.io/login)
-- [Terms of Service](https://www.lumahealth.io/terms)
-- [Privacy Policy](https://www.lumahealth.io/privacy-policy)
-- [GitHub Organization](https://github.com/lumahealthhq)
-- [LinkedIn](https://www.linkedin.com/company/luma-health)
+- [Compliance](https://www.lumahealth.io/security-and-trust/)
+- [Terms of service](https://www.lumahealth.io/terms-of-use)
+- [Privacy policy](https://www.lumahealth.io/privacy-policy)
+- [GitHub](https://github.com/lumahealthhq)
+- [Status](https://status.lumahealth.io)
 
-## Maintainers
+## API Evangelist rating
 
-**FN:** Kin Lane
-**Email:** kin@apievangelist.com
+**Kin Score 48.4** — developing · rubric 0.25.0 · scored 2026-10-23
+
+| Facet | Score |
+|---|---|
+| Discoverability | 74.1 |
+| Contract quality | 49.6 |
+| Contract governance | 4.5 |
+| Operational transparency | 28.9 |
+| Developer ergonomics | 36.3 |
+| Access clarity | 43.4 |
+
+**Agent readiness 29.4** — agent-ready
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | yes |
+| Agentic Access | derived (partial credit) |
+| Reversibility Documented | — |
+| MCP Server | — |
+| Auth Clarity | bearer (partial credit) |
+| Idempotency | — |
+| Error Semantics | verified |
+| OpenAPI Examples | partial |
+| Rate Limit Signal | documented (partial credit) |
+| Event Surface Described | — |
+| Agent Skills | derived (partial credit) |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | — |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | — |
+| Agentic Commerce | — |
+| Pagination Ratio | — |
+| Operation Distinctiveness | distinct |
+
+**Regulatory alignment 32.0** — Health
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/luma-health/](https://apis.io/providers/luma-health/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for Luma Health: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/luma-health/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
